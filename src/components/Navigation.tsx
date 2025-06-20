@@ -19,6 +19,9 @@ const Navigation = () => {
     isConnecting,
     connectWallet,
     disconnectWallet,
+    networkName,
+    isCorrectNetwork,
+    switchToHelios,
   } = useWallet();
 
   const formatAddress = (address: string) => {
@@ -80,9 +83,12 @@ const Navigation = () => {
                 variant="outline"
                 size="sm"
                 className="gap-2 bg-white/60 border-border/50"
+                onClick={!isCorrectNetwork ? switchToHelios : undefined}
               >
-                <div className="w-2 h-2 bg-success rounded-full"></div>
-                Helios
+                <div
+                  className={`w-2 h-2 rounded-full ${isCorrectNetwork ? "bg-success" : "bg-warning"}`}
+                ></div>
+                {networkName}
                 <ChevronDown className="w-4 h-4" />
               </Button>
 

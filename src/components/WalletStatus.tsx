@@ -4,7 +4,14 @@ import { Wallet, ExternalLink } from "lucide-react";
 import { useWallet } from "@/contexts/WalletContext";
 
 const WalletStatus = () => {
-  const { isConnected, address, balance, connectWallet } = useWallet();
+  const {
+    isConnected,
+    address,
+    balance,
+    connectWallet,
+    isCorrectNetwork,
+    switchToHelios,
+  } = useWallet();
 
   if (!isConnected) {
     return (
@@ -25,13 +32,19 @@ const WalletStatus = () => {
   }
 
   return (
-    <Card className="bg-success/5 border-success/20">
+    <Card
+      className={`${isCorrectNetwork ? "bg-success/5 border-success/20" : "bg-warning/5 border-warning/20"}`}
+    >
       <CardContent className="p-6">
         <div className="flex items-center justify-between mb-4">
-          <h3 className="text-lg font-semibold text-success">
-            Wallet Connected
+          <h3
+            className={`text-lg font-semibold ${isCorrectNetwork ? "text-success" : "text-warning"}`}
+          >
+            {isCorrectNetwork ? "Wallet Connected" : "Wrong Network"}
           </h3>
-          <div className="w-3 h-3 bg-success rounded-full"></div>
+          <div
+            className={`w-3 h-3 rounded-full ${isCorrectNetwork ? "bg-success" : "bg-warning"}`}
+          ></div>
         </div>
         <div className="space-y-2">
           <div className="flex justify-between items-center">
@@ -46,7 +59,7 @@ const WalletStatus = () => {
                 className="h-6 w-6 p-0"
                 onClick={() =>
                   window.open(
-                    `https://etherscan.io/address/${address}`,
+                    `https://explorer.helioschainlabs.org/address/${address}`,
                     "_blank",
                   )
                 }
@@ -57,8 +70,16 @@ const WalletStatus = () => {
           </div>
           <div className="flex justify-between items-center">
             <span className="text-sm text-muted-foreground">Balance</span>
-            <span className="font-medium">{balance} ETH</span>
+            <span className="font-medium">{balance} HLS</span>
           </div>
+          {!isCorrectNetwork && (
+            <Button
+              onClick={switchToHelios}
+              className="w-full mt-4 bg-warning hover:bg-warning/90"
+            >
+              Switch to Helios Network
+            </Button>
+          )}
         </div>
       </CardContent>
     </Card>

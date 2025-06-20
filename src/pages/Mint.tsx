@@ -6,12 +6,24 @@ import { useWallet } from "@/contexts/WalletContext";
 import { useState } from "react";
 
 const Mint = () => {
-  const { isConnected, address, connectWallet, balance } = useWallet();
+  const {
+    isConnected,
+    address,
+    connectWallet,
+    balance,
+    isCorrectNetwork,
+    switchToHelios,
+  } = useWallet();
   const [isMinting, setIsMinting] = useState(false);
 
   const handleMint = async () => {
     if (!isConnected) {
       await connectWallet();
+      return;
+    }
+
+    if (!isCorrectNetwork) {
+      await switchToHelios();
       return;
     }
 
@@ -92,15 +104,31 @@ const Mint = () => {
 
                 {/* Wallet Status */}
                 {isConnected && (
-                  <div className="bg-success/10 border border-success/20 rounded-lg p-3 text-sm">
+                  <div
+                    className={`border rounded-lg p-3 text-sm ${
+                      isCorrectNetwork
+                        ? "bg-success/10 border-success/20"
+                        : "bg-warning/10 border-warning/20"
+                    }`}
+                  >
                     <div className="flex justify-between items-center">
                       <span className="text-muted-foreground">
                         Wallet Balance
                       </span>
-                      <span className="font-medium">{balance} ETH</span>
+                      <span className="font-medium">{balance} HLS</span>
                     </div>
                     <div className="flex justify-between items-center mt-1">
-                      <span className="text-muted-foreground">Connected</span>
+                      <span className="text-muted-foreground">Network</span>
+                      <span
+                        className={`font-medium ${
+                          isCorrectNetwork ? "text-success" : "text-warning"
+                        }`}
+                      >
+                        {isCorrectNetwork ? "Helios Testnet" : "Wrong Network"}
+                      </span>
+                    </div>
+                    <div className="flex justify-between items-center mt-1">
+                      <span className="text-muted-foreground">Address</span>
                       <span className="text-success font-medium">
                         {address?.slice(0, 6)}...{address?.slice(-4)}
                       </span>
@@ -118,6 +146,11 @@ const Mint = () => {
                     <>
                       <Wallet className="w-5 h-5 mr-2" />
                       Connect Wallet to Mint
+                    </>
+                  ) : !isCorrectNetwork ? (
+                    <>
+                      <Zap className="w-5 h-5 mr-2" />
+                      Switch to Helios Network
                     </>
                   ) : isMinting ? (
                     <>

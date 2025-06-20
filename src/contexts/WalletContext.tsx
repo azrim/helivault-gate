@@ -6,6 +6,20 @@ import React, {
   ReactNode,
 } from "react";
 
+// Helios Chain Testnet Configuration
+const HELIOS_NETWORK = {
+  chainId: "0xa410", // 42000 in hex
+  chainName: "Helios Chain Testnet",
+  nativeCurrency: {
+    name: "Helios",
+    symbol: "HLS",
+    decimals: 18,
+  },
+  rpcUrls: ["https://testnet1.helioschainlabs.org"],
+  blockExplorerUrls: ["https://explorer.helioschainlabs.org"],
+  iconUrls: ["helioschain"],
+};
+
 interface WalletContextType {
   isConnected: boolean;
   address: string | null;
@@ -13,6 +27,9 @@ interface WalletContextType {
   connectWallet: () => Promise<void>;
   disconnectWallet: () => void;
   balance: string;
+  networkName: string;
+  isCorrectNetwork: boolean;
+  switchToHelios: () => Promise<void>;
 }
 
 const WalletContext = createContext<WalletContextType | undefined>(undefined);
@@ -34,6 +51,8 @@ export const WalletProvider: React.FC<WalletProviderProps> = ({ children }) => {
   const [address, setAddress] = useState<string | null>(null);
   const [isConnecting, setIsConnecting] = useState(false);
   const [balance, setBalance] = useState("0.00");
+  const [networkName, setNetworkName] = useState("Unknown");
+  const [isCorrectNetwork, setIsCorrectNetwork] = useState(false);
 
   // Check if wallet is already connected on mount
   useEffect(() => {
@@ -66,6 +85,7 @@ export const WalletProvider: React.FC<WalletProviderProps> = ({ children }) => {
         if (accounts.length > 0) {
           setAddress(accounts[0]);
           setIsConnected(true);
+          await checkNetwork();
           await getBalance(accounts[0]);
         }
       }
@@ -80,7 +100,30 @@ export const WalletProvider: React.FC<WalletProviderProps> = ({ children }) => {
     } else {
       setAddress(accounts[0]);
       setIsConnected(true);
+      checkNetwork();
       getBalance(accounts[0]);
+    }
+  };
+
+  const checkNetwork = async () => {
+    try {
+      if (window.ethereum) {
+        const chainId = await window.ethereum.request({
+          method: "eth_chainId",
+        });
+
+        if (chainId === HELIOS_NETWORK.chainId) {
+          setNetworkName("Helios Chain Testnet");
+          setIsCorrectNetwork(true);
+        } else {
+          setNetworkName("Wrong Network");
+          setIsCorrectNetwork(false);
+        }
+      }
+    } catch (error) {
+      console.error("Error checking network:", error);
+      setNetworkName("Unknown");
+      setIsCorrectNetwork(false);
     }
   };
 
@@ -91,13 +134,44 @@ export const WalletProvider: React.FC<WalletProviderProps> = ({ children }) => {
           method: "eth_getBalance",
           params: [address, "latest"],
         });
-        // Convert from wei to ether (simplified)
-        const ethBalance = parseInt(balance, 16) / Math.pow(10, 18);
-        setBalance(ethBalance.toFixed(4));
+        // Convert from wei to HLS
+        const hlsBalance = parseInt(balance, 16) / Math.pow(10, 18);
+        setBalance(hlsBalance.toFixed(4));
       }
     } catch (error) {
       console.error("Error getting balance:", error);
       setBalance("0.00");
+    }
+  };
+
+  const switchToHelios = async () => {
+    if (!window.ethereum) {
+      alert("Please install MetaMask!");
+      return;
+    }
+
+    try {
+      // Try to switch to Helios network
+      await window.ethereum.request({
+        method: "wallet_switchEthereumChain",
+        params: [{ chainId: HELIOS_NETWORK.chainId }],
+      });
+    } catch (switchError: any) {
+      // Network doesn't exist, add it
+      if (switchError.code === 4902) {
+        try {
+          await window.ethereum.request({
+            method: "wallet_addEthereumChain",
+            params: [HELIOS_NETWORK],
+          });
+        } catch (addError) {
+          console.error("Error adding Helios network:", addError);
+          alert("Failed to add Helios network. Please add it manually.");
+        }
+      } else {
+        console.error("Error switching to Helios network:", switchError);
+        alert("Failed to switch to Helios network.");
+      }
     }
   };
 
@@ -116,6 +190,14 @@ export const WalletProvider: React.FC<WalletProviderProps> = ({ children }) => {
       if (accounts.length > 0) {
         setAddress(accounts[0]);
         setIsConnected(true);
+
+        // Check network and switch to Helios if needed
+        await checkNetwork();
+        if (!isCorrectNetwork) {
+          await switchToHelios();
+          await checkNetwork();
+        }
+
         await getBalance(accounts[0]);
       }
     } catch (error: any) {
@@ -134,6 +216,8 @@ export const WalletProvider: React.FC<WalletProviderProps> = ({ children }) => {
     setIsConnected(false);
     setAddress(null);
     setBalance("0.00");
+    setNetworkName("Unknown");
+    setIsCorrectNetwork(false);
   };
 
   const value: WalletContextType = {
@@ -143,6 +227,9 @@ export const WalletProvider: React.FC<WalletProviderProps> = ({ children }) => {
     connectWallet,
     disconnectWallet,
     balance,
+    networkName,
+    isCorrectNetwork,
+    switchToHelios,
   };
 
   return (
