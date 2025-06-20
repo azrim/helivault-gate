@@ -59,6 +59,7 @@ export const WalletProvider: React.FC<WalletProviderProps> = ({ children }) => {
   const [networkName, setNetworkName] = useState("Unknown");
   const [isCorrectNetwork, setIsCorrectNetwork] = useState(false);
   const [contractData, setContractData] = useState<ContractData | null>(null);
+  const [isLoadingContract, setIsLoadingContract] = useState(false);
 
   // Check if wallet is already connected on mount
   useEffect(() => {
@@ -93,7 +94,12 @@ export const WalletProvider: React.FC<WalletProviderProps> = ({ children }) => {
           setIsConnected(true);
           await checkNetwork();
           await getBalance(accounts[0]);
-          setTimeout(refreshContractData, 1000);
+          // Only refresh contract data after a delay and if on correct network
+          setTimeout(() => {
+            if (isCorrectNetwork) {
+              refreshContractData();
+            }
+          }, 2000);
         }
       }
     } catch (error) {
@@ -109,7 +115,12 @@ export const WalletProvider: React.FC<WalletProviderProps> = ({ children }) => {
       setIsConnected(true);
       checkNetwork();
       getBalance(accounts[0]);
-      setTimeout(refreshContractData, 1000);
+      // Only refresh if we're on the correct network
+      setTimeout(() => {
+        if (isCorrectNetwork) {
+          refreshContractData();
+        }
+      }, 2000);
     }
   };
 
@@ -153,13 +164,32 @@ export const WalletProvider: React.FC<WalletProviderProps> = ({ children }) => {
   };
 
   const refreshContractData = async () => {
+    // Prevent multiple simultaneous calls
+    if (isLoadingContract) {
+      console.log("Contract data refresh already in progress, skipping...");
+      return;
+    }
+
     try {
-      if (isCorrectNetwork) {
-        const data = await web3Service.getContractData(address || undefined);
+      if (isCorrectNetwork && address) {
+        setIsLoadingContract(true);
+        console.log("Refreshing contract data for address:", address);
+        const data = await web3Service.getContractData(address);
         setContractData(data);
+        console.log("Contract data updated:", data);
+      } else {
+        console.log(
+          "Skipping contract data refresh - not on correct network or no address",
+        );
       }
-    } catch (error) {
-      console.error("Error fetching contract data:", error);
+    } catch (error: any) {
+      console.error("Error in refreshContractData:", {
+        message: error.message,
+        stack: error.stack,
+        error: error,
+      });
+    } finally {
+      setIsLoadingContract(false);
     }
   };
 
@@ -233,7 +263,7 @@ export const WalletProvider: React.FC<WalletProviderProps> = ({ children }) => {
         }
 
         await getBalance(accounts[0]);
-        setTimeout(refreshContractData, 1000);
+        // Contract data will be refreshed when network is confirmed as correct
       }
     } catch (error: any) {
       console.error("Error connecting wallet:", error);

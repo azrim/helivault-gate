@@ -27,29 +27,81 @@ export class Web3Service {
 
   async getContractData(userAddress?: string): Promise<ContractData> {
     try {
+      if (!this.provider) {
+        throw new Error("No Web3 provider available");
+      }
+
+      console.log("Fetching contract data...");
       const contract = this.getContract();
 
-      // Get contract data using eth_call
-      const [currentSupply, maxSupply, mintPrice, userBalance, isRevealed] =
-        await Promise.all([
-          this.callContract("totalSupply", []),
-          this.callContract("maxSupply", []),
-          this.callContract("mintPrice", []),
-          userAddress
-            ? this.callContract("balanceOf", [userAddress])
-            : Promise.resolve("0"),
-          this.callContract("revealed", []),
-        ]);
+      // Get contract data using simplified eth_call with hardcoded function signatures
+      const calls = [
+        this.simpleContractCall("totalSupply()", "0x18160ddd"), // totalSupply()
+        this.simpleContractCall("maxSupply()", "0xd5abeb01"), // maxSupply()
+        this.simpleContractCall("mintPrice()", "0x6817c76c"), // mintPrice()
+        this.simpleContractCall("revealed()", "0x51830227"), // revealed()
+      ];
+
+      if (userAddress) {
+        calls.push(
+          this.simpleContractCall(
+            "balanceOf(address)",
+            "0x70a08231",
+            userAddress,
+          ),
+        );
+      }
+
+      const results = await Promise.allSettled(calls);
+
+      console.log("Contract call results:", results);
+
+      // Parse results with fallbacks
+      const currentSupply =
+        results[0].status === "fulfilled"
+          ? parseInt(results[0].value, 16) || 0
+          : 0;
+      const maxSupply =
+        results[1].status === "fulfilled"
+          ? parseInt(results[1].value, 16) || 1000
+          : 1000;
+      const mintPrice =
+        results[2].status === "fulfilled"
+          ? this.formatEther(results[2].value)
+          : "0.01";
+      const isRevealed =
+        results[3].status === "fulfilled"
+          ? results[3].value ===
+            "0x0000000000000000000000000000000000000000000000000000000000000001"
+          : false;
+      const userBalance =
+        userAddress && results[4] && results[4].status === "fulfilled"
+          ? parseInt(results[4].value, 16) || 0
+          : 0;
+
+      console.log("Parsed contract data:", {
+        currentSupply,
+        maxSupply,
+        mintPrice,
+        userBalance,
+        isRevealed,
+      });
 
       return {
-        currentSupply: parseInt(currentSupply, 16),
-        maxSupply: parseInt(maxSupply, 16),
-        mintPrice: this.formatEther(mintPrice),
-        userBalance: parseInt(userBalance, 16),
-        isRevealed: isRevealed === "0x1",
+        currentSupply,
+        maxSupply,
+        mintPrice,
+        userBalance,
+        isRevealed,
       };
-    } catch (error) {
-      console.error("Error fetching contract data:", error);
+    } catch (error: any) {
+      console.error("Error fetching contract data:", {
+        message: error.message,
+        stack: error.stack,
+        error: error,
+      });
+
+      // Return fallback data
       return {
         currentSupply: 0,
         maxSupply: 1000,
@@ -60,20 +112,23 @@ export class Web3Service {
     }
   }
 
-  private async callContract(method: string, params: any[]): Promise<string> {
+  private async simpleContractCall(
+    methodName: string,
+    functionSelector: string,
+    address?: string,
+  ): Promise<string> {
     const contract = this.getContract();
-    const methodAbi = contract.abi.find(
-      (item: any) => item.name === method && item.type === "function",
-    );
 
-    if (!methodAbi) {
-      throw new Error(`Method ${method} not found in ABI`);
+    let data = functionSelector;
+
+    // Add address parameter if provided (for balanceOf)
+    if (address && methodName.includes("address")) {
+      // Remove 0x prefix and pad to 32 bytes
+      const cleanAddress = address.replace("0x", "");
+      data += "000000000000000000000000" + cleanAddress.toLowerCase();
     }
 
-    // Encode function call
-    const functionSignature = this.encodeFunctionSignature(methodAbi);
-    const encodedParams = this.encodeParameters(methodAbi.inputs, params);
-    const data = functionSignature + encodedParams.slice(2);
+    console.log(`Calling ${methodName} with data:`, data);
 
     const result = await this.provider.request({
       method: "eth_call",
@@ -86,44 +141,11 @@ export class Web3Service {
       ],
     });
 
+    console.log(`Result for ${methodName}:`, result);
     return result;
   }
 
-  private encodeFunctionSignature(methodAbi: any): string {
-    const signature = `${methodAbi.name}(${methodAbi.inputs.map((input: any) => input.type).join(",")})`;
-    return this.keccak256(signature).slice(0, 10);
-  }
-
-  private encodeParameters(inputs: any[], params: any[]): string {
-    if (inputs.length === 0) return "0x";
-
-    // Simple encoding for basic types
-    let encoded = "0x";
-    for (let i = 0; i < params.length; i++) {
-      const param = params[i];
-      const input = inputs[i];
-
-      if (input.type === "address") {
-        encoded += param.slice(2).padStart(64, "0");
-      } else if (input.type.startsWith("uint")) {
-        const hex = parseInt(param).toString(16);
-        encoded += hex.padStart(64, "0");
-      }
-    }
-    return encoded;
-  }
-
-  private keccak256(data: string): string {
-    // Simple hash function for function signatures
-    // In production, use a proper keccak256 implementation
-    let hash = 0;
-    for (let i = 0; i < data.length; i++) {
-      const char = data.charCodeAt(i);
-      hash = (hash << 5) - hash + char;
-      hash = hash & hash;
-    }
-    return "0x" + Math.abs(hash).toString(16).padStart(8, "0");
-  }
+  // Removed complex encoding methods - using hardcoded function selectors instead
 
   private formatEther(wei: string): string {
     const weiValue = parseInt(wei, 16);
@@ -135,8 +157,19 @@ export class Web3Service {
     userAddress: string,
   ): Promise<{ hash: string; success: boolean }> {
     try {
+      if (!this.provider) {
+        throw new Error("No Web3 provider available");
+      }
+
       const contract = this.getContract();
       const mintPriceWei = "0x2386F26FC10000"; // 0.01 ether in wei
+
+      console.log("Sending mint transaction...", {
+        from: userAddress,
+        to: contract.address,
+        value: mintPriceWei,
+        data: "0x1249c58b",
+      });
 
       const txHash = await this.provider.request({
         method: "eth_sendTransaction",
@@ -146,14 +179,31 @@ export class Web3Service {
             to: contract.address,
             value: mintPriceWei,
             data: "0x1249c58b", // mint() function signature
+            gas: "0x5208", // 21000 in hex (basic gas limit)
           },
         ],
       });
 
+      console.log("Transaction sent:", txHash);
       return { hash: txHash, success: true };
     } catch (error: any) {
-      console.error("Minting error:", error);
-      throw new Error(error.message || "Minting failed");
+      console.error("Minting error:", {
+        message: error.message,
+        code: error.code,
+        data: error.data,
+        error: error,
+      });
+
+      // Handle specific error cases
+      if (error.code === 4001) {
+        throw new Error("Transaction rejected by user");
+      } else if (error.code === -32603) {
+        throw new Error(
+          "Internal JSON-RPC error. Please check your wallet and try again.",
+        );
+      } else {
+        throw new Error(error.message || "Minting transaction failed");
+      }
     }
   }
 
