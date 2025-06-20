@@ -15,10 +15,10 @@ const Navigation = () => {
   const location = useLocation();
 
   const navItems = [
-    { icon: Home, label: "Mint", path: "/" },
-    { icon: Palette, label: "Gallery", path: "/gallery" },
-    { icon: ShoppingBag, label: "Marketplace", path: "/marketplace" },
-    { icon: User, label: "Profile", path: "/profile" },
+    { icon: Home, label: "Dashboard", path: "/" },
+    { icon: Palette, label: "Bridge", path: "/bridge" },
+    { icon: ShoppingBag, label: "Validators", path: "/validators" },
+    { icon: User, label: "Delegations", path: "/delegations" },
   ];
 
   return (

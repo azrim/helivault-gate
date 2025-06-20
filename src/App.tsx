@@ -19,6 +19,10 @@ const App = () => (
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<Index />} />
+          <Route path="/bridge" element={<Gallery />} />
+          <Route path="/validators" element={<Marketplace />} />
+          <Route path="/delegations" element={<Profile />} />
+          {/* Legacy routes for backward compatibility */}
           <Route path="/gallery" element={<Gallery />} />
           <Route path="/marketplace" element={<Marketplace />} />
           <Route path="/profile" element={<Profile />} />

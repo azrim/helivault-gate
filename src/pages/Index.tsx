@@ -18,6 +18,7 @@ import {
   Activity,
 } from "lucide-react";
 import Navigation from "@/components/Navigation";
+import DelegationChart from "@/components/DelegationChart";
 
 const Index = () => {
   const [mintProgress, setMintProgress] = useState(0);
@@ -219,62 +220,54 @@ const Index = () => {
           </CardContent>
         </Card>
 
-        {/* Recent Activity */}
+        {/* Active Delegations */}
         <Card>
           <CardHeader className="flex flex-row items-center space-y-0 pb-6">
             <div className="w-10 h-10 bg-primary/10 rounded-lg flex items-center justify-center mr-4">
-              <Activity className="w-5 h-5 text-primary" />
+              <Coins className="w-5 h-5 text-primary" />
             </div>
             <CardTitle className="text-xl font-semibold">
-              Recent Activity
+              Active Delegations
             </CardTitle>
           </CardHeader>
           <CardContent>
             <div className="overflow-x-auto">
               <table className="w-full">
                 <thead>
-                  <tr className="bg-secondary/30 rounded-lg">
-                    <th className="text-left py-3 px-4 rounded-l-lg">NFT</th>
-                    <th className="text-left py-3 px-4">Collection</th>
-                    <th className="text-left py-3 px-4">Action</th>
-                    <th className="text-right py-3 px-4 rounded-r-lg">Date</th>
+                  <tr className="bg-secondary/50 rounded-lg">
+                    <th className="text-left py-3 px-4 rounded-l-lg font-medium text-sm">
+                      Validator
+                    </th>
+                    <th className="text-left py-3 px-4 font-medium text-sm">
+                      Staked Assets
+                    </th>
+                    <th className="text-left py-3 px-4 font-medium text-sm">
+                      APY
+                    </th>
+                    <th className="text-right py-3 px-4 rounded-r-lg font-medium text-sm">
+                      Actions
+                    </th>
                   </tr>
                 </thead>
-                <tbody>
-                  <tr className="border-b border-border last:border-0">
-                    <td className="py-4 px-4">
-                      <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 bg-gradient-to-br from-primary to-purple-600 rounded-lg"></div>
-                        <span className="font-medium">
-                          Cosmic Warrior #1234
-                        </span>
-                      </div>
-                    </td>
-                    <td className="py-4 px-4">Cosmic Collection</td>
-                    <td className="py-4 px-4">
-                      <Badge
-                        variant="outline"
-                        className="bg-success/10 text-success border-success"
-                      >
-                        Minted
-                      </Badge>
-                    </td>
-                    <td className="py-4 px-4 text-right text-muted-foreground">
-                      2 hours ago
-                    </td>
-                  </tr>
-                </tbody>
+                <tbody>{/* Empty table body for now */}</tbody>
               </table>
             </div>
 
-            <div className="mt-6 bg-secondary/30 rounded-lg p-6 text-center">
-              <Star className="w-8 h-8 text-muted-foreground mx-auto mb-2" />
-              <div className="text-sm text-muted-foreground">
-                Start minting to see your activity here
+            <div className="mt-6 bg-secondary/30 rounded-lg p-8 text-center">
+              <div className="space-y-2">
+                <div className="text-base font-semibold">
+                  Delegations informations
+                </div>
+                <div className="text-sm text-muted-foreground">
+                  No delegation found.
+                </div>
               </div>
             </div>
           </CardContent>
         </Card>
+
+        {/* Delegation Distribution Chart */}
+        <DelegationChart />
       </main>
     </div>
   );
