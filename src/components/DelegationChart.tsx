@@ -9,20 +9,20 @@ const DelegationChart = () => {
           <PieChart className="w-5 h-5 text-primary" />
         </div>
         <CardTitle className="text-xl font-semibold">
-          Delegation Distribution
+          NFT Collection Distribution
         </CardTitle>
       </CardHeader>
       <CardContent>
         <div className="text-center py-12">
           <div className="mb-6">
             <h3 className="text-lg font-semibold mb-4">
-              Delegation Distribution
+              NFT Collection Distribution
             </h3>
             <div className="w-32 h-32 mx-auto bg-secondary/30 rounded-full flex items-center justify-center">
               <Frown className="w-12 h-12 text-muted-foreground" />
             </div>
           </div>
-          <p className="text-sm text-muted-foreground">No delegation found</p>
+          <p className="text-sm text-muted-foreground">No NFTs found</p>
         </div>
       </CardContent>
     </Card>
