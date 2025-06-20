@@ -104,6 +104,8 @@ export default {
           "conic-gradient(from 180deg at 50% 50%, var(--tw-gradient-stops))",
         "brand-gradient":
           "linear-gradient(135deg, hsl(var(--gradient-start)), hsl(var(--gradient-end)))",
+        "success-gradient":
+          "linear-gradient(135deg, hsl(var(--success-gradient-start)), hsl(var(--success-gradient-end)))",
       },
     },
   },

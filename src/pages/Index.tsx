@@ -44,27 +44,27 @@ const Index = () => {
                 <Award className="w-5 h-5 text-primary" />
               </div>
               <CardTitle className="text-lg font-semibold">
-                My Collection
+                My Delegations
               </CardTitle>
             </CardHeader>
             <CardContent>
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
                   <Label className="text-sm text-muted-foreground">
-                    Total Minted
+                    Total Staked Value
                   </Label>
-                  <div className="text-2xl font-bold">24</div>
+                  <div className="text-2xl font-bold">$3.2k</div>
                   <div className="text-xs text-muted-foreground">
-                    Across 3 collections
+                    Across 5 validators
                   </div>
                 </div>
                 <div className="space-y-2">
-                  <Label className="text-sm text-success">Floor Price</Label>
+                  <Label className="text-sm text-success">Average APY</Label>
                   <div className="text-2xl font-bold text-success">
-                    0.15 ETH
+                    5934.80%
                   </div>
                   <div className="text-xs text-muted-foreground">
-                    Average value
+                    Weighted average
                   </div>
                 </div>
               </div>
@@ -72,30 +72,35 @@ const Index = () => {
           </Card>
 
           {/* Minting Rewards */}
-          <Card className="bg-card border-border">
+          <Card className="bg-card border-border overflow-hidden">
             <CardHeader className="flex flex-row items-center space-y-0 pb-4">
               <div className="w-10 h-10 bg-success/10 rounded-lg flex items-center justify-center mr-4">
                 <Coins className="w-5 h-5 text-success" />
               </div>
               <CardTitle className="text-lg font-semibold">
-                Minting Rewards
+                My Rewards
               </CardTitle>
             </CardHeader>
-            <CardContent className="text-center">
-              <div className="space-y-4">
-                <div>
-                  <Label className="text-sm text-muted-foreground">
-                    Rewards Available
-                  </Label>
-                  <div className="text-4xl font-bold text-success mt-2">
-                    1.47
+            <CardContent className="text-center relative">
+              <div className="bg-success-gradient rounded-xl p-6 text-white">
+                <div className="space-y-4">
+                  <div>
+                    <Label className="text-sm text-white/80">
+                      Rewards Available
+                    </Label>
+                    <div className="text-4xl font-bold mt-2 flex items-baseline justify-center gap-2">
+                      19.98
+                      <div className="w-8 h-8 bg-white/20 rounded-full flex items-center justify-center">
+                        <Star className="w-4 h-4 text-white" />
+                      </div>
+                    </div>
+                    <div className="text-sm text-white/80">≈$1500</div>
                   </div>
-                  <div className="text-sm text-muted-foreground">ETH</div>
+                  <Button className="w-full bg-white/20 hover:bg-white/30 text-white border-0 backdrop-blur-sm">
+                    <Zap className="w-4 h-4 mr-2" />
+                    Claim All Rewards ⚡
+                  </Button>
                 </div>
-                <Button className="w-full bg-success hover:bg-success/90 text-success-foreground">
-                  <Zap className="w-4 h-4 mr-2" />
-                  Claim All Rewards
-                </Button>
               </div>
             </CardContent>
           </Card>

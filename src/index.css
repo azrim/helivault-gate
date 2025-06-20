@@ -9,43 +9,45 @@
    * A different format will require also updating the theme in tailwind.config.ts.
   */
   :root {
-    --background: 272 30% 95%;
-    --foreground: 272 20% 15%;
+    --background: 266 30% 94%;
+    --foreground: 272 15% 20%;
 
     --card: 0 0% 100%;
-    --card-foreground: 272 20% 15%;
+    --card-foreground: 272 15% 20%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 272 20% 15%;
+    --popover-foreground: 272 15% 20%;
 
-    --primary: 264 90% 55%;
+    --primary: 264 85% 50%;
     --primary-foreground: 0 0% 100%;
 
-    --secondary: 273 15% 97%;
-    --secondary-foreground: 272 20% 15%;
+    --secondary: 273 20% 96%;
+    --secondary-foreground: 272 15% 20%;
 
-    --muted: 273 15% 97%;
-    --muted-foreground: 272 10% 45%;
+    --muted: 273 20% 96%;
+    --muted-foreground: 220 10% 50%;
 
-    --accent: 264 90% 55%;
+    --accent: 264 85% 50%;
     --accent-foreground: 0 0% 100%;
 
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 272 20% 90%;
-    --input: 272 20% 90%;
-    --ring: 264 90% 55%;
+    --border: 272 15% 88%;
+    --input: 272 15% 88%;
+    --ring: 264 85% 50%;
 
     --radius: 0.5rem;
 
     /* Custom NFT Platform Colors */
-    --success: 162 75% 65%;
+    --success: 162 85% 55%;
     --success-foreground: 0 0% 100%;
     --warning: 48 95% 65%;
     --warning-foreground: 0 0% 100%;
-    --gradient-start: 264 90% 55%;
-    --gradient-end: 280 75% 65%;
+    --gradient-start: 264 85% 50%;
+    --gradient-end: 280 75% 60%;
+    --success-gradient-start: 162 85% 55%;
+    --success-gradient-end: 142 75% 60%;
 
     --sidebar-background: 0 0% 98%;
 
