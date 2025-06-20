@@ -1,6 +1,5 @@
 import { Link, useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
 import {
   Home,
   Palette,
@@ -15,7 +14,7 @@ const Navigation = () => {
   const location = useLocation();
 
   const navItems = [
-    { icon: Home, label: "Dashboard", path: "/" },
+    { icon: Home, label: "Mint", path: "/" },
     { icon: Palette, label: "Bridge", path: "/bridge" },
     { icon: ShoppingBag, label: "Validators", path: "/validators" },
     { icon: User, label: "Delegations", path: "/delegations" },
@@ -23,21 +22,6 @@ const Navigation = () => {
 
   return (
     <div className="min-h-screen bg-background">
-      {/* Announcement Banner */}
-      <div className="bg-warning/10 border-b border-warning/20 px-4 py-2">
-        <div className="max-w-7xl mx-auto flex items-center justify-center gap-2 text-sm">
-          <Badge
-            variant="outline"
-            className="bg-warning text-warning-foreground border-warning"
-          >
-            Announcement
-          </Badge>
-          <span className="text-warning-foreground">
-            Currently powered by Ethereum Testnet - Mint your NFTs for free!
-          </span>
-        </div>
-      </div>
-
       {/* Header */}
       <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -48,7 +32,7 @@ const Navigation = () => {
                 <Palette className="w-5 h-5 text-white" />
               </div>
               <span className="text-xl font-bold text-foreground">
-                Helios <span className="text-primary">Gate</span>
+                Helivault <span className="text-primary">Gate</span>
               </span>
             </div>
 
