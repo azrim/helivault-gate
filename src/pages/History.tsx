@@ -49,10 +49,9 @@ const History = () => {
   }, []);
 
   return (
-    <div>
+    <div className="min-h-screen bg-background">
       <Navigation />
-
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-2 pb-6 mt-16">
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-20 pb-6">
         <Card>
           <CardHeader className="flex flex-row items-center space-y-0 pb-6">
             <div className="w-10 h-10 bg-primary/10 rounded-lg flex items-center justify-center mr-4">

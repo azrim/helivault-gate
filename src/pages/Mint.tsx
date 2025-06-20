@@ -20,7 +20,6 @@ const Mint = () => {
   const [isMinting, setIsMinting] = useState(false);
   const [lastTxHash, setLastTxHash] = useState<string | null>(null);
 
-  // Refresh contract data on mount and when connected
   useEffect(() => {
     if (isConnected && isCorrectNetwork) {
       refreshContractData();
@@ -52,13 +51,9 @@ const Mint = () => {
     try {
       const result = await mintNFTFromContract();
       setLastTxHash(result.hash);
-
-      // Show success message with transaction hash
       alert(
         `🎉 NFT Minted Successfully!\n\nTransaction Hash: ${result.hash}\n\nYour NFT will appear in your wallet shortly.`,
       );
-
-      // Refresh contract data after a delay
       setTimeout(refreshContractData, 3000);
     } catch (error: any) {
       console.error("Minting failed:", error);
@@ -67,16 +62,15 @@ const Mint = () => {
       setIsMinting(false);
     }
   };
+
   return (
-    <div>
+    <div className="min-h-screen bg-background">
       <Navigation />
 
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-2 pb-6 mt-16">
-        {/* Main NFT Mint Card */}
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-20 pb-6">
         <Card className="bg-card border-border">
           <CardContent className="p-8">
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
-              {/* NFT Image */}
               <div className="aspect-square bg-gradient-to-br from-primary/20 to-purple-500/20 rounded-xl flex items-center justify-center relative overflow-hidden">
                 <div className="absolute inset-0 bg-gradient-to-br from-purple-400 via-pink-400 to-blue-400 opacity-80"></div>
                 <div className="relative z-10 text-center text-white">
@@ -91,14 +85,12 @@ const Mint = () => {
                   <div className="text-lg">Helivault NFT</div>
                   {contractData && (
                     <div className="text-sm mt-2 opacity-80">
-                      {contractData.currentSupply} / {contractData.maxSupply}{" "}
-                      minted
+                      {contractData.currentSupply} / {contractData.maxSupply} minted
                     </div>
                   )}
                 </div>
               </div>
 
-              {/* Mint Interface */}
               <div className="space-y-6">
                 <div>
                   <h1 className="text-3xl font-bold mb-2">
@@ -114,19 +106,16 @@ const Mint = () => {
                   </div>
                 </div>
 
-                {/* Lore */}
                 <div className="space-y-2">
                   <h3 className="text-lg font-semibold">Lore</h3>
                   <p className="text-muted-foreground leading-relaxed">
-                    Born from the cosmic storms of the Helivault dimension, this
-                    NFT carries the ancient power of digital creation. Each
-                    piece holds unique properties that unlock special abilities
-                    within the metaverse, making it not just art, but a key to
-                    infinite possibilities.
+                    Born from the cosmic storms of the Helivault dimension, this NFT
+                    carries the ancient power of digital creation. Each piece holds
+                    unique properties that unlock special abilities within the
+                    metaverse.
                   </p>
                 </div>
 
-                {/* Mint Price & Stats */}
                 <div className="bg-secondary/30 rounded-lg p-4 space-y-3">
                   <div className="flex justify-between items-center">
                     <span className="text-sm text-muted-foreground">
@@ -137,9 +126,7 @@ const Mint = () => {
                     </span>
                   </div>
                   <div className="flex justify-between items-center">
-                    <span className="text-sm text-muted-foreground">
-                      Supply
-                    </span>
+                    <span className="text-sm text-muted-foreground">Supply</span>
                     <span className="font-medium">
                       {contractData
                         ? `${contractData.currentSupply} / ${contractData.maxSupply}`
@@ -164,7 +151,6 @@ const Mint = () => {
                     )}
                 </div>
 
-                {/* Wallet Status */}
                 {isConnected && (
                   <div
                     className={`border rounded-lg p-3 text-sm ${
@@ -174,9 +160,7 @@ const Mint = () => {
                     }`}
                   >
                     <div className="flex justify-between items-center">
-                      <span className="text-muted-foreground">
-                        Wallet Balance
-                      </span>
+                      <span className="text-muted-foreground">Wallet Balance</span>
                       <span className="font-medium">{balance} HLS</span>
                     </div>
                     <div className="flex justify-between items-center mt-1">
@@ -198,7 +182,6 @@ const Mint = () => {
                   </div>
                 )}
 
-                {/* Mint Button */}
                 <Button
                   onClick={handleMint}
                   disabled={
@@ -220,9 +203,7 @@ const Mint = () => {
                     </>
                   ) : contractData &&
                     contractData.currentSupply >= contractData.maxSupply ? (
-                    <>
-                      <span>Sold Out</span>
-                    </>
+                    <>Sold Out</>
                   ) : isMinting ? (
                     <>
                       <div className="w-5 h-5 mr-2 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
@@ -231,21 +212,15 @@ const Mint = () => {
                   ) : (
                     <>
                       <Zap className="w-5 h-5 mr-2" />
-                      Mint NFT ({contractData
-                        ? contractData.mintPrice
-                        : "0.01"}{" "}
-                      HLS)
+                      Mint NFT ({contractData ? contractData.mintPrice : "0.01"} HLS)
                     </>
                   )}
                 </Button>
 
-                {/* Transaction Hash Display */}
                 {lastTxHash && (
                   <div className="bg-success/10 border border-success/20 rounded-lg p-3 text-sm">
                     <div className="flex justify-between items-center">
-                      <span className="text-muted-foreground">
-                        Last Transaction
-                      </span>
+                      <span className="text-muted-foreground">Last Transaction</span>
                       <a
                         href={`https://explorer.helioschainlabs.org/tx/${lastTxHash}`}
                         target="_blank"
