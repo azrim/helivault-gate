@@ -71,7 +71,7 @@ const Mint = () => {
     <div>
       <Navigation />
 
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-2 pb-6">
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-2 pb-6 mt-16">
         {/* Main NFT Mint Card */}
         <Card className="bg-card border-border">
           <CardContent className="p-8">
