@@ -8,6 +8,7 @@ import { Coins } from "lucide-react";
 import Navigation from "@/components/Navigation";
 import { useEffect, useState } from "react";
 import { web3Service } from "@/services/web3Service";
+import { ethers } from "ethers";
 
 const History = () => {
   const [address, setAddress] = useState<string | null>(null);
@@ -20,21 +21,18 @@ const History = () => {
         const ethereum = (window as any).ethereum;
         if (!ethereum) return;
 
-        const userAddress = ethereum.selectedAddress;
+        const provider = new ethers.BrowserProvider(ethereum);
+        const signer = await provider.getSigner();
+        const userAddress = await signer.getAddress();
         setAddress(userAddress);
-        if (!userAddress) return;
 
-        const provider = new (window as any).ethers.providers.Web3Provider(ethereum);
-        const contractInfo = web3Service.getContract();
-        const contract = new (window as any).ethers.Contract(
-          contractInfo.address,
-          contractInfo.abi,
-          provider
-        );
+        const { address: contractAddress, abi } = web3Service.getContract();
+        const contract = new ethers.Contract(contractAddress, abi, provider);
 
-        const balance = await contract.balanceOf(userAddress);
+        const balance: bigint = await contract.balanceOf(userAddress);
         const ids: number[] = [];
-        for (let i = 0; i < balance; i++) {
+
+        for (let i = 0n; i < balance; i++) {
           const tokenId = await contract.tokenOfOwnerByIndex(userAddress, i);
           ids.push(Number(tokenId));
         }
@@ -73,7 +71,7 @@ const History = () => {
                       NFT
                     </th>
                     <th className="text-left py-4 px-4 font-medium text-sm text-muted-foreground">
-                      Date
+                      Token ID
                     </th>
                     <th className="text-left py-4 px-4 font-medium text-sm text-muted-foreground">
                       Price
@@ -86,19 +84,22 @@ const History = () => {
                 <tbody>
                   {loading ? (
                     <tr>
-                      <td className="py-4 px-4" colSpan={4}>
+                      <td colSpan={4} className="py-4 px-4 text-center">
                         Loading...
                       </td>
                     </tr>
                   ) : tokenIds.length === 0 ? (
                     <tr>
-                      <td className="py-4 px-4" colSpan={4}>
+                      <td colSpan={4} className="py-4 px-4 text-center">
                         No NFTs found.
                       </td>
                     </tr>
                   ) : (
                     tokenIds.map((id, index) => (
-                      <tr key={id} className="border-b border-border last:border-0">
+                      <tr
+                        key={id}
+                        className="border-b border-border last:border-0"
+                      >
                         <td className="py-4 px-4">
                           <div className="flex items-center gap-3">
                             <div
@@ -108,10 +109,12 @@ const History = () => {
                                   : "bg-gradient-to-br from-pink-400 to-purple-400"
                               }`}
                             ></div>
-                            <span className="font-medium">Helivault NFT #{id}</span>
+                            <span className="font-medium">Helivault NFT</span>
                           </div>
                         </td>
-                        <td className="py-4 px-4 text-muted-foreground">–</td>
+                        <td className="py-4 px-4 text-muted-foreground">
+                          #{id}
+                        </td>
                         <td className="py-4 px-4 font-medium">0.01 HLS</td>
                         <td className="py-4 px-4 text-right">
                           <span className="inline-flex items-center px-2 py-1 rounded-full text-xs bg-success/10 text-success border border-success/20">
