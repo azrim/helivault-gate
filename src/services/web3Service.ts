@@ -179,7 +179,7 @@ export class Web3Service {
             to: contract.address,
             value: mintPriceWei,
             data: "0x1249c58b", // mint() function signature
-            gas: "0x5208", // 21000 in hex (basic gas limit)
+            //gas: "0x5208", // 21000 in hex (basic gas limit)
           },
         ],
       });
