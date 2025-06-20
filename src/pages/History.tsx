@@ -6,12 +6,49 @@ import {
 } from "@/components/ui/card";
 import { Coins } from "lucide-react";
 import Navigation from "@/components/Navigation";
-import { useAccount } from "wagmi";
-import { useNFTMintHistory } from "@/hooks/useNFTMintHistory";
+import { useEffect, useState } from "react";
+import { web3Service } from "@/services/web3Service";
 
 const History = () => {
-  const { address } = useAccount();
-  const { tokenIds, loading } = useNFTMintHistory(address);
+  const [address, setAddress] = useState<string | null>(null);
+  const [tokenIds, setTokenIds] = useState<number[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchMintHistory = async () => {
+      try {
+        const ethereum = (window as any).ethereum;
+        if (!ethereum) return;
+
+        const userAddress = ethereum.selectedAddress;
+        setAddress(userAddress);
+        if (!userAddress) return;
+
+        const provider = new (window as any).ethers.providers.Web3Provider(ethereum);
+        const contractInfo = web3Service.getContract();
+        const contract = new (window as any).ethers.Contract(
+          contractInfo.address,
+          contractInfo.abi,
+          provider
+        );
+
+        const balance = await contract.balanceOf(userAddress);
+        const ids: number[] = [];
+        for (let i = 0; i < balance; i++) {
+          const tokenId = await contract.tokenOfOwnerByIndex(userAddress, i);
+          ids.push(Number(tokenId));
+        }
+
+        setTokenIds(ids);
+      } catch (error) {
+        console.error("Failed to fetch mint history", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchMintHistory();
+  }, []);
 
   return (
     <div>
