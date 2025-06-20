@@ -4,6 +4,8 @@ import { Zap, Wallet } from "lucide-react";
 import Navigation from "@/components/Navigation";
 import { useWallet } from "@/contexts/WalletContext";
 import { useState, useEffect } from "react";
+import { ethers } from "ethers";
+import { web3Service } from "@/services/web3Service";
 
 const Mint = () => {
   const {
@@ -17,14 +19,47 @@ const Mint = () => {
     refreshContractData,
     mintNFT: mintNFTFromContract,
   } = useWallet();
+
   const [isMinting, setIsMinting] = useState(false);
   const [lastTxHash, setLastTxHash] = useState<string | null>(null);
+  const [imageUrl, setImageUrl] = useState<string | null>(null);
+
+  const ipfsToHttp = (url: string) =>
+    url.replace(
+      "ipfs://",
+      "https://amaranth-defiant-locust-313.mypinata.cloud/ipfs/"
+    );
+
+  const fetchNextTokenImage = async () => {
+    try {
+      if (!contractData) return;
+      const nextTokenId = contractData.currentSupply;
+      const { address: contractAddress, abi } = web3Service.getContract();
+      const ethereum = (window as any).ethereum;
+      const provider = new ethers.BrowserProvider(ethereum);
+      const contract = new ethers.Contract(contractAddress, abi, provider);
+
+      const tokenUri: string = await contract.tokenURI(nextTokenId);
+      const metadataRes = await fetch(ipfsToHttp(tokenUri));
+      const metadata = await metadataRes.json();
+      const image = ipfsToHttp(metadata.image);
+      setImageUrl(image);
+    } catch (err) {
+      console.error("Failed to load image", err);
+    }
+  };
 
   useEffect(() => {
     if (isConnected && isCorrectNetwork) {
       refreshContractData();
     }
   }, [isConnected, isCorrectNetwork, refreshContractData]);
+
+  useEffect(() => {
+    if (contractData) {
+      fetchNextTokenImage();
+    }
+  }, [contractData]);
 
   const handleMint = async () => {
     if (!isConnected) {
@@ -51,12 +86,9 @@ const Mint = () => {
     try {
       const result = await mintNFTFromContract();
       setLastTxHash(result.hash);
-      alert(
-        `🎉 NFT Minted Successfully!\n\nTransaction Hash: ${result.hash}\n\nYour NFT will appear in your wallet shortly.`,
-      );
+      alert(`🎉 NFT Minted!\n\nTransaction Hash: ${result.hash}`);
       setTimeout(refreshContractData, 3000);
     } catch (error: any) {
-      console.error("Minting failed:", error);
       alert(`Minting failed: ${error.message}`);
     } finally {
       setIsMinting(false);
@@ -71,61 +103,43 @@ const Mint = () => {
         <Card className="bg-card border-border">
           <CardContent className="p-8">
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
-              <div className="aspect-square bg-gradient-to-br from-primary/20 to-purple-500/20 rounded-xl flex items-center justify-center relative overflow-hidden">
-                <div className="absolute inset-0 bg-gradient-to-br from-purple-400 via-pink-400 to-blue-400 opacity-80"></div>
-                <div className="relative z-10 text-center text-white">
-                  <div className="text-6xl font-bold mb-2">
-                    #
-                    {contractData
-                      ? (contractData.currentSupply + 1)
-                          .toString()
-                          .padStart(3, "0")
-                      : "001"}
-                  </div>
-                  <div className="text-lg">Helivault NFT</div>
-                  {contractData && (
-                    <div className="text-sm mt-2 opacity-80">
-                      {contractData.currentSupply} / {contractData.maxSupply} minted
-                    </div>
-                  )}
-                </div>
+              {/* NFT Image */}
+              <div className="aspect-square bg-muted rounded-xl flex items-center justify-center overflow-hidden">
+                {imageUrl ? (
+                  <img
+                    src={imageUrl}
+                    alt="NFT Preview"
+                    className="w-full h-full object-cover"
+                  />
+                ) : (
+                  <div className="text-muted-foreground">Loading image...</div>
+                )}
               </div>
 
+              {/* Mint Interface */}
               <div className="space-y-6">
-                <div>
-                  <h1 className="text-3xl font-bold mb-2">
-                    Helivault NFT #
-                    {contractData
-                      ? (contractData.currentSupply + 1)
-                          .toString()
-                          .padStart(3, "0")
-                      : "001"}
-                  </h1>
-                  <div className="text-sm text-muted-foreground mb-4">
-                    Collection: Genesis Series
-                  </div>
+                <h1 className="text-3xl font-bold">
+                  Helivault NFT #
+                  {contractData
+                    ? (contractData.currentSupply + 1)
+                        .toString()
+                        .padStart(3, "0")
+                    : "001"}
+                </h1>
+
+                <div className="text-muted-foreground text-sm">
+                  Born from the cosmic storms of the Helivault dimension, this NFT
+                  holds the power of digital creation.
                 </div>
 
-                <div className="space-y-2">
-                  <h3 className="text-lg font-semibold">Lore</h3>
-                  <p className="text-muted-foreground leading-relaxed">
-                    Born from the cosmic storms of the Helivault dimension, this NFT
-                    carries the ancient power of digital creation. Each piece holds
-                    unique properties that unlock special abilities within the
-                    metaverse.
-                  </p>
-                </div>
-
-                <div className="bg-secondary/30 rounded-lg p-4 space-y-3">
-                  <div className="flex justify-between items-center">
-                    <span className="text-sm text-muted-foreground">
-                      Mint Price
-                    </span>
-                    <span className="text-lg font-bold">
+                <div className="bg-secondary/30 rounded-lg p-4 space-y-2">
+                  <div className="flex justify-between">
+                    <span className="text-sm text-muted-foreground">Mint Price</span>
+                    <span className="font-bold text-lg">
                       {contractData ? contractData.mintPrice : "0.01"} HLS
                     </span>
                   </div>
-                  <div className="flex justify-between items-center">
+                  <div className="flex justify-between">
                     <span className="text-sm text-muted-foreground">Supply</span>
                     <span className="font-medium">
                       {contractData
@@ -133,54 +147,13 @@ const Mint = () => {
                         : "0 / 1000"}
                     </span>
                   </div>
-                  <div className="flex justify-between items-center">
-                    <span className="text-sm text-muted-foreground">
-                      Your NFTs
-                    </span>
+                  <div className="flex justify-between">
+                    <span className="text-sm text-muted-foreground">Your NFTs</span>
                     <span className="font-medium text-success">
                       {contractData ? contractData.userBalance : 0}
                     </span>
                   </div>
-                  {contractData &&
-                    contractData.currentSupply >= contractData.maxSupply && (
-                      <div className="bg-warning/10 border border-warning/20 rounded p-2 text-center">
-                        <span className="text-sm text-warning font-medium">
-                          ⚠️ Maximum supply reached!
-                        </span>
-                      </div>
-                    )}
                 </div>
-
-                {isConnected && (
-                  <div
-                    className={`border rounded-lg p-3 text-sm ${
-                      isCorrectNetwork
-                        ? "bg-success/10 border-success/20"
-                        : "bg-warning/10 border-warning/20"
-                    }`}
-                  >
-                    <div className="flex justify-between items-center">
-                      <span className="text-muted-foreground">Wallet Balance</span>
-                      <span className="font-medium">{balance} HLS</span>
-                    </div>
-                    <div className="flex justify-between items-center mt-1">
-                      <span className="text-muted-foreground">Network</span>
-                      <span
-                        className={`font-medium ${
-                          isCorrectNetwork ? "text-success" : "text-warning"
-                        }`}
-                      >
-                        {isCorrectNetwork ? "Helios Testnet" : "Wrong Network"}
-                      </span>
-                    </div>
-                    <div className="flex justify-between items-center mt-1">
-                      <span className="text-muted-foreground">Address</span>
-                      <span className="text-success font-medium">
-                        {address?.slice(0, 6)}...{address?.slice(-4)}
-                      </span>
-                    </div>
-                  </div>
-                )}
 
                 <Button
                   onClick={handleMint}
@@ -207,7 +180,7 @@ const Mint = () => {
                   ) : isMinting ? (
                     <>
                       <div className="w-5 h-5 mr-2 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
-                      Minting NFT...
+                      Minting...
                     </>
                   ) : (
                     <>
