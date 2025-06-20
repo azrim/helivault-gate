@@ -5,6 +5,8 @@ import React, {
   useEffect,
   ReactNode,
 } from "react";
+import { web3Service } from "@/services/web3Service";
+import type { ContractData } from "@/contracts/HelivaultNFT";
 
 // Helios Chain Testnet Configuration
 const HELIOS_NETWORK = {
@@ -30,6 +32,9 @@ interface WalletContextType {
   networkName: string;
   isCorrectNetwork: boolean;
   switchToHelios: () => Promise<void>;
+  contractData: ContractData | null;
+  refreshContractData: () => Promise<void>;
+  mintNFT: () => Promise<{ hash: string; success: boolean }>;
 }
 
 const WalletContext = createContext<WalletContextType | undefined>(undefined);
@@ -53,6 +58,7 @@ export const WalletProvider: React.FC<WalletProviderProps> = ({ children }) => {
   const [balance, setBalance] = useState("0.00");
   const [networkName, setNetworkName] = useState("Unknown");
   const [isCorrectNetwork, setIsCorrectNetwork] = useState(false);
+  const [contractData, setContractData] = useState<ContractData | null>(null);
 
   // Check if wallet is already connected on mount
   useEffect(() => {
@@ -87,6 +93,7 @@ export const WalletProvider: React.FC<WalletProviderProps> = ({ children }) => {
           setIsConnected(true);
           await checkNetwork();
           await getBalance(accounts[0]);
+          setTimeout(refreshContractData, 1000);
         }
       }
     } catch (error) {
@@ -102,6 +109,7 @@ export const WalletProvider: React.FC<WalletProviderProps> = ({ children }) => {
       setIsConnected(true);
       checkNetwork();
       getBalance(accounts[0]);
+      setTimeout(refreshContractData, 1000);
     }
   };
 
@@ -141,6 +149,32 @@ export const WalletProvider: React.FC<WalletProviderProps> = ({ children }) => {
     } catch (error) {
       console.error("Error getting balance:", error);
       setBalance("0.00");
+    }
+  };
+
+  const refreshContractData = async () => {
+    try {
+      if (isCorrectNetwork) {
+        const data = await web3Service.getContractData(address || undefined);
+        setContractData(data);
+      }
+    } catch (error) {
+      console.error("Error fetching contract data:", error);
+    }
+  };
+
+  const mintNFT = async (): Promise<{ hash: string; success: boolean }> => {
+    if (!address || !isCorrectNetwork) {
+      throw new Error("Wallet not connected or wrong network");
+    }
+
+    try {
+      const result = await web3Service.mintNFT(address);
+      // Refresh contract data after successful mint
+      setTimeout(refreshContractData, 2000);
+      return result;
+    } catch (error: any) {
+      throw new Error(error.message || "Minting failed");
     }
   };
 
@@ -199,6 +233,7 @@ export const WalletProvider: React.FC<WalletProviderProps> = ({ children }) => {
         }
 
         await getBalance(accounts[0]);
+        setTimeout(refreshContractData, 1000);
       }
     } catch (error: any) {
       console.error("Error connecting wallet:", error);
@@ -218,6 +253,7 @@ export const WalletProvider: React.FC<WalletProviderProps> = ({ children }) => {
     setBalance("0.00");
     setNetworkName("Unknown");
     setIsCorrectNetwork(false);
+    setContractData(null);
   };
 
   const value: WalletContextType = {
@@ -230,6 +266,9 @@ export const WalletProvider: React.FC<WalletProviderProps> = ({ children }) => {
     networkName,
     isCorrectNetwork,
     switchToHelios,
+    contractData,
+    refreshContractData,
+    mintNFT,
   };
 
   return (
