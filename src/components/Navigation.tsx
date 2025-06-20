@@ -1,10 +1,29 @@
 import { Link, useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Home, Palette, ShoppingBag, Wallet, ChevronDown } from "lucide-react";
+import {
+  Home,
+  Palette,
+  ShoppingBag,
+  Wallet,
+  ChevronDown,
+  LogOut,
+} from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useWallet } from "@/contexts/WalletContext";
 
 const Navigation = () => {
   const location = useLocation();
+  const {
+    isConnected,
+    address,
+    isConnecting,
+    connectWallet,
+    disconnectWallet,
+  } = useWallet();
+
+  const formatAddress = (address: string) => {
+    return `${address.slice(0, 6)}...${address.slice(-4)}`;
+  };
 
   const navItems = [
     { icon: Home, label: "Home", path: "/" },
@@ -68,10 +87,33 @@ const Navigation = () => {
               </Button>
 
               {/* Connect Wallet */}
-              <Button className="gap-2 bg-primary hover:bg-primary/90 rounded-full px-6">
-                0xc0c...9000 ⚡
-                <Wallet className="w-4 h-4" />
-              </Button>
+              {!isConnected ? (
+                <Button
+                  onClick={connectWallet}
+                  disabled={isConnecting}
+                  className="gap-2 bg-primary hover:bg-primary/90 rounded-full px-6"
+                >
+                  {isConnecting ? "Connecting..." : "Connect Wallet"}
+                  <Wallet className="w-4 h-4" />
+                </Button>
+              ) : (
+                <div className="flex items-center gap-2">
+                  <Button
+                    variant="outline"
+                    className="gap-2 bg-white/60 border-border/50 rounded-full px-4"
+                  >
+                    {formatAddress(address!)} ⚡
+                  </Button>
+                  <Button
+                    onClick={disconnectWallet}
+                    variant="outline"
+                    size="sm"
+                    className="bg-white/60 border-border/50 rounded-full p-2"
+                  >
+                    <LogOut className="w-4 h-4" />
+                  </Button>
+                </div>
+              )}
             </div>
           </div>
         </div>

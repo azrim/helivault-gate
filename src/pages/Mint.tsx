@@ -1,9 +1,32 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { Zap } from "lucide-react";
+import { Zap, Wallet } from "lucide-react";
 import Navigation from "@/components/Navigation";
+import { useWallet } from "@/contexts/WalletContext";
+import { useState } from "react";
 
 const Mint = () => {
+  const { isConnected, address, connectWallet, balance } = useWallet();
+  const [isMinting, setIsMinting] = useState(false);
+
+  const handleMint = async () => {
+    if (!isConnected) {
+      await connectWallet();
+      return;
+    }
+
+    setIsMinting(true);
+    try {
+      // Simulate minting process
+      await new Promise((resolve) => setTimeout(resolve, 2000));
+      alert("NFT Minted Successfully! 🎉");
+    } catch (error) {
+      console.error("Minting failed:", error);
+      alert("Minting failed. Please try again.");
+    } finally {
+      setIsMinting(false);
+    }
+  };
   return (
     <div>
       <Navigation />
@@ -67,10 +90,46 @@ const Mint = () => {
                   </div>
                 </div>
 
+                {/* Wallet Status */}
+                {isConnected && (
+                  <div className="bg-success/10 border border-success/20 rounded-lg p-3 text-sm">
+                    <div className="flex justify-between items-center">
+                      <span className="text-muted-foreground">
+                        Wallet Balance
+                      </span>
+                      <span className="font-medium">{balance} ETH</span>
+                    </div>
+                    <div className="flex justify-between items-center mt-1">
+                      <span className="text-muted-foreground">Connected</span>
+                      <span className="text-success font-medium">
+                        {address?.slice(0, 6)}...{address?.slice(-4)}
+                      </span>
+                    </div>
+                  </div>
+                )}
+
                 {/* Mint Button */}
-                <Button className="w-full h-12 text-lg bg-brand-gradient hover:opacity-90 transition-opacity">
-                  <Zap className="w-5 h-5 mr-2" />
-                  Mint NFT
+                <Button
+                  onClick={handleMint}
+                  disabled={isMinting}
+                  className="w-full h-12 text-lg bg-brand-gradient hover:opacity-90 transition-opacity disabled:opacity-50"
+                >
+                  {!isConnected ? (
+                    <>
+                      <Wallet className="w-5 h-5 mr-2" />
+                      Connect Wallet to Mint
+                    </>
+                  ) : isMinting ? (
+                    <>
+                      <div className="w-5 h-5 mr-2 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
+                      Minting...
+                    </>
+                  ) : (
+                    <>
+                      <Zap className="w-5 h-5 mr-2" />
+                      Mint NFT
+                    </>
+                  )}
                 </Button>
               </div>
             </div>
