@@ -1,23 +1,15 @@
 import { Link, useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import {
-  Home,
-  Palette,
-  ShoppingBag,
-  User,
-  Wallet,
-  ChevronDown,
-} from "lucide-react";
+import { Home, Palette, ShoppingBag, Wallet, ChevronDown } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const Navigation = () => {
   const location = useLocation();
 
   const navItems = [
-    { icon: Home, label: "Mint", path: "/" },
-    { icon: Palette, label: "Bridge", path: "/bridge" },
-    { icon: ShoppingBag, label: "Validators", path: "/validators" },
-    { icon: User, label: "Delegations", path: "/delegations" },
+    { icon: Home, label: "Home", path: "/" },
+    { icon: Palette, label: "Mint", path: "/mint" },
+    { icon: ShoppingBag, label: "History", path: "/history" },
   ];
 
   return (
