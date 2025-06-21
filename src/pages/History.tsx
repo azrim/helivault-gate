@@ -52,9 +52,9 @@ const History = () => {
   return (
     <div className="min-h-screen bg-background">
       <Helmet>
-        <title>Home – Helivault Gate</title>
+        <title>History – Helivault Gate</title>
       </Helmet>
-      
+
       <Navigation />
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-20 pb-6">
         <Card>
