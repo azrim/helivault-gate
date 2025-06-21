@@ -38,7 +38,7 @@ const Navigation = () => {
 
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Top row */}
         <div className="flex h-16 items-center justify-between">
           {/* Logo */}
@@ -137,7 +137,7 @@ const Navigation = () => {
 
         {/* Mobile Dropdown Menu */}
         {mobileOpen && (
-          <div className="md:hidden mt-3 bg-white border border-border rounded-xl p-4 space-y-4">
+          <div className="absolute right-4 top-16 z-50 w-72 bg-white border border-border rounded-xl p-4 space-y-4 shadow-xl md:hidden">
             {/* Nav Links */}
             <div className="space-y-2">
               {navItems.map(({ icon: Icon, label, path }) => {
