@@ -42,6 +42,7 @@ const Mint = () => {
     if (!contractData) {
       toast.error("Contract not loaded", {
         description: "Please refresh the page and try again.",
+        duration: 5000,
       });
       return;
     }
@@ -49,6 +50,7 @@ const Mint = () => {
     if (contractData.currentSupply >= contractData.maxSupply) {
       toast.error("Maximum supply reached", {
         description: "No more NFTs available to mint.",
+        duration: 5000,
       });
       return;
     }
@@ -70,12 +72,14 @@ const Mint = () => {
             </a>
           </span>
         ),
+        duration: 5000,
       });
       setTimeout(refreshContractData, 3000);
     } catch (error: any) {
       console.error("Minting failed:", error);
       toast.error("Minting failed", {
         description: error.message,
+        duration: 5000,
       });
     } finally {
       setIsMinting(false);
