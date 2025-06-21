@@ -1,6 +1,5 @@
 // src/contracts/HelivaultNFT.ts
 
-// Updated for the new HelivaultCyphers contract
 export const HELIVAULT_CYPHERS_CONTRACT = {
   address: "0x7E8E1081767bB8BdBF54323a93C9C36Dfd7073cF",
   abi: [
@@ -67,5 +66,13 @@ export const HELIVAULT_CYPHERS_CONTRACT = {
         "stateMutability": "view",
         "type": "function"
     },
+    // --- FIX: Added the missing owner function to the ABI ---
+    {
+        "inputs": [],
+        "name": "owner",
+        "outputs": [{ "internalType": "address", "name": "", "type": "address" }],
+        "stateMutability": "view",
+        "type": "function"
+    }
   ],
 } as const;
