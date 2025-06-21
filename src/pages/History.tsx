@@ -1,3 +1,4 @@
+// src/pages/History.tsx
 import {
   Card,
   CardContent,
@@ -7,69 +8,82 @@ import {
 import { Coins } from "lucide-react";
 import Navigation from "@/components/Navigation";
 import { useEffect, useState } from "react";
-import { web3Service } from "@/services/web3Service";
-import { ethers } from "ethers";
 import { Helmet } from "react-helmet-async";
+import { useAccount, useReadContract } from "wagmi";
+import { HELIVAULT_NFT_CONTRACT } from "@/contracts/HelivaultNFT";
+import { formatEther } from "viem";
+import { ConnectButton } from "@rainbow-me/rainbowkit";
 
 const History = () => {
-  const [address, setAddress] = useState<string | null>(null);
+  const { address, isConnected } = useAccount();
   const [tokenIds, setTokenIds] = useState<number[]>([]);
   const [loading, setLoading] = useState(true);
-  const [walletConnected, setWalletConnected] = useState(false);
-  const [mintPrice, setMintPrice] = useState<string | null>(null);
+  
+  const contract = {
+    address: HELIVAULT_NFT_CONTRACT.address,
+    abi: HELIVAULT_NFT_CONTRACT.abi,
+  } as const;
 
+  const { data: balanceResult, isLoading: isBalanceLoading } = useReadContract({
+    ...contract,
+    functionName: 'balanceOf',
+    args: [address!],
+    query: { enabled: isConnected }
+  });
+
+  const { data: mintPriceResult } = useReadContract({
+    ...contract,
+    functionName: 'mintPrice'
+  });
+
+  const mintPrice = mintPriceResult ? formatEther(mintPriceResult) : "—";
+  
+  // This effect fetches all token IDs one by one. 
+  // For large collections, this can be slow. A dedicated `tokensOfOwner` function in the contract is usually better.
   useEffect(() => {
-    const fetchMintHistory = async () => {
-      try {
-        const ethereum = (window as any).ethereum;
-        if (!ethereum){
-          setLoading(false);
-          return;
-        }
-
-        const accounts = await ethereum.request({ method: "eth_accounts" });
-        if (accounts.length === 0) {
-          setWalletConnected(false);
-          setLoading(false); // Wallet not connected – exit quietly
-          return;
-        }
-
-        const userAddress = accounts[0];
-        setAddress(userAddress);
-        setWalletConnected(true);
-
-        const contractData = await web3Service.getContractData(userAddress);
-        setMintPrice(contractData.mintPrice);
-
-        const provider = new ethers.BrowserProvider(ethereum);
-        const { address: contractAddress, abi } = web3Service.getContract();
-        const contract = new ethers.Contract(contractAddress, abi, provider);
-
-        const balance: bigint = await contract.balanceOf(userAddress);
-        const ids: number[] = [];
-
-        for (let i = 0n; i < balance; i++) {
-          const tokenId = await contract.tokenOfOwnerByIndex(userAddress, i);
-          ids.push(Number(tokenId));
-        }
-
-        setTokenIds(ids);
-      } catch (error) {
-        console.error("Failed to fetch mint history", error);
-      } finally {
+    const fetchAllTokens = async () => {
+      if (!balanceResult || balanceResult === 0n) {
+        setTokenIds([]);
         setLoading(false);
+        return;
       }
+
+      setLoading(true);
+      const ids: number[] = [];
+      // Dynamic import of wagmi's public client for reads without a connected wallet
+      const { createPublicClient, http } = await import('viem');
+      const { heliosTestnet } = await import('@/lib/chains');
+      const client = createPublicClient({ chain: heliosTestnet, transport: http() });
+
+      const tokenPromises = [];
+      for (let i = 0n; i < balanceResult; i++) {
+        tokenPromises.push(client.readContract({
+          ...contract,
+          functionName: 'tokenOfOwnerByIndex',
+          args: [address!, i],
+        }));
+      }
+      
+      const results = await Promise.all(tokenPromises);
+      results.forEach(tokenId => ids.push(Number(tokenId)));
+
+      setTokenIds(ids);
+      setLoading(false);
     };
 
-    fetchMintHistory();
-  }, []);
+    if (isConnected) {
+      fetchAllTokens();
+    } else {
+      setLoading(false);
+    }
+  }, [balanceResult, isConnected, address, contract]);
+
 
   return (
     <div className="min-h-screen bg-background">
       <Helmet>
         <title>History – Helivault Gate</title>
       </Helmet>
-
       <Navigation />
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-20 pb-6">
         <Card>
@@ -86,54 +100,41 @@ const History = () => {
               <table className="w-full">
                 <thead>
                   <tr className="bg-secondary/50">
-                    <th className="text-left py-4 px-4 rounded-l-lg font-medium text-sm text-muted-foreground">
-                      NFT
-                    </th>
-                    <th className="text-left py-4 px-4 font-medium text-sm text-muted-foreground">
-                      Token ID
-                    </th>
-                    <th className="text-left py-4 px-4 font-medium text-sm text-muted-foreground">
-                      Price
-                    </th>
-                    <th className="text-right py-4 px-4 rounded-r-lg font-medium text-sm text-muted-foreground">
-                      Status
-                    </th>
+                    <th className="text-left py-4 px-4 rounded-l-lg font-medium text-sm text-muted-foreground">NFT</th>
+                    <th className="text-left py-4 px-4 font-medium text-sm text-muted-foreground">Token ID</th>
+                    <th className="text-left py-4 px-4 font-medium text-sm text-muted-foreground">Price</th>
+                    <th className="text-right py-4 px-4 rounded-r-lg font-medium text-sm text-muted-foreground">Status</th>
                   </tr>
                 </thead>
                 <tbody>
-                  {!walletConnected ? (
+                  {!isConnected ? (
                     <tr>
-                      <td colSpan={4} className="py-4 px-4 text-center text-muted-foreground">
-                        Please connect your wallet to view mint history.
+                      <td colSpan={4} className="py-8 px-4 text-center text-muted-foreground">
+                        <div className="flex flex-col items-center gap-4">
+                           Please connect your wallet to view mint history.
+                           <ConnectButton />
+                        </div>
                       </td>
                     </tr>
-                  ) : loading ? (
+                  ) : loading || isBalanceLoading ? (
                     <tr>
-                      <td colSpan={4} className="py-4 px-4 text-center">Loading...</td>
+                      <td colSpan={4} className="py-8 px-4 text-center">Loading...</td>
                     </tr>
                   ) : tokenIds.length === 0 ? (
                     <tr>
-                      <td colSpan={4} className="py-4 px-4 text-center">No NFTs found.</td>
+                      <td colSpan={4} className="py-8 px-4 text-center">No NFTs found for this address.</td>
                     </tr>
                   ) : (
                     tokenIds.map((id, index) => (
                       <tr key={id} className="border-b border-border last:border-0">
                         <td className="py-4 px-4">
                           <div className="flex items-center gap-3">
-                            <div
-                              className={`w-8 h-8 rounded ${
-                                index % 2 === 0
-                                  ? "bg-gradient-to-br from-purple-400 to-blue-400"
-                                  : "bg-gradient-to-br from-pink-400 to-purple-400"
-                              }`}
-                            ></div>
+                            <div className={`w-8 h-8 rounded ${index % 2 === 0 ? "bg-gradient-to-br from-purple-400 to-blue-400" : "bg-gradient-to-br from-pink-400 to-purple-400"}`} />
                             <span className="font-medium">Helivault NFT</span>
                           </div>
                         </td>
                         <td className="py-4 px-4 text-muted-foreground">#{id}</td>
-                        <td className="py-4 px-4 font-medium">
-                          {mintPrice ? `${mintPrice} HLS` : "—"}
-                        </td>
+                        <td className="py-4 px-4 font-medium">{mintPrice} HLS</td>
                         <td className="py-4 px-4 text-right">
                           <span className="inline-flex items-center px-2 py-1 rounded-full text-xs bg-success/10 text-success border border-success/20">
                             Minted
@@ -144,17 +145,6 @@ const History = () => {
                   )}
                 </tbody>
               </table>
-            </div>
-
-            <div className="mt-8 bg-secondary/30 rounded-lg p-8 text-center">
-              <div className="space-y-3">
-                <div className="text-base font-semibold text-foreground">
-                  Ready to mint more NFTs?
-                </div>
-                <div className="text-sm text-muted-foreground">
-                  Visit the mint page to continue building your collection.
-                </div>
-              </div>
             </div>
           </CardContent>
         </Card>

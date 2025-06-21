@@ -1,3 +1,4 @@
+// src/pages/Home.tsx
 import Navigation from "@/components/Navigation";
 import WalletStatus from "@/components/WalletStatus";
 import { Helmet } from "react-helmet-async";

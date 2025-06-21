@@ -1,34 +1,20 @@
+// src/components/Navigation.tsx
 import { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import {
   Home,
   Palette,
   ShoppingBag,
-  Wallet,
-  ChevronDown,
-  LogOut,
   Menu,
   X,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-import { useWallet } from "@/contexts/WalletContext";
+import { ConnectButton } from "@rainbow-me/rainbowkit";
 
 const Navigation = () => {
   const location = useLocation();
-  const {
-    isConnected,
-    address,
-    isConnecting,
-    connectWallet,
-    disconnectWallet,
-    networkName,
-    isCorrectNetwork,
-    switchToHelios,
-  } = useWallet();
   const [mobileOpen, setMobileOpen] = useState(false);
-
-  const formatAddress = (addr: string) => `${addr.slice(0, 6)}...${addr.slice(-4)}`;
 
   const navItems = [
     { icon: Home, label: "Home", path: "/" },
@@ -39,7 +25,6 @@ const Navigation = () => {
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Top row */}
         <div className="flex h-16 items-center justify-between">
           {/* Logo */}
           <div className="flex items-center gap-3">
@@ -77,50 +62,7 @@ const Navigation = () => {
 
           {/* Desktop Actions */}
           <div className="hidden md:flex items-center gap-3">
-            {/* Network */}
-            <Button
-              variant="outline"
-              size="sm"
-              className="gap-2 bg-white/60 border-border/50"
-              onClick={!isCorrectNetwork ? switchToHelios : undefined}
-            >
-              <div
-                className={`w-2 h-2 rounded-full ${
-                  isCorrectNetwork ? "bg-success" : "bg-warning"
-                }`}
-              ></div>
-              {networkName}
-              <ChevronDown className="w-4 h-4" />
-            </Button>
-
-            {/* Wallet */}
-            {!isConnected ? (
-              <Button
-                onClick={connectWallet}
-                disabled={isConnecting}
-                className="gap-2 bg-primary hover:bg-primary/90 rounded-full px-6"
-              >
-                {isConnecting ? "Connecting..." : "Connect Wallet"}
-                <Wallet className="w-4 h-4" />
-              </Button>
-            ) : (
-              <>
-                <Button
-                  variant="outline"
-                  className="gap-2 bg-white/60 border-border/50 rounded-full px-4"
-                >
-                  {formatAddress(address!)} ⚡
-                </Button>
-                <Button
-                  onClick={disconnectWallet}
-                  variant="outline"
-                  size="sm"
-                  className="bg-white/60 border-border/50 rounded-full p-2"
-                >
-                  <LogOut className="w-4 h-4" />
-                </Button>
-              </>
-            )}
+            <ConnectButton />
           </div>
 
           {/* Mobile menu button */}
@@ -160,52 +102,8 @@ const Navigation = () => {
                 );
               })}
             </div>
-
-            {/* Network Selector */}
-            <div>
-              <span className="text-xs font-semibold text-muted-foreground mb-1 block">
-                Network
-              </span>
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={!isCorrectNetwork ? switchToHelios : undefined}
-                className="w-full justify-start gap-2"
-              >
-                <div
-                  className={`w-2 h-2 rounded-full ${
-                    isCorrectNetwork ? "bg-success" : "bg-warning"
-                  }`}
-                ></div>
-                {networkName}
-                <ChevronDown className="w-4 h-4 ml-auto" />
-              </Button>
-            </div>
-
-            {/* Wallet Info */}
-            <div className="pt-2 border-t border-border space-y-2">
-              {!isConnected ? (
-                <Button
-                  onClick={connectWallet}
-                  disabled={isConnecting}
-                  className="w-full gap-2 bg-primary hover:bg-primary/90"
-                >
-                  {isConnecting ? "Connecting..." : "Connect Wallet"}
-                  <Wallet className="w-4 h-4" />
-                </Button>
-              ) : (
-                <>
-                  <div className="text-sm text-muted-foreground flex justify-between items-center">
-                    <span>{formatAddress(address!)}</span>
-                    <button
-                      onClick={disconnectWallet}
-                      className="text-red-500 hover:underline"
-                    >
-                      Disconnect
-                    </button>
-                  </div>
-                </>
-              )}
+            <div className="pt-2 border-t border-border">
+              <ConnectButton />
             </div>
           </div>
         )}

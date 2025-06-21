@@ -1,17 +1,17 @@
+// src/components/WalletStatus.tsx
+
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Wallet, ExternalLink } from "lucide-react";
-import { useWallet } from "@/contexts/WalletContext";
+import { useAccount, useBalance } from "wagmi";
+import { ConnectButton } from "@rainbow-me/rainbowkit";
+import { heliosTestnet } from "@/lib/chains";
 
 const WalletStatus = () => {
-  const {
-    isConnected,
-    address,
-    balance,
-    connectWallet,
-    isCorrectNetwork,
-    switchToHelios,
-  } = useWallet();
+  const { address, isConnected, chain } = useAccount();
+  const { data: balance } = useBalance({ address });
+
+  const isCorrectNetwork = chain?.id === heliosTestnet.id;
 
   if (!isConnected) {
     return (
@@ -20,12 +20,12 @@ const WalletStatus = () => {
           <Wallet className="w-12 h-12 text-warning mx-auto mb-4" />
           <h3 className="text-lg font-semibold mb-2">Wallet Not Connected</h3>
           <p className="text-muted-foreground mb-4">
-            Connect your wallet to start minting NFTs and track your collection.
+            Connect your wallet to start minting NFTs and track your
+            collection.
           </p>
-          <Button onClick={connectWallet} className="gap-2">
-            <Wallet className="w-4 h-4" />
-            Connect Wallet
-          </Button>
+          <div className="flex justify-center">
+            <ConnectButton />
+          </div>
         </CardContent>
       </Card>
     );
@@ -59,7 +59,7 @@ const WalletStatus = () => {
                 className="h-6 w-6 p-0"
                 onClick={() =>
                   window.open(
-                    `https://explorer.helioschainlabs.org/address/${address}`,
+                    `${heliosTestnet.blockExplorers.default.url}/address/${address}`,
                     "_blank",
                   )
                 }
@@ -70,15 +70,12 @@ const WalletStatus = () => {
           </div>
           <div className="flex justify-between items-center">
             <span className="text-sm text-muted-foreground">Balance</span>
-            <span className="font-medium">{balance} HLS</span>
+            <span className="font-medium">{balance ? `${Number(balance.formatted).toFixed(4)} ${balance.symbol}` : '0.00 HLS'}</span>
           </div>
           {!isCorrectNetwork && (
-            <Button
-              onClick={switchToHelios}
-              className="w-full mt-4 bg-warning hover:bg-warning/90"
-            >
-              Switch to Helios Network
-            </Button>
+            <div className="mt-4">
+               <ConnectButton />
+            </div>
           )}
         </div>
       </CardContent>
