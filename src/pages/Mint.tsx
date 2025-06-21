@@ -5,6 +5,7 @@ import Navigation from "@/components/Navigation";
 import { useWallet } from "@/contexts/WalletContext";
 import { useState, useEffect } from "react";
 import { Helmet } from "react-helmet-async";
+import { toast } from "sonner";
 
 const Mint = () => {
   const {
@@ -39,12 +40,16 @@ const Mint = () => {
     }
 
     if (!contractData) {
-      alert("Contract data not loaded. Please refresh the page.");
+      toast.error("Contract not loaded", {
+        description: "Please refresh the page and try again.",
+      });
       return;
     }
 
     if (contractData.currentSupply >= contractData.maxSupply) {
-      alert("Maximum supply reached! No more NFTs available.");
+      toast.error("Maximum supply reached", {
+        description: "No more NFTs available to mint.",
+      });
       return;
     }
 
@@ -52,13 +57,26 @@ const Mint = () => {
     try {
       const result = await mintNFTFromContract();
       setLastTxHash(result.hash);
-      alert(
-        `🎉 NFT Minted Successfully!\n\nTransaction Hash: ${result.hash}\n\nYour NFT will appear in your wallet shortly.`
-      );
+      toast.success("🎉 NFT Minted Successfully!", {
+        description: (
+          <span>
+            <a
+              href={`https://explorer.helioschainlabs.org/tx/${result.hash}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="underline text-sm text-blue-500 hover:text-blue-600"
+            >
+              View on Explorer ↗
+            </a>
+          </span>
+        ),
+      });
       setTimeout(refreshContractData, 3000);
     } catch (error: any) {
       console.error("Minting failed:", error);
-      alert(`Minting failed: ${error.message}`);
+      toast.error("Minting failed", {
+        description: error.message,
+      });
     } finally {
       setIsMinting(false);
     }

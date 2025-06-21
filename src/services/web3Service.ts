@@ -4,7 +4,7 @@ import {
 } from "@/contracts/HelivaultNFT";
 
 export class Web3Service {
-  private contract: any;
+  public contract: any;
   private provider: any;
 
   constructor() {
