@@ -22,11 +22,16 @@ const History = () => {
         const ethereum = (window as any).ethereum;
         if (!ethereum) return;
 
-        const provider = new ethers.BrowserProvider(ethereum);
-        const signer = await provider.getSigner();
-        const userAddress = await signer.getAddress();
+        const accounts = await ethereum.request({ method: "eth_accounts" });
+        if (accounts.length === 0) {
+          setLoading(false); // Wallet not connected – exit quietly
+          return;
+        }
+
+        const userAddress = accounts[0];
         setAddress(userAddress);
 
+        const provider = new ethers.BrowserProvider(ethereum);
         const { address: contractAddress, abi } = web3Service.getContract();
         const contract = new ethers.Contract(contractAddress, abi, provider);
 
