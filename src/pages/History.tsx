@@ -16,6 +16,7 @@ const History = () => {
   const [tokenIds, setTokenIds] = useState<number[]>([]);
   const [loading, setLoading] = useState(true);
   const [walletConnected, setWalletConnected] = useState(false);
+  const [mintPrice, setMintPrice] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchMintHistory = async () => {
@@ -36,6 +37,9 @@ const History = () => {
         const userAddress = accounts[0];
         setAddress(userAddress);
         setWalletConnected(true);
+
+        const contractData = await web3Service.getContractData(userAddress);
+        setMintPrice(contractData.mintPrice);
 
         const provider = new ethers.BrowserProvider(ethereum);
         const { address: contractAddress, abi } = web3Service.getContract();
@@ -127,7 +131,9 @@ const History = () => {
                           </div>
                         </td>
                         <td className="py-4 px-4 text-muted-foreground">#{id}</td>
-                        <td className="py-4 px-4 font-medium">0.01 HLS</td>
+                        <td className="py-4 px-4 font-medium">
+                          {mintPrice ? `${mintPrice} HLS` : "—"}
+                        </td>
                         <td className="py-4 px-4 text-right">
                           <span className="inline-flex items-center px-2 py-1 rounded-full text-xs bg-success/10 text-success border border-success/20">
                             Minted
