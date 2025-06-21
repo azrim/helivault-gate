@@ -15,21 +15,27 @@ const History = () => {
   const [address, setAddress] = useState<string | null>(null);
   const [tokenIds, setTokenIds] = useState<number[]>([]);
   const [loading, setLoading] = useState(true);
+  const [walletConnected, setWalletConnected] = useState(false);
 
   useEffect(() => {
     const fetchMintHistory = async () => {
       try {
         const ethereum = (window as any).ethereum;
-        if (!ethereum) return;
+        if (!ethereum){
+          setLoading(false);
+          return;
+        }
 
         const accounts = await ethereum.request({ method: "eth_accounts" });
         if (accounts.length === 0) {
+          setWalletConnected(false);
           setLoading(false); // Wallet not connected – exit quietly
           return;
         }
 
         const userAddress = accounts[0];
         setAddress(userAddress);
+        setWalletConnected(true);
 
         const provider = new ethers.BrowserProvider(ethereum);
         const { address: contractAddress, abi } = web3Service.getContract();
@@ -91,24 +97,23 @@ const History = () => {
                   </tr>
                 </thead>
                 <tbody>
-                  {loading ? (
+                  {!walletConnected ? (
                     <tr>
-                      <td colSpan={4} className="py-4 px-4 text-center">
-                        Loading...
+                      <td colSpan={4} className="py-4 px-4 text-center text-muted-foreground">
+                        Please connect your wallet to view mint history.
                       </td>
+                    </tr>
+                  ) : loading ? (
+                    <tr>
+                      <td colSpan={4} className="py-4 px-4 text-center">Loading...</td>
                     </tr>
                   ) : tokenIds.length === 0 ? (
                     <tr>
-                      <td colSpan={4} className="py-4 px-4 text-center">
-                        No NFTs found.
-                      </td>
+                      <td colSpan={4} className="py-4 px-4 text-center">No NFTs found.</td>
                     </tr>
                   ) : (
                     tokenIds.map((id, index) => (
-                      <tr
-                        key={id}
-                        className="border-b border-border last:border-0"
-                      >
+                      <tr key={id} className="border-b border-border last:border-0">
                         <td className="py-4 px-4">
                           <div className="flex items-center gap-3">
                             <div
@@ -121,9 +126,7 @@ const History = () => {
                             <span className="font-medium">Helivault NFT</span>
                           </div>
                         </td>
-                        <td className="py-4 px-4 text-muted-foreground">
-                          #{id}
-                        </td>
+                        <td className="py-4 px-4 text-muted-foreground">#{id}</td>
                         <td className="py-4 px-4 font-medium">0.01 HLS</td>
                         <td className="py-4 px-4 text-right">
                           <span className="inline-flex items-center px-2 py-1 rounded-full text-xs bg-success/10 text-success border border-success/20">
