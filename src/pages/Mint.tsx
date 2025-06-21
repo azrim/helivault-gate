@@ -4,6 +4,7 @@ import { Zap, Wallet } from "lucide-react";
 import Navigation from "@/components/Navigation";
 import { useWallet } from "@/contexts/WalletContext";
 import { useState, useEffect } from "react";
+import { Helmet } from "react-helmet-async";
 
 const Mint = () => {
   const {
@@ -68,6 +69,10 @@ const Mint = () => {
 
   return (
     <div className="min-h-screen bg-background">
+      <Helmet>
+        <title>Mint – Helivault Gate</title>
+      </Helmet>
+
       <Navigation />
 
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-20 pb-6">

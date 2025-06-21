@@ -9,6 +9,7 @@ import Navigation from "@/components/Navigation";
 import { useEffect, useState } from "react";
 import { web3Service } from "@/services/web3Service";
 import { ethers } from "ethers";
+import { Helmet } from "react-helmet-async";
 
 const History = () => {
   const [address, setAddress] = useState<string | null>(null);
@@ -50,6 +51,10 @@ const History = () => {
 
   return (
     <div className="min-h-screen bg-background">
+      <Helmet>
+        <title>Home – Helivault Gate</title>
+      </Helmet>
+      
       <Navigation />
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-20 pb-6">
         <Card>
