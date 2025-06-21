@@ -1,4 +1,3 @@
-// src/pages/History.tsx
 import {
   Card,
   CardContent,
@@ -7,40 +6,42 @@ import {
 } from "@/components/ui/card";
 import { Coins } from "lucide-react";
 import Navigation from "@/components/Navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import { Helmet } from "react-helmet-async";
 import { useAccount, useReadContract } from "wagmi";
 import { HELIVAULT_NFT_CONTRACT } from "@/contracts/HelivaultNFT";
 import { formatEther } from "viem";
 import { ConnectButton } from "@rainbow-me/rainbowkit";
 
+// --- FIX: Define the contract config outside the component ---
+// This prevents it from being recreated on every render, which was causing an infinite loop.
+const contractConfig = {
+  address: HELIVAULT_NFT_CONTRACT.address,
+  abi: HELIVAULT_NFT_CONTRACT.abi,
+} as const;
+
 const History = () => {
   const { address, isConnected } = useAccount();
   const [tokenIds, setTokenIds] = useState<number[]>([]);
   const [loading, setLoading] = useState(true);
-  
-  const contract = {
-    address: HELIVAULT_NFT_CONTRACT.address,
-    abi: HELIVAULT_NFT_CONTRACT.abi,
-  } as const;
 
   const { data: balanceResult, isLoading: isBalanceLoading } = useReadContract({
-    ...contract,
+    ...contractConfig,
     functionName: 'balanceOf',
     args: [address!],
-    query: { enabled: isConnected }
+    query: { enabled: isConnected && !!address },
   });
 
   const { data: mintPriceResult } = useReadContract({
-    ...contract,
-    functionName: 'mintPrice'
+    ...contractConfig,
+    functionName: 'mintPrice',
   });
 
   const mintPrice = mintPriceResult ? formatEther(mintPriceResult) : "—";
   
-  // This effect fetches all token IDs one by one. 
-  // For large collections, this can be slow. A dedicated `tokensOfOwner` function in the contract is usually better.
   useEffect(() => {
+    // This effect fetches all token IDs one by one. 
+    // For large collections, this can be slow. A dedicated `tokensOfOwner` function in the contract is usually better.
     const fetchAllTokens = async () => {
       if (!balanceResult || balanceResult === 0n) {
         setTokenIds([]);
@@ -49,8 +50,8 @@ const History = () => {
       }
 
       setLoading(true);
-      const ids: number[] = [];
-      // Dynamic import of wagmi's public client for reads without a connected wallet
+      
+      // Dynamic import of wagmi's public client for reads
       const { createPublicClient, http } = await import('viem');
       const { heliosTestnet } = await import('@/lib/chains');
       const client = createPublicClient({ chain: heliosTestnet, transport: http() });
@@ -58,17 +59,22 @@ const History = () => {
       const tokenPromises = [];
       for (let i = 0n; i < balanceResult; i++) {
         tokenPromises.push(client.readContract({
-          ...contract,
+          ...contractConfig,
           functionName: 'tokenOfOwnerByIndex',
           args: [address!, i],
         }));
       }
       
-      const results = await Promise.all(tokenPromises);
-      results.forEach(tokenId => ids.push(Number(tokenId)));
-
-      setTokenIds(ids);
-      setLoading(false);
+      try {
+        const results = await Promise.all(tokenPromises);
+        const ids = results.map(tokenId => Number(tokenId));
+        setTokenIds(ids);
+      } catch (error) {
+        console.error("Error fetching token IDs:", error);
+        setTokenIds([]); // Clear tokens on error
+      } finally {
+        setLoading(false);
+      }
     };
 
     if (isConnected) {
@@ -76,7 +82,8 @@ const History = () => {
     } else {
       setLoading(false);
     }
-  }, [balanceResult, isConnected, address, contract]);
+    // --- FIX: The dependency array is now stable ---
+  }, [balanceResult, isConnected, address]);
 
 
   return (
