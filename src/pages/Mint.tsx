@@ -100,7 +100,7 @@ const Mint = () => {
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-20 pb-6">
         <Card className="bg-card border-border">
           <CardContent className="p-8">
-            <div className="flex flex-col lg:flex-row gap-8 items-center justify-center min-h-[60vh]">
+            <div className="flex flex-col lg:flex-row gap-8 items-center lg:items-stretch justify-center">
               {/* NFT IMAGE */}
               <div className="w-full lg:w-1/2 flex justify-center">
                 <div className="aspect-square w-full max-w-sm rounded-xl overflow-hidden relative">
@@ -116,7 +116,7 @@ const Mint = () => {
               </div>
 
               {/* RIGHT PANEL */}
-              <div className="w-full lg:w-1/2 flex justify-center">
+              <div className="flex flex-col justify-center w-full lg:w-1/2 space-y-6">
                 <div className="w-full max-w-xl space-y-6">
                   <div>
                     <h1 className="text-3xl font-bold mb-2">
