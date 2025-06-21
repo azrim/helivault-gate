@@ -1,6 +1,5 @@
 import { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { Button } from "@/components/ui/button";
 import {
   Home,
   Palette,
@@ -11,6 +10,7 @@ import {
   Menu,
   X,
 } from "lucide-react";
+import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { useWallet } from "@/contexts/WalletContext";
 
@@ -28,8 +28,7 @@ const Navigation = () => {
   } = useWallet();
   const [mobileOpen, setMobileOpen] = useState(false);
 
-  const formatAddress = (address: string) =>
-    `${address.slice(0, 6)}...${address.slice(-4)}`;
+  const formatAddress = (addr: string) => `${addr.slice(0, 6)}...${addr.slice(-4)}`;
 
   const navItems = [
     { icon: Home, label: "Home", path: "/" },
@@ -40,7 +39,8 @@ const Navigation = () => {
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex h-16 items-center justify-between gap-4">
+        {/* Top row */}
+        <div className="flex h-16 items-center justify-between">
           {/* Logo */}
           <div className="flex items-center gap-3">
             <div className="w-8 h-8 bg-brand-gradient rounded-lg flex items-center justify-center">
@@ -75,9 +75,9 @@ const Navigation = () => {
             })}
           </nav>
 
-          {/* Actions */}
-          <div className="flex items-center gap-3">
-            {/* Network Selector */}
+          {/* Desktop Actions */}
+          <div className="hidden md:flex items-center gap-3">
+            {/* Network */}
             <Button
               variant="outline"
               size="sm"
@@ -93,7 +93,7 @@ const Navigation = () => {
               <ChevronDown className="w-4 h-4" />
             </Button>
 
-            {/* Connect Wallet */}
+            {/* Wallet */}
             {!isConnected ? (
               <Button
                 onClick={connectWallet}
@@ -104,7 +104,7 @@ const Navigation = () => {
                 <Wallet className="w-4 h-4" />
               </Button>
             ) : (
-              <div className="hidden md:flex items-center gap-2">
+              <>
                 <Button
                   variant="outline"
                   className="gap-2 bg-white/60 border-border/50 rounded-full px-4"
@@ -119,14 +119,15 @@ const Navigation = () => {
                 >
                   <LogOut className="w-4 h-4" />
                 </Button>
-              </div>
+              </>
             )}
+          </div>
 
-            {/* Mobile Menu Button */}
+          {/* Mobile menu button */}
+          <div className="md:hidden">
             <Button
               variant="ghost"
               size="icon"
-              className="md:hidden"
               onClick={() => setMobileOpen(!mobileOpen)}
             >
               {mobileOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
@@ -134,14 +135,18 @@ const Navigation = () => {
           </div>
         </div>
 
-        {/* Mobile Menu Panel */}
+        {/* Mobile Dropdown Menu */}
         {mobileOpen && (
-          <div className="md:hidden mt-3 bg-white border border-border rounded-xl p-4 space-y-3">
-            {navItems.map(({ icon: Icon, label, path }) => {
-              const isActive = location.pathname === path;
-              return (
-                <Link key={path} to={path} onClick={() => setMobileOpen(false)}>
-                  <div
+          <div className="md:hidden mt-3 bg-white border border-border rounded-xl p-4 space-y-4">
+            {/* Nav Links */}
+            <div className="space-y-2">
+              {navItems.map(({ icon: Icon, label, path }) => {
+                const isActive = location.pathname === path;
+                return (
+                  <Link
+                    key={path}
+                    to={path}
+                    onClick={() => setMobileOpen(false)}
                     className={cn(
                       "flex items-center gap-2 px-3 py-2 rounded-lg font-medium",
                       isActive
@@ -151,24 +156,57 @@ const Navigation = () => {
                   >
                     <Icon className="w-4 h-4" />
                     {label}
-                  </div>
-                </Link>
-              );
-            })}
+                  </Link>
+                );
+              })}
+            </div>
 
-            {isConnected && (
-              <div className="pt-2 border-t border-border space-y-2">
-                <div className="flex justify-between items-center text-sm text-muted-foreground">
-                  <span>{formatAddress(address!)}</span>
-                  <button
-                    onClick={disconnectWallet}
-                    className="text-red-500 hover:underline"
-                  >
-                    Disconnect
-                  </button>
-                </div>
-              </div>
-            )}
+            {/* Network Selector */}
+            <div>
+              <span className="text-xs font-semibold text-muted-foreground mb-1 block">
+                Network
+              </span>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={!isCorrectNetwork ? switchToHelios : undefined}
+                className="w-full justify-start gap-2"
+              >
+                <div
+                  className={`w-2 h-2 rounded-full ${
+                    isCorrectNetwork ? "bg-success" : "bg-warning"
+                  }`}
+                ></div>
+                {networkName}
+                <ChevronDown className="w-4 h-4 ml-auto" />
+              </Button>
+            </div>
+
+            {/* Wallet Info */}
+            <div className="pt-2 border-t border-border space-y-2">
+              {!isConnected ? (
+                <Button
+                  onClick={connectWallet}
+                  disabled={isConnecting}
+                  className="w-full gap-2 bg-primary hover:bg-primary/90"
+                >
+                  {isConnecting ? "Connecting..." : "Connect Wallet"}
+                  <Wallet className="w-4 h-4" />
+                </Button>
+              ) : (
+                <>
+                  <div className="text-sm text-muted-foreground flex justify-between items-center">
+                    <span>{formatAddress(address!)}</span>
+                    <button
+                      onClick={disconnectWallet}
+                      className="text-red-500 hover:underline"
+                    >
+                      Disconnect
+                    </button>
+                  </div>
+                </>
+              )}
+            </div>
           </div>
         )}
       </div>
