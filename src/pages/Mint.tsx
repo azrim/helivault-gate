@@ -106,7 +106,7 @@ const Mint = () => {
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-12 pb-12">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-start">
           
-          <div className="w-full aspect-square sticky top-28">
+          <div className="w-full aspect-square top-28">
             <img 
               src={nftImageUrl} 
               alt="Helivault Cypher" 
