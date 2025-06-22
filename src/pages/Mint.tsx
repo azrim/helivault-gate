@@ -110,7 +110,7 @@ const Mint = () => {
             <img 
               src={nftImageUrl} 
               alt="Helivault Cypher" 
-              className="object-cover w-full h-full rounded-xl shadow-lg"
+              className="object-cover w-full h-full rounded-xl shadow-lg top-0 transition-transform transform hover:scale-105 hover:shadow-xl"
             />
           </div>
 
