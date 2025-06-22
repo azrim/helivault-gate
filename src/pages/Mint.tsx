@@ -111,7 +111,6 @@ const Mint = () => {
               src={nftImageUrl} 
               alt="Helivault Cypher" 
               className="object-cover w-full h-full rounded-xl shadow-lg"
-              onError={(e) => { (e.target as HTMLImageElement).src = "/vault-placeholder.png"; }}
             />
           </div>
 
