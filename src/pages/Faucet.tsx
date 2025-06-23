@@ -108,11 +108,13 @@ const Faucet = () => {
               <p className="text-muted-foreground mb-6">
                 Claim free HLV tokens to use for minting NFTs.
               </p>
-              <div className="bg-secondary/50 p-6 rounded-lg mb-6">
-                <p className="text-sm text-muted-foreground">Your HLV Balance</p>
-                <p className="text-4xl font-bold">
-                  {typeof hlvBalance === 'bigint' ? Number(formatEther(hlvBalance)).toFixed(2) : "0.00"} HLV
-                </p>
+              <div className="p-6 space-y-4">
+                <div className="bg-secondary/50 p-6 rounded-lg mb-6">
+                  <p className="text-sm text-muted-foreground">Your HLV Balance</p>
+                  <p className="text-4xl font-bold">
+                    {typeof hlvBalance === 'bigint' ? Number(formatEther(hlvBalance)).toFixed(2) : "0.00"} HLV
+                  </p>
+                </div>
               </div>
 
               <div className="p-6 space-y-4">
