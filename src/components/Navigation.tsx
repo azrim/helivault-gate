@@ -2,11 +2,11 @@ import { Link, useLocation } from "react-router-dom";
 import { cn } from "@/lib/utils";
 import { ThemeSwitcher } from "./ThemeSwitcher";
 import { CustomConnectButton } from "./CustomConnectButton";
-import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { Button } from "./ui/button";
 import { Menu } from "lucide-react";
 import { useIsMobile } from "@/hooks/use-mobile";
-import { MobileBottomNav } from "./MobileBottomNav"; // Import the mobile nav
+import { MobileBottomNav } from "./MobileBottomNav";
+import { motion } from "framer-motion";
 
 // --- Desktop Navigation Link ---
 type DesktopNavItemProps = {
@@ -19,20 +19,29 @@ const desktopNavItems: DesktopNavItemProps[] = [
   { path: "/faucet", label: "Faucet" },
   { path: "/history", label: "History" },
 ];
+
 const DesktopNavLink = ({ path, label }: DesktopNavItemProps) => {
   const location = useLocation();
   const isActive = location.pathname === path;
   return (
     <Link
       to={path}
+      // Added more vertical padding (py-3) to create space
       className={cn(
-        "relative px-3 py-2 text-sm font-medium transition-colors",
-        isActive ? "text-foreground" : "text-muted-foreground hover:text-foreground/80"
+        "relative px-3 py-3 text-sm font-medium transition-colors",
+        isActive
+          ? "text-foreground"
+          : "text-muted-foreground hover:text-foreground/80"
       )}
     >
       {label}
+
+      {/* The animated indicator, now using framer-motion */}
       {isActive && (
-        <span className="absolute bottom-1.5 left-1/2 -translate-x-1/2 w-3/5 h-0.5 bg-gradient-to-r from-purple-500 to-blue-400 rounded-full" />
+        <motion.div
+          className="absolute bottom-1.5 left-0 right-0 mx-auto h-0.5 w-3/5 rounded-full bg-gradient-to-r from-purple-500 to-blue-400"
+          layoutId="desktop-nav-indicator" // Unique ID for the desktop animation
+        />
       )}
     </Link>
   );
