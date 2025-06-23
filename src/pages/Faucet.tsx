@@ -130,9 +130,13 @@ const Faucet = () => {
 
             <div className="mt-8 p-6 space-y-4">
               {!isConnected ? (
-                <ConnectButton label="Connect Wallet to Claim" />
+                <div className="flex justify-center">
+                  <ConnectButton label="Connect Wallet to Claim" />
+                </div>
               ) : !isCorrectNetwork ? (
-                <ConnectButton label="Wrong Network" />
+                <div className="flex justify-center">
+                  <ConnectButton label="Wrong Network" />
+                </div>
               ) : isClaimable ? (
                 <Button onClick={handleClaim} disabled={isClaiming || isConfirming} className="w-full h-12 text-lg">
                   {isClaiming || isConfirming ? "Claiming..." : "Claim Tokens"}
