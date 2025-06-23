@@ -78,12 +78,12 @@ const History = () => {
   }, [balanceResult, isConnected, address]);
 
   return (
-    <PageWrapper>
-      <div className="min-h-screen bg-background">
-        <Helmet>
-          <title>History – Quantum Relics</title>
-        </Helmet>
-        <Navigation />
+    <div className="min-h-screen bg-background">
+      <Helmet>
+        <title>History – Quantum Relics</title>
+      </Helmet>
+      <Navigation />
+      <PageWrapper>
         <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-20 pb-6">
           <Card>
             <CardHeader className="flex flex-row items-center space-y-0 pb-6">
@@ -133,8 +133,8 @@ const History = () => {
             </CardContent>
           </Card>
         </main>
-      </div>
-    </PageWrapper>
+      </PageWrapper>
+    </div>
   );
 };
 

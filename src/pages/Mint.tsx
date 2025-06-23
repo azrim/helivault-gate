@@ -114,12 +114,12 @@ const Mint = () => {
   const nftImageUrl = `https://bafybeicv24cjsqbiqwiui7txa5rk4yzrx43vaw4wheip4qp6fahpcsuhh4.ipfs.w3s.link/relic.png`;
 
   return (
-    <PageWrapper>
-      <div className="min-h-screen bg-background">
-        <Helmet>
-          <title>Mint – Quantum Relics</title>
-        </Helmet>
-        <Navigation />
+    <div className="min-h-screen bg-background">
+      <Helmet>
+        <title>Mint – Quantum Relics</title>
+      </Helmet>
+      <Navigation />
+      <PageWrapper>
         <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-12 pb-12">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-start">
 
@@ -201,8 +201,8 @@ const Mint = () => {
             </div>
           </div>
         </main>
-      </div>
-    </PageWrapper>
+      </PageWrapper>
+    </div>
   );
 };
 

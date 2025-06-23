@@ -6,13 +6,12 @@ import PageWrapper from "@/components/PageWrapper";
 
 const Home = () => {
   return (
-    <PageWrapper>
-      <div className="min-h-screen bg-background">
-        <Helmet>
-          <title>Home – Helivault Gate</title>
-        </Helmet>
-
-        <Navigation />
+    <div className="min-h-screen bg-background">
+      <Helmet>
+        <title>Home – Helivault Gate</title>
+      </Helmet>
+      <Navigation />
+      <PageWrapper>
         <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-20 pb-6">
           <div className="text-center mb-8">
             <h1 className="text-4xl font-bold bg-brand-gradient bg-clip-text text-transparent mb-4">
@@ -27,8 +26,8 @@ const Home = () => {
             <WalletStatus />
           </div>
         </main>
-      </div>
-    </PageWrapper>
+      </PageWrapper>
+    </div>
   );
 };
 

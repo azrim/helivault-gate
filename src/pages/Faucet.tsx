@@ -95,12 +95,12 @@ const Faucet = () => {
   const isCorrectNetwork = chain?.id === heliosTestnet.id;
 
   return (
-    <PageWrapper>
-      <div className="min-h-screen bg-background">
-        <Helmet>
-          <title>HLV Faucet – Helivault Gate</title>
-        </Helmet>
-        <Navigation />
+    <div className="min-h-screen bg-background">
+      <Helmet>
+        <title>HLV Faucet – Helivault Gate</title>
+      </Helmet>
+      <Navigation />
+      <PageWrapper>
         <main className="max-w-xl mx-auto px-4 sm:px-6 lg:px-8 pt-12 pb-12">
           <Card>
             <CardHeader>
@@ -153,8 +153,8 @@ const Faucet = () => {
             </CardContent>
           </Card>
         </main>
-      </div>
-    </PageWrapper>
+      </PageWrapper >
+    </div>
   );
 };
 
