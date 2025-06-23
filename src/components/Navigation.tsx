@@ -1,56 +1,49 @@
 import { Link, useLocation } from "react-router-dom";
-import { Home, Palette, Droplets, ShoppingBag, LucideIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { ThemeSwitcher } from "./ThemeSwitcher";
-import { ConnectButton } from "@rainbow-me/rainbowkit";
-import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
+import { CustomConnectButton } from "./CustomConnectButton";
+import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+import { Button } from "./ui/button";
+import { Menu } from "lucide-react";
 
-// Define the type for a navigation item for better type safety
+// The type no longer needs an icon
 type NavItemProps = {
   path: string;
   label: string;
-  icon: LucideIcon;
 };
 
-// Centralized navigation items array
+// The array is now simpler
 const navItems: NavItemProps[] = [
-  { path: "/", label: "Home", icon: Home },
-  { path: "/mint", label: "Mint", icon: Palette },
-  { path: "/faucet", label: "Faucet", icon: Droplets },
-  { path: "/history", label: "History", icon: ShoppingBag },
+  { path: "/", label: "Home" },
+  { path: "/mint", label: "Mint" },
+  { path: "/faucet", label: "Faucet" },
+  { path: "/history", label: "History" },
 ];
 
 /**
- * Reusable NavLink component
+ * Reusable NavLink component with the gradient underline indicator
  */
-const NavLink = ({ path, icon: Icon, label }: NavItemProps) => {
+const NavLink = ({ path, label }: NavItemProps) => {
   const location = useLocation();
   const isActive = location.pathname === path;
 
   return (
-    <Tooltip>
-      <TooltipTrigger asChild>
-        <Link to={path}>
-          <div
-            className={cn(
-              "flex items-center justify-center gap-2 h-11 transition-all duration-300 ease-in-out",
-              isActive ? "bg-primary text-primary-foreground rounded-full px-4" : "w-11 text-muted-foreground hover:text-foreground"
-            )}
-          >
-            <Icon className="w-5 h-5 shrink-0" />
-            <span className={cn("font-medium", !isActive && "hidden")}>
-              {label}
-            </span>
-          </div>
-        </Link>
-      </TooltipTrigger>
-      {/* Show tooltip only when the item is inactive and label is hidden */}
-      {!isActive && (
-        <TooltipContent>
-          <p>{label}</p>
-        </TooltipContent>
+    <Link
+      to={path}
+      // The link is now a relative container for the absolute underline
+      className={cn(
+        "relative px-3 py-2 text-sm font-medium transition-colors",
+        isActive
+          ? "text-foreground" // Active text is bright
+          : "text-muted-foreground hover:text-foreground/80"
       )}
-    </Tooltip>
+    >
+      {label}
+      {/* The gradient underline, rendered only if the link is active */}
+      {isActive && (
+        <span className="absolute bottom-1.5 left-1/2 -translate-x-1/2 w-3/5 h-0.5 bg-gradient-to-r from-purple-500 to-blue-400 rounded-full" />
+      )}
+    </Link>
   );
 };
 
@@ -59,33 +52,66 @@ const NavLink = ({ path, icon: Icon, label }: NavItemProps) => {
  */
 const Navigation = () => {
   return (
-    <header className="fixed sticky bottom-0 left-0 z-50 w-full p-4 md:top-0 md:bottom-auto">
-      <div className="relative max-w-7xl mx-auto flex items-center justify-between">
-        {/* Logo - visible on desktop */}
-        <Link to="/" className="hidden md:flex items-center gap-3">
-          <img 
-            src="/helios-icon.png" 
-            alt="Helios Icon"
-            className="h-8 w-8 rounded-full" 
-          />
-          <span className="text-xl font-bold text-foreground">
-            Helivault <span className="text-primary">Gate</span>
-          </span>
-        </Link>
+    <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/80 backdrop-blur-lg">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="grid h-16 grid-cols-3 items-center">
+          
+          {/* Left Column */}
+          <div className="flex items-center justify-start">
+            <Link to="/" className="flex items-center gap-3">
+              <img 
+                src="/helios-icon.png" 
+                alt="Helios Icon"
+                className="h-8 w-8 rounded-full" 
+              />
+              <span className="hidden sm:block text-xl font-bold text-foreground whitespace-nowrap">
+                Helivault Gate
+              </span>
+            </Link>
+          </div>
 
-        {/* Main Navigation Bar */}
-        <nav className="absolute left-1/2 -translate-x-1/2 flex items-center gap-2 bg-background/80 backdrop-blur-sm rounded-full p-2 border shadow-lg">
-          {navItems.map((item) => (
-            <NavLink key={item.path} {...item} />
-          ))}
-        </nav>
+          {/* Center Column: Text-based navigation */}
+          <nav className="hidden md:flex items-center justify-center gap-4">
+            {navItems.map((item) => (
+              <NavLink key={item.path} {...item} />
+            ))}
+          </nav>
 
-        {/* Right Side Actions */}
-        <div className="absolute right-0 flex items-center gap-3">
-           <div className="hidden sm:block">
-            <ConnectButton />
-           </div>
-          <ThemeSwitcher />
+          {/* Right Column */}
+          <div className="flex items-center justify-end gap-3">
+            <div className="hidden sm:block">
+              <CustomConnectButton />
+            </div>
+            <ThemeSwitcher />
+            
+            {/* Mobile Menu Trigger */}
+            <div className="md:hidden">
+              <Sheet>
+                <SheetTrigger asChild>
+                  <Button variant="outline" size="icon">
+                    <Menu className="h-5 w-5" />
+                    <span className="sr-only">Open menu</span>
+                  </Button>
+                </SheetTrigger>
+                <SheetContent>
+                  <div className="grid gap-4 py-4">
+                    {navItems.map((item) => (
+                      <Link
+                        key={item.path}
+                        to={item.path}
+                        className="text-lg font-medium text-muted-foreground hover:text-foreground"
+                      >
+                        {item.label}
+                      </Link>
+                    ))}
+                    <div className="pt-4 border-t">
+                       <CustomConnectButton />
+                    </div>
+                  </div>
+                </SheetContent>
+              </Sheet>
+            </div>
+          </div>
         </div>
       </div>
     </header>
