@@ -1,7 +1,8 @@
 // src/contracts/QuantumRelics.ts
 
 export const QUANTUM_RELICS_CONTRACT = {
-  address: "0x0d4ae987f48D0f7ADCa60c233F7876589beed8B0",
+  // --- NEW DEPLOYED ADDRESS ---
+  address: "0xdd35F4cDBeD22fcDF57Cd17976fEB115F4359feE",
   abi: [
     {
       "inputs": [
