@@ -9,12 +9,12 @@ import Navigation from "@/components/Navigation";
 import { useEffect, useState } from "react";
 import { Helmet } from "react-helmet-async";
 import { useAccount, useReadContract } from "wagmi";
-import { HELIVAULT_CYPHERS_CONTRACT } from "@/contracts/HelivaultNFT"; // Updated import
+import { QUANTUM_RELICS_CONTRACT } from "@/contracts/QuantumRelics";
 import { formatEther } from "viem";
 import { ConnectButton } from "@rainbow-me/rainbowkit";
+import { heliosTestnet } from "@/lib/chains";
 
-// Use the new contract config
-const contractConfig = HELIVAULT_CYPHERS_CONTRACT;
+const contractConfig = QUANTUM_RELICS_CONTRACT;
 
 const History = () => {
   const { address, isConnected } = useAccount();
@@ -30,20 +30,21 @@ const History = () => {
 
   const { data: mintPriceResult } = useReadContract({
     ...contractConfig,
-    functionName: 'mintPrice',
+    functionName: 'MINT_PRICE',
   });
 
-  // Fetch the new contract's name dynamically
-  const { data: nftName } = useReadContract({
+  const { data: nftNameResult } = useReadContract({
       ...contractConfig,
       functionName: 'name'
   });
 
-  const mintPrice = mintPriceResult ? formatEther(mintPriceResult) : "—";
+  const mintPrice = typeof mintPriceResult === 'bigint' ? formatEther(mintPriceResult) : "—";
+  const nftName = typeof nftNameResult === 'string' ? nftNameResult : 'Quantum Relic';
   
   useEffect(() => {
     const fetchAllTokens = async () => {
-      if (!balanceResult || balanceResult === 0n) {
+      // Ensure balanceResult is a bigint before using it
+      if (typeof balanceResult !== 'bigint' || balanceResult === 0n) {
         setTokenIds([]);
         setLoading(false);
         return;
@@ -78,8 +79,7 @@ const History = () => {
   return (
     <div className="min-h-screen bg-background">
       <Helmet>
-        {/* Updated Title */}
-        <title>History – Helivault Cyphers</title>
+        <title>History – Quantum Relics</title>
       </Helmet>
       <Navigation />
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-20 pb-6">
@@ -114,12 +114,11 @@ const History = () => {
                         <td className="py-4 px-4">
                           <div className="flex items-center gap-3">
                             <div className={`w-8 h-8 rounded ${index % 2 === 0 ? "bg-gradient-to-br from-purple-400 to-blue-400" : "bg-gradient-to-br from-pink-400 to-purple-400"}`} />
-                            {/* Updated to show dynamic name */}
-                            <span className="font-medium">{nftName || 'Helivault Cypher'}</span>
+                            <span className="font-medium">{nftName}</span>
                           </div>
                         </td>
                         <td className="py-4 px-4 text-muted-foreground">#{id}</td>
-                        <td className="py-4 px-4 font-medium">{mintPrice} HLS</td>
+                        <td className="py-4 px-4 font-medium">{mintPrice} HLV</td>
                         <td className="py-4 px-4 text-right">
                           <span className="inline-flex items-center px-2 py-1 rounded-full text-xs bg-success/10 text-success border border-success/20">Minted</span>
                         </td>

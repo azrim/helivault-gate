@@ -1,3 +1,4 @@
+// src/components/Navigation.tsx
 import { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import {
@@ -6,6 +7,7 @@ import {
   ShoppingBag,
   Menu,
   X,
+  Droplets,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
@@ -18,6 +20,7 @@ const Navigation = () => {
   const navItems = [
     { icon: Home, label: "Home", path: "/" },
     { icon: Palette, label: "Mint", path: "/mint" },
+    { icon: Droplets, label: "Faucet", path: "/faucet" },
     { icon: ShoppingBag, label: "History", path: "/history" },
   ];
 
@@ -70,7 +73,7 @@ const Navigation = () => {
               size="icon"
               onClick={() => setMobileOpen(!mobileOpen)}
             >
-              {mobileOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-s5" />}
+              {mobileOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
             </Button>
           </div>
         </div>

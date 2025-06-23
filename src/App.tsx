@@ -8,6 +8,7 @@ import { heliosTestnet } from "./lib/chains"; // Import your custom chain
 import Home from "./pages/Home";
 import Mint from "./pages/Mint";
 import History from "./pages/History";
+import Faucet from "./pages/Faucet";
 import NotFound from "./pages/NotFound";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
@@ -42,6 +43,7 @@ const App = () => (
                 <Route path="/" element={<Home />} />
                 <Route path="/mint" element={<Mint />} />
                 <Route path="/history" element={<History />} />
+                <Route path="/faucet" element={<Faucet />} />
                 <Route path="*" element={<NotFound />} />
               </Routes>
             </BrowserRouter>
