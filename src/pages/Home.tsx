@@ -1,5 +1,4 @@
 // src/pages/Home.tsx
-import Navigation from "@/components/Navigation";
 import WalletStatus from "@/components/WalletStatus";
 import { Helmet } from "react-helmet-async";
 import PageWrapper from "@/components/PageWrapper";
@@ -10,7 +9,6 @@ const Home = () => {
       <Helmet>
         <title>Home – Helivault Gate</title>
       </Helmet>
-      <Navigation />
       <PageWrapper>
         <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-20 pb-6">
           <div className="text-center mb-8">

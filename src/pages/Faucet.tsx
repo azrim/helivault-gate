@@ -3,7 +3,6 @@ import { Helmet } from "react-helmet-async";
 import { useAccount, useReadContract, useWriteContract, useWaitForTransactionReceipt } from "wagmi";
 import { formatEther } from "viem";
 import { toast } from "sonner";
-import Navigation from "@/components/Navigation";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { HELIVAULT_TOKEN_CONTRACT } from "@/contracts/HelivaultToken";
@@ -99,7 +98,6 @@ const Faucet = () => {
       <Helmet>
         <title>HLV Faucet – Helivault Gate</title>
       </Helmet>
-      <Navigation />
       <PageWrapper>
         <main className="max-w-xl mx-auto px-4 sm:px-6 lg:px-8 pt-12 pb-12">
           <Card>

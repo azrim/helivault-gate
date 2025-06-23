@@ -5,7 +5,6 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Coins } from "lucide-react";
-import Navigation from "@/components/Navigation";
 import { useEffect, useState } from "react";
 import { Helmet } from "react-helmet-async";
 import { useAccount, useReadContract } from "wagmi";
@@ -82,7 +81,6 @@ const History = () => {
       <Helmet>
         <title>History – Quantum Relics</title>
       </Helmet>
-      <Navigation />
       <PageWrapper>
         <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-20 pb-6">
           <Card>

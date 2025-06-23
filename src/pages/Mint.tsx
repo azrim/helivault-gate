@@ -3,7 +3,6 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Copy, Check } from "lucide-react";
-import Navigation from "@/components/Navigation";
 import { useEffect, useState, useRef } from "react";
 import { Helmet } from "react-helmet-async";
 import { toast } from "sonner";
@@ -118,7 +117,6 @@ const Mint = () => {
       <Helmet>
         <title>Mint – Quantum Relics</title>
       </Helmet>
-      <Navigation />
       <PageWrapper>
         <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-12 pb-12">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-start">
