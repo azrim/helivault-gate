@@ -5,22 +5,19 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Coins } from "lucide-react";
-import { useEffect, useState } from "react";
 import { Helmet } from "react-helmet-async";
-import { useAccount, useReadContract } from "wagmi";
+import { useAccount, useReadContract, useReadContracts } from "wagmi";
 import { QUANTUM_RELICS_CONTRACT } from "@/contracts/QuantumRelics";
 import { formatEther } from "viem";
 import { ConnectButton } from "@rainbow-me/rainbowkit";
-import { heliosTestnet } from "@/lib/chains";
 import PageWrapper from "@/components/PageWrapper";
 
 const contractConfig = QUANTUM_RELICS_CONTRACT;
 
 const History = () => {
   const { address, isConnected } = useAccount();
-  const [tokenIds, setTokenIds] = useState<number[]>([]);
-  const [loading, setLoading] = useState(true);
 
+  // Step 1: Get the total number of NFTs the user owns
   const { data: balanceResult, isLoading: isBalanceLoading } = useReadContract({
     ...contractConfig,
     functionName: 'balanceOf',
@@ -28,11 +25,35 @@ const History = () => {
     query: { enabled: isConnected && !!address },
   });
 
+  const balance = typeof balanceResult === 'bigint' ? balanceResult : 0n;
+
+  // Step 2: Prepare a list of contract calls to get the ID of each NFT
+  // This runs only when 'balance' has a value > 0
+  const tokenContracts = [];
+  for (let i = 0n; i < balance; i++) {
+    tokenContracts.push({
+      ...contractConfig,
+      functionName: 'tokenOfOwnerByIndex',
+      args: [address!, i],
+    });
+  }
+
+  // Step 3: Fetch all token IDs at once using useReadContracts
+  const { data: tokenIdsResults, isLoading: areTokenIdsLoading } = useReadContracts({
+    contracts: tokenContracts,
+    query: { enabled: balance > 0 }, // Only run this query if the user has a balance
+  });
+  
+  // Process the results into a simple array of numbers
+  const tokenIds = tokenIdsResults
+    ?.map((result) => (typeof result.result === 'bigint' ? Number(result.result) : null))
+    .filter((id): id is number => id !== null) ?? [];
+
+  // Fetch other contract data
   const { data: mintPriceResult } = useReadContract({
     ...contractConfig,
     functionName: 'MINT_PRICE',
   });
-
   const { data: nftNameResult } = useReadContract({
     ...contractConfig,
     functionName: 'name'
@@ -40,41 +61,9 @@ const History = () => {
 
   const mintPrice = typeof mintPriceResult === 'bigint' ? formatEther(mintPriceResult) : "—";
   const nftName = typeof nftNameResult === 'string' ? nftNameResult : 'Quantum Relic';
-
-  useEffect(() => {
-    const fetchAllTokens = async () => {
-      // Ensure balanceResult is a bigint before using it
-      if (typeof balanceResult !== 'bigint' || balanceResult === 0n) {
-        setTokenIds([]);
-        setLoading(false);
-        return;
-      }
-      setLoading(true);
-      const { createPublicClient, http } = await import('viem');
-      const { heliosTestnet } = await import('@/lib/chains');
-      const client = createPublicClient({ chain: heliosTestnet, transport: http() });
-      const tokenPromises = [];
-      for (let i = 0n; i < balanceResult; i++) {
-        tokenPromises.push(client.readContract({
-          ...contractConfig,
-          functionName: 'tokenOfOwnerByIndex',
-          args: [address!, i],
-        }));
-      }
-      try {
-        const results = await Promise.all(tokenPromises);
-        const ids = results.map(tokenId => Number(tokenId));
-        setTokenIds(ids);
-      } catch (error) {
-        console.error("Error fetching token IDs:", error);
-        setTokenIds([]);
-      } finally {
-        setLoading(false);
-      }
-    };
-    if (isConnected) { fetchAllTokens(); }
-    else { setLoading(false); }
-  }, [balanceResult, isConnected, address]);
+  
+  // The overall loading state is a combination of the two hooks
+  const loading = isBalanceLoading || areTokenIdsLoading;
 
   return (
     <div className="min-h-screen bg-background">
@@ -104,8 +93,8 @@ const History = () => {
                   <tbody>
                     {!isConnected ? (
                       <tr><td colSpan={4} className="py-8 px-4 text-center text-muted-foreground"><div className="flex flex-col items-center gap-4">Please connect your wallet to view mint history.<ConnectButton /></div></td></tr>
-                    ) : loading || isBalanceLoading ? (
-                      <tr><td colSpan={4} className="py-8 px-4 text-center">Loading...</td></tr>
+                    ) : loading ? (
+                      <tr><td colSpan={4} className="py-8 px-4 text-center">Loading NFT history...</td></tr>
                     ) : tokenIds.length === 0 ? (
                       <tr><td colSpan={4} className="py-8 px-4 text-center">No NFTs found for this address.</td></tr>
                     ) : (
