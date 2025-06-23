@@ -1,110 +1,92 @@
-// src/components/Navigation.tsx
-import { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
-import {
-  Home,
-  Palette,
-  ShoppingBag,
-  Menu,
-  X,
-  Droplets,
-} from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { Home, Palette, Droplets, ShoppingBag, LucideIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { ConnectButton } from "@rainbow-me/rainbowkit";
 import { ThemeSwitcher } from "./ThemeSwitcher";
+import { ConnectButton } from "@rainbow-me/rainbowkit";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 
-const Navigation = () => {
+// Define the type for a navigation item for better type safety
+type NavItemProps = {
+  path: string;
+  label: string;
+  icon: LucideIcon;
+};
+
+// Centralized navigation items array
+const navItems: NavItemProps[] = [
+  { path: "/", label: "Home", icon: Home },
+  { path: "/mint", label: "Mint", icon: Palette },
+  { path: "/faucet", label: "Faucet", icon: Droplets },
+  { path: "/history", label: "History", icon: ShoppingBag },
+];
+
+/**
+ * Reusable NavLink component
+ */
+const NavLink = ({ path, icon: Icon, label }: NavItemProps) => {
   const location = useLocation();
-  const [mobileOpen, setMobileOpen] = useState(false);
-
-  const navItems = [
-    { icon: Home, label: "Home", path: "/" },
-    { icon: Palette, label: "Mint", path: "/mint" },
-    { icon: Droplets, label: "Faucet", path: "/faucet" },
-    { icon: ShoppingBag, label: "History", path: "/history" },
-  ];
+  const isActive = location.pathname === path;
 
   return (
-    <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-      <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex h-16 items-center justify-between">
-          
-          <Link to="/" className="flex items-center gap-3">
-            <img 
-              src="/helios-icon.png" 
-              alt="Helios Icon"
-              className="h-8 w-8 rounded-full" 
-            />
-            <span className="text-xl font-bold text-foreground">
-              Helivault <span className="text-primary">Gate</span>
+    <Tooltip>
+      <TooltipTrigger asChild>
+        <Link to={path}>
+          <div
+            className={cn(
+              "flex items-center justify-center gap-2 h-11 transition-all duration-300 ease-in-out",
+              isActive ? "bg-primary text-primary-foreground rounded-full px-4" : "w-11 text-muted-foreground hover:text-foreground"
+            )}
+          >
+            <Icon className="w-5 h-5 shrink-0" />
+            <span className={cn("font-medium", !isActive && "hidden")}>
+              {label}
             </span>
-          </Link>
+          </div>
+        </Link>
+      </TooltipTrigger>
+      {/* Show tooltip only when the item is inactive and label is hidden */}
+      {!isActive && (
+        <TooltipContent>
+          <p>{label}</p>
+        </TooltipContent>
+      )}
+    </Tooltip>
+  );
+};
 
-          <nav className="hidden md:flex items-center gap-1 bg-white/60 backdrop-blur-sm rounded-full p-1.5 border border-border/50">
-            {navItems.map(({ icon: Icon, label, path }) => {
-              const isActive = location.pathname === path;
-              return (
-                <Link key={path} to={path}>
-                  <Button
-                    variant={isActive ? "default" : "ghost"}
-                    size="sm"
-                    className={cn(
-                      "gap-2 rounded-full h-9 px-4 font-medium",
-                      isActive
-                        ? "bg-primary text-primary-foreground shadow-sm hover:bg-primary/90"
-                        : "hover:bg-white/80 text-muted-foreground"
-                    )}
-                  >
-                    <Icon className="w-4 h-4" />
-                    {label}
-                  </Button>
-                </Link>
-              );
-            })}
-          </nav>
+/**
+ * Main Navigation Component
+ */
+const Navigation = () => {
+  return (
+    <header className="fixed sticky bottom-0 left-0 z-50 w-full p-4 md:top-0 md:bottom-auto">
+      <div className="relative max-w-7xl mx-auto flex items-center justify-between">
+        {/* Logo - visible on desktop */}
+        <Link to="/" className="hidden md:flex items-center gap-3">
+          <img 
+            src="/helios-icon.png" 
+            alt="Helios Icon"
+            className="h-8 w-8 rounded-full" 
+          />
+          <span className="text-xl font-bold text-foreground">
+            Helivault <span className="text-primary">Gate</span>
+          </span>
+        </Link>
 
-          <div className="hidden md:flex items-center gap-3">
+        {/* Main Navigation Bar */}
+        <nav className="absolute left-1/2 -translate-x-1/2 flex items-center gap-2 bg-background/80 backdrop-blur-sm rounded-full p-2 border shadow-lg">
+          {navItems.map((item) => (
+            <NavLink key={item.path} {...item} />
+          ))}
+        </nav>
+
+        {/* Right Side Actions */}
+        <div className="absolute right-0 flex items-center gap-3">
+           <div className="hidden sm:block">
             <ConnectButton />
-            <ThemeSwitcher />
-          </div>
-
-          <div className="md:hidden">
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={() => setMobileOpen(!mobileOpen)}
-            >
-              {mobileOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
-            </Button>
-          </div>
+           </div>
+          <ThemeSwitcher />
         </div>
-
-        {mobileOpen && (
-          <div className="absolute right-4 top-16 z-50 w-72 bg-white border border-border rounded-xl p-4 space-y-4 shadow-xl md:hidden">
-            <div className="space-y-2">
-              {navItems.map(({ icon: Icon, label, path }) => (
-                <Link
-                  key={path}
-                  to={path}
-                  onClick={() => setMobileOpen(false)}
-                  className={cn(
-                    "flex items-center gap-2 px-3 py-2 rounded-lg font-medium",
-                    location.pathname === path
-                      ? "bg-primary text-white"
-                      : "text-muted-foreground hover:bg-accent"
-                  )}
-                >
-                  <Icon className="w-4 h-4" />
-                  {label}
-                </Link>
-              ))}
-            </div>
-            <div className="pt-2 border-t border-border">
-              <ConnectButton />
-            </div>
-          </div>
-        )}
       </div>
     </header>
   );
