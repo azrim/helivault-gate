@@ -12,6 +12,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { ConnectButton } from "@rainbow-me/rainbowkit";
+import { ThemeSwitcher } from "./ThemeSwitcher";
 
 const Navigation = () => {
   const location = useLocation();
@@ -65,6 +66,7 @@ const Navigation = () => {
 
           <div className="hidden md:flex items-center gap-3">
             <ConnectButton />
+            <ThemeSwitcher />
           </div>
 
           <div className="md:hidden">
