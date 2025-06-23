@@ -115,20 +115,20 @@ const Faucet = () => {
               </p>
             </div>
             
-            <div className="space-y-4">
-              <div className="flex justify-between">
+            <div className="p-6 space-y-4">
+              <div className="flex justify-between items-center">
                 <span className="text-muted-foreground">Claim Amount:</span>
                 <span className="font-bold">
                   {typeof faucetAmountResult === 'bigint' ? formatEther(faucetAmountResult) : '3.9'} HLV
                 </span>
               </div>
-              <div className="flex justify-between">
+              <div className="flex justify-between items-center text-sm text-muted-foreground">
                 <span className="text-muted-foreground">Cooldown:</span>
                 <span className="font-bold">12 Hours</span>
               </div>
             </div>
 
-            <div className="mt-8">
+            <div className="mt-8 p-6 space-y-4">
               {!isConnected ? (
                 <ConnectButton label="Connect Wallet to Claim" />
               ) : !isCorrectNetwork ? (
