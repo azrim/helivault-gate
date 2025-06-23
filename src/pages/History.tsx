@@ -91,14 +91,14 @@ const History = () => {
               <CardTitle className="text-xl font-semibold">Mint History</CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="overflow-x-auto">
+              <div className="overflow-x-auto p-6 space-y-4">
                 <table className="w-full">
                   <thead>
                     <tr className="bg-secondary/50">
-                      <th className="text-left py-4 px-4 rounded-l-lg font-medium text-sm text-muted-foreground">NFT</th>
-                      <th className="text-left py-4 px-4 font-medium text-sm text-muted-foreground">Token ID</th>
-                      <th className="text-left py-4 px-4 font-medium text-sm text-muted-foreground">Price</th>
-                      <th className="text-right py-4 px-4 rounded-r-lg font-medium text-sm text-muted-foreground">Status</th>
+                      <th className="text-center py-4 px-4 rounded-l-lg font-medium text-sm text-muted-foreground">NFT</th>
+                      <th className="text-center py-4 px-4 font-medium text-sm text-muted-foreground">Token ID</th>
+                      <th className="text-center py-4 px-4 font-medium text-sm text-muted-foreground">Price</th>
+                      <th className="text-center py-4 px-4 rounded-r-lg font-medium text-sm text-muted-foreground">Status</th>
                     </tr>
                   </thead>
                   <tbody>
