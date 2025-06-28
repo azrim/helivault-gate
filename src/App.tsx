@@ -3,7 +3,7 @@ import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { RainbowKitProvider, getDefaultConfig } from "@rainbow-me/rainbowkit";
 import { WagmiProvider } from "wagmi";
-import { heliosTestnet } from "./lib/chains";
+import { heliosTestnet, sepolia, bscTestnet, avalancheFuji } from "./lib/chains";
 import { AnimatePresence } from "framer-motion";
 
 import Navigation from "./components/Navigation";
@@ -13,7 +13,6 @@ import Bridge from "./pages/Bridge";
 import Deploy from "./pages/Deploy";
 import Faucet from "./pages/Faucet";
 import NotFound from "./pages/NotFound";
-import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { HelmetProvider } from "react-helmet-async";
@@ -24,12 +23,12 @@ import { NavigationProvider, useNavigationContext } from "./context/NavigationCo
 import '@rainbow-me/rainbowkit/styles.css';
 
 const queryClient = new QueryClient();
-const walletConnectProjectId = 'b4a5bd4206fe36062ef6a8f389565fd2';
+const walletConnectProjectId = 'b4a5bd4206fe3606166Ffd9aaD9c0b18';
 
 const config = getDefaultConfig({
   appName: 'Helivault',
   projectId: walletConnectProjectId,
-  chains: [heliosTestnet],
+  chains: [heliosTestnet, sepolia, bscTestnet, avalancheFuji],
   ssr: false,
 });
 
@@ -38,18 +37,16 @@ const AnimatedRoutes = () => {
   const { direction } = useNavigationContext();
 
   return (
-    <div style={{ position: 'relative', minHeight: 'calc(100vh - 4rem)' }}>
-      <AnimatePresence initial={false} custom={direction}>
-        <Routes location={location} key={location.pathname}>
-          <Route path="/" element={<PageWrapper><Home /></PageWrapper>} />
-          <Route path="/bridge" element={<PageWrapper><Bridge /></PageWrapper>} />
-          <Route path="/deploy" element={<PageWrapper><Deploy /></PageWrapper>} />
-          <Route path="/mint" element={<PageWrapper><Mint /></PageWrapper>} />
-          <Route path="/faucet" element={<PageWrapper><Faucet /></PageWrapper>} />
-          <Route path="*" element={<PageWrapper><NotFound /></PageWrapper>} />
-        </Routes>
-      </AnimatePresence>
-    </div>
+    <AnimatePresence initial={false} custom={direction}>
+      <Routes location={location} key={location.pathname}>
+        <Route path="/" element={<PageWrapper><Home /></PageWrapper>} />
+        <Route path="/bridge" element={<PageWrapper><Bridge /></PageWrapper>} />
+        <Route path="/deploy" element={<PageWrapper><Deploy /></PageWrapper>} />
+        <Route path="/mint" element={<PageWrapper><Mint /></PageWrapper>} />
+        <Route path="/faucet" element={<PageWrapper><Faucet /></PageWrapper>} />
+        <Route path="*" element={<PageWrapper><NotFound /></PageWrapper>} />
+      </Routes>
+    </AnimatePresence>
   );
 };
 
@@ -60,12 +57,18 @@ const App = () => (
         <RainbowKitProvider>
           <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
             <TooltipProvider>
-              <Toaster />
               <Sonner />
               <NavigationProvider>
                 <BrowserRouter>
-                  <Navigation />
-                  <AnimatedRoutes />
+                  {/* This layout makes the main content area scrollable */}
+                  <div className="flex h-screen flex-col">
+                    <Navigation />
+                    <main className="flex-1 overflow-y-auto">
+                      <div className="relative">
+                        <AnimatedRoutes />
+                      </div>
+                    </main>
+                  </div>
                 </BrowserRouter>
               </NavigationProvider>
             </TooltipProvider>
