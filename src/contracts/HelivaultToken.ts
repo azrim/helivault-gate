@@ -1,7 +1,7 @@
 // src/contracts/HelivaultToken.ts
 
 export const HELIVAULT_TOKEN_CONTRACT = {
-  address: "0xa33bFBE8ec7d62a29c571d162d90Fb04F8A6aA95",
+  address: "0x5b5bd7E84317C3D1666D75c1e6Ab306451B3412f",
   abi: [
     // Standard ERC20 ABI
     {
