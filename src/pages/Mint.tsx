@@ -16,10 +16,8 @@ import { ConnectButton } from "@rainbow-me/rainbowkit";
 
 const contractConfig = QUANTUM_RELICS_CONTRACT;
 
-// Child component to fetch and render each row of the history table.
-// This is the key to avoiding the TypeScript error.
 const HistoryRow = ({ ownerAddress, index, nftName, mintPrice }: { ownerAddress: `0x${string}`, index: bigint, nftName: string, mintPrice: string }) => {
-  const { data: tokenIdResult, isLoading } = useReadContract({
+  const { data: tokenIdResult, isLoading, isError, error, refetch } = useReadContract({
     address: contractConfig.address,
     abi: contractConfig.abi,
     functionName: 'tokenOfOwnerByIndex',
@@ -31,8 +29,22 @@ const HistoryRow = ({ ownerAddress, index, nftName, mintPrice }: { ownerAddress:
   if (isLoading) {
     return (
       <tr className="border-b border-border last:border-0">
-        <td colSpan={4} className="py-4 px-4 text-center">Loading token...</td>
+        <td colSpan={4} className="py-4 px-4 text-center">Memuat data token...</td>
       </tr>
+    );
+  }
+
+  if (isError) {
+    console.error(`Gagal mengambil token pada indeks ${index}:`, error);
+    return (
+        <tr className="border-b border-border last:border-0">
+            <td colSpan={4} className="py-4 px-4 text-center text-red-500">
+              <div className="flex flex-col items-center justify-center gap-2">
+                <span>Gagal memuat Token #{index.toString()}. Ini mungkin masalah sementara pada jaringan.</span>
+                <Button variant="outline" size="sm" onClick={() => refetch()}>Coba Lagi</Button>
+              </div>
+            </td>
+        </tr>
     );
   }
 

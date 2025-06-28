@@ -2,7 +2,7 @@
 
 export const QUANTUM_RELICS_CONTRACT = {
   // --- NEW DEPLOYED ADDRESS ---
-  address: "0xE37E48328aE502a75A72D36D8e13cfFB0Cffe7e3",
+  address: "0x7Ff13298e0c5Dd7CDaBa7606166Ffd9aaD9c0b18",
   abi: [
     {
       "inputs": [
