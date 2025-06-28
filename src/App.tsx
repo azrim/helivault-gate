@@ -1,3 +1,4 @@
+// src/App.tsx
 import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { RainbowKitProvider, getDefaultConfig } from "@rainbow-me/rainbowkit";
@@ -16,11 +17,12 @@ import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { HelmetProvider } from "react-helmet-async";
 import { ThemeProvider } from "./components/ThemeProvider";
+import PageWrapper from "./components/PageWrapper";
+import { NavigationProvider, useNavigationContext } from "./context/NavigationContext";
 
 import '@rainbow-me/rainbowkit/styles.css';
 
 const queryClient = new QueryClient();
-
 const walletConnectProjectId = 'b4a5bd4206fe36062ef6a8f389565fd2';
 
 const config = getDefaultConfig({
@@ -32,16 +34,20 @@ const config = getDefaultConfig({
 
 const AnimatedRoutes = () => {
   const location = useLocation();
+  const { direction } = useNavigationContext();
+
   return (
-    <AnimatePresence mode="wait">
-      <Routes location={location} key={location.pathname}>
-        <Route path="/" element={<Home />} />
-        <Route path="/mint" element={<Mint />} />
-        <Route path="/history" element={<History />} />
-        <Route path="/faucet" element={<Faucet />} />
-        <Route path="*" element={<NotFound />} />
-      </Routes>
-    </AnimatePresence>
+    <div style={{ position: 'relative', minHeight: 'calc(100vh - 4rem)' }}>
+      <AnimatePresence initial={false} custom={direction}>
+        <Routes location={location} key={location.pathname}>
+          <Route path="/" element={<PageWrapper><Home /></PageWrapper>} />
+          <Route path="/mint" element={<PageWrapper><Mint /></PageWrapper>} />
+          <Route path="/history" element={<PageWrapper><History /></PageWrapper>} />
+          <Route path="/faucet" element={<PageWrapper><Faucet /></PageWrapper>} />
+          <Route path="*" element={<PageWrapper><NotFound /></PageWrapper>} />
+        </Routes>
+      </AnimatePresence>
+    </div>
   );
 };
 
@@ -54,10 +60,12 @@ const App = () => (
             <TooltipProvider>
               <Toaster />
               <Sonner />
-              <BrowserRouter>
-                <Navigation />
-                <AnimatedRoutes />
-              </BrowserRouter>
+              <NavigationProvider>
+                <BrowserRouter>
+                  <Navigation />
+                  <AnimatedRoutes />
+                </BrowserRouter>
+              </NavigationProvider>
             </TooltipProvider>
           </ThemeProvider>
         </RainbowKitProvider>

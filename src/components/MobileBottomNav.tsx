@@ -3,6 +3,7 @@ import { Home, Sparkles, Droplets, History, LucideIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { motion } from "framer-motion";
 import { Tooltip, TooltipContent, TooltipTrigger, TooltipProvider } from "@/components/ui/tooltip";
+import { useNavigationContext } from "@/context/NavigationContext";
 
 // Define the type for our navigation items
 type NavItem = {
@@ -21,7 +22,18 @@ const navItems: NavItem[] = [
 
 const NavLink = ({ path, icon: Icon, label }: NavItem) => {
   const location = useLocation();
+  const { setDirection } = useNavigationContext();
   const isActive = location.pathname === path;
+
+  const handleClick = () => {
+    const currentIndex = navItems.findIndex(item => item.path === location.pathname);
+    const newIndex = navItems.findIndex(item => item.path === path);
+    if (newIndex > currentIndex) {
+      setDirection('left');
+    } else {
+      setDirection('right');
+    }
+  };
 
   return (
     <TooltipProvider delayDuration={100}>
@@ -29,12 +41,12 @@ const NavLink = ({ path, icon: Icon, label }: NavItem) => {
         <TooltipTrigger asChild>
           <Link
             to={path}
+            onClick={handleClick}
             className={cn(
               "relative flex items-center h-12 rounded-full transition-all duration-300 ease-out",
               isActive ? "text-primary-foreground gap-2 pr-4 pl-3" : "w-12 justify-center text-muted-foreground hover:bg-white/10"
             )}
           >
-            {/* This is the blue pill that slides behind the active item */}
             {isActive && (
               <motion.div
                 layoutId="active-mobile-pill"
@@ -42,25 +54,16 @@ const NavLink = ({ path, icon: Icon, label }: NavItem) => {
                 transition={{ type: "spring", stiffness: 350, damping: 30 }}
               />
             )}
-
-            {/* Icon is always visible and on a higher layer */}
             <div className="relative z-10">
               <Icon className="h-6 w-6" />
             </div>
-
-            {/* Label is rendered only when active */}
             {isActive && (
-              <span className="relative z-10 text-sm font-medium">
-                {label}
-              </span>
+              <span className="relative z-10 text-sm font-medium">{label}</span>
             )}
           </Link>
         </TooltipTrigger>
-        {/* Tooltip appears on hover for inactive items */}
         {!isActive && (
-          <TooltipContent side="top">
-            <p>{label}</p>
-          </TooltipContent>
+          <TooltipContent side="top"><p>{label}</p></TooltipContent>
         )}
       </Tooltip>
     </TooltipProvider>

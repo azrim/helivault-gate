@@ -1,36 +1,42 @@
 // src/components/PageWrapper.tsx
-import { motion } from "framer-motion";
+import { motion, Variants } from "framer-motion";
 import React from "react";
+import { useNavigationContext } from "@/context/NavigationContext";
 
-const pageVariants = {
-  initial: {
-    opacity: 0,
-    y: 20,
-  },
+const pageVariants: Variants = {
+  initial: (direction: "left" | "right") => ({
+    x: direction === 'left' ? "100%" : "-100%",
+    position: 'absolute' as const,
+    width: '100%',
+  }),
   in: {
-    opacity: 1,
-    y: 0,
+    x: 0,
   },
-  out: {
-    opacity: 0,
-    y: -20,
-  },
+  out: (direction: "left" | "right") => ({
+    x: direction === 'left' ? "-100%" : "100%",
+    position: 'absolute' as const,
+    width: '100%',
+  }),
 };
 
 const pageTransition = {
   type: "tween",
-  ease: "anticipate",
+  ease: "easeInOut",
   duration: 0.4,
 };
 
 const PageWrapper = ({ children }: { children: React.ReactNode }) => {
+  const { direction } = useNavigationContext();
+
   return (
     <motion.div
+      custom={direction}
       initial="initial"
       animate="in"
       exit="out"
       variants={pageVariants}
       transition={pageTransition}
+      style={{ willChange: 'transform' }}
     >
       {children}
     </motion.div>

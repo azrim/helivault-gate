@@ -13,7 +13,6 @@ import { HELIVAULT_TOKEN_CONTRACT } from "@/contracts/HelivaultToken";
 import { heliosTestnet } from "@/lib/chains";
 import { formatEther, parseEther } from "viem";
 import { ConnectButton } from "@rainbow-me/rainbowkit";
-import PageWrapper from "@/components/PageWrapper";
 
 const Mint = () => {
   const queryClient = useQueryClient();
@@ -117,7 +116,6 @@ const Mint = () => {
       <Helmet>
         <title>Mint – Quantum Relics</title>
       </Helmet>
-      <PageWrapper>
         <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-12 pb-12">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-start">
 
@@ -199,7 +197,6 @@ const Mint = () => {
             </div>
           </div>
         </main>
-      </PageWrapper>
     </div>
   );
 };

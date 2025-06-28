@@ -7,12 +7,14 @@ import { Menu } from "lucide-react";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { MobileBottomNav } from "./MobileBottomNav";
 import { motion } from "framer-motion";
+import { useNavigationContext } from "@/context/NavigationContext";
 
 // --- Desktop Navigation Link ---
 type DesktopNavItemProps = {
   path: string;
   label: string;
 };
+
 const desktopNavItems: DesktopNavItemProps[] = [
   { path: "/", label: "Home" },
   { path: "/mint", label: "Mint" },
@@ -22,31 +24,38 @@ const desktopNavItems: DesktopNavItemProps[] = [
 
 const DesktopNavLink = ({ path, label }: DesktopNavItemProps) => {
   const location = useLocation();
+  const { setDirection } = useNavigationContext();
   const isActive = location.pathname === path;
+
+  const handleClick = () => {
+    const currentIndex = desktopNavItems.findIndex(item => item.path === location.pathname);
+    const newIndex = desktopNavItems.findIndex(item => item.path === path);
+    if (newIndex > currentIndex) {
+      setDirection('left');
+    } else {
+      setDirection('right');
+    }
+  };
+
   return (
     <Link
       to={path}
-      // Added more vertical padding (py-3) to create space
+      onClick={handleClick}
       className={cn(
         "relative px-3 py-3 text-sm font-medium transition-colors",
-        isActive
-          ? "text-foreground"
-          : "text-muted-foreground hover:text-foreground/80"
+        isActive ? "text-foreground" : "text-muted-foreground hover:text-foreground/80"
       )}
     >
       {label}
-
-      {/* The animated indicator, now using framer-motion */}
       {isActive && (
         <motion.div
           className="absolute bottom-1.5 left-0 right-0 mx-auto h-0.5 w-3/5 rounded-full bg-gradient-to-r from-purple-500 to-blue-400"
-          layoutId="desktop-nav-indicator" // Unique ID for the desktop animation
+          layoutId="desktop-nav-indicator"
         />
       )}
     </Link>
   );
 };
-
 
 // --- Mobile Top Header ---
 const MobileTopHeader = () => {
