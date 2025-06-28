@@ -3,23 +3,23 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Copy, Check, Coins } from "lucide-react";
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState } from "react";
 import { Helmet } from "react-helmet-async";
 import { toast } from "sonner";
-import { useAccount, useReadContract, useWriteContract, useWaitForTransactionReceipt } from "wagmi";
+import { useAccount, useReadContract, useWriteContract, useWaitForTransactionReceipt, useConfig } from "wagmi";
+import { waitForTransactionReceipt } from "wagmi/actions";
 import { useQueryClient } from "@tanstack/react-query";
 import { QUANTUM_RELICS_CONTRACT } from "@/contracts/QuantumRelics";
 import { HELIVAULT_TOKEN_CONTRACT } from "@/contracts/HelivaultToken";
 import { heliosTestnet } from "@/lib/chains";
-import { formatEther } from "viem";
+import { formatEther, TransactionExecutionError, type WaitForTransactionReceiptReturnType } from "viem";
 import { ConnectButton } from "@rainbow-me/rainbowkit";
 
 const contractConfig = QUANTUM_RELICS_CONTRACT;
 
 const HistoryRow = ({ ownerAddress, index, nftName, mintPrice }: { ownerAddress: `0x${string}`, index: bigint, nftName: string, mintPrice: string }) => {
   const { data: tokenIdResult, isLoading, isError, error, refetch } = useReadContract({
-    address: contractConfig.address,
-    abi: contractConfig.abi,
+    ...contractConfig,
     functionName: 'tokenOfOwnerByIndex',
     args: [ownerAddress, index],
   });
@@ -29,19 +29,19 @@ const HistoryRow = ({ ownerAddress, index, nftName, mintPrice }: { ownerAddress:
   if (isLoading) {
     return (
       <tr className="border-b border-border last:border-0">
-        <td colSpan={4} className="py-4 px-4 text-center">Memuat data token...</td>
+        <td colSpan={4} className="py-4 px-4 text-center">Loading token data...</td>
       </tr>
     );
   }
 
   if (isError) {
-    console.error(`Gagal mengambil token pada indeks ${index}:`, error);
+    console.error(`Error fetching token at index ${index}:`, error);
     return (
         <tr className="border-b border-border last:border-0">
             <td colSpan={4} className="py-4 px-4 text-center text-red-500">
               <div className="flex flex-col items-center justify-center gap-2">
-                <span>Gagal memuat Token #{index.toString()}. Ini mungkin masalah sementara pada jaringan.</span>
-                <Button variant="outline" size="sm" onClick={() => refetch()}>Coba Lagi</Button>
+                <span>Failed to load Token #{index.toString()}.</span>
+                <Button variant="outline" size="sm" onClick={() => refetch()}>Try Again</Button>
               </div>
             </td>
         </tr>
@@ -69,113 +69,125 @@ const HistoryRow = ({ ownerAddress, index, nftName, mintPrice }: { ownerAddress:
 
 const Mint = () => {
   const queryClient = useQueryClient();
-  const { address, isConnected, chain } = useAccount();
-  const { data: hash, isPending: isMinting, writeContractAsync } = useWriteContract();
-
+  const wagmiConfig = useConfig();
+  const { address, chain } = useAccount();
+  const { writeContractAsync } = useWriteContract();
+  
   const [quantity, setQuantity] = useState(1);
   const [copied, setCopied] = useState(false);
-  const toastShownRef = useRef(false);
+  const [mintingStep, setMintingStep] = useState<'idle' | 'approving' | 'minting'>('idle');
+  const [txHash, setTxHash] = useState<`0x${string}` | undefined>();
+  const [activeToastId, setActiveToastId] = useState<string | number | undefined>();
 
   const nftContract = QUANTUM_RELICS_CONTRACT;
   const tokenContract = HELIVAULT_TOKEN_CONTRACT;
+  const isConnected = !!address;
 
-  // --- Data Fetching for Mint Component ---
-  const { data: totalSupply } = useReadContract({ address: nftContract.address, abi: nftContract.abi, functionName: 'currentSupply' });
-  const { data: maxSupply } = useReadContract({ address: nftContract.address, abi: nftContract.abi, functionName: 'MAX_SUPPLY' });
-  const { data: mintPriceResult } = useReadContract({ address: nftContract.address, abi: nftContract.abi, functionName: 'MINT_PRICE' });
-
-  const { data: allowance } = useReadContract({
-    address: tokenContract.address,
-    abi: tokenContract.abi,
+  // --- Data Fetching ---
+  const { data: totalSupply, refetch: refetchTotalSupply } = useReadContract({ ...nftContract, functionName: 'currentSupply' });
+  const { data: maxSupply } = useReadContract({ ...nftContract, functionName: 'MAX_SUPPLY' });
+  const { data: mintPriceResult } = useReadContract({ ...nftContract, functionName: 'MINT_PRICE' });
+  const { data: userBalanceResult, isLoading: isBalanceLoading, refetch: refetchUserBalance } = useReadContract({ ...nftContract, functionName: 'balanceOf', args: [address!], query: { enabled: isConnected } });
+  const { data: nftNameResult } = useReadContract({ ...nftContract, functionName: 'name' });
+  const { data: allowance, refetch: refetchAllowance } = useReadContract({
+    ...tokenContract,
     functionName: 'allowance',
     args: [address!, nftContract.address],
-    query: { enabled: isConnected && !!address, refetchInterval: 5000 },
-  });
-  
-  // --- Data Fetching for History Component ---
-  const { data: userBalanceResult, isLoading: isBalanceLoading } = useReadContract({
-    address: nftContract.address,
-    abi: nftContract.abi,
-    functionName: 'balanceOf',
-    args: [address!],
-    query: { enabled: isConnected && !!address },
+    query: { enabled: isConnected },
   });
 
-  const { data: nftNameResult } = useReadContract({
-    address: nftContract.address,
-    abi: nftContract.abi,
-    functionName: 'name'
-  });
+  const { isSuccess: isConfirmed, data: receipt } = useWaitForTransactionReceipt({ hash: txHash });
 
-  const { isLoading: isConfirming, isSuccess: isConfirmed } = useWaitForTransactionReceipt({ hash });
-
-  const userBalance = typeof userBalanceResult === 'bigint' ? userBalanceResult : 0n;
-  const tokenIndices = Array.from({ length: Number(userBalance) }, (_, i) => BigInt(i));
-
+  // --- Main Minting Logic ---
   const handleMint = async () => {
-    toastShownRef.current = false;
-    if (typeof mintPriceResult === 'undefined' || quantity <= 0) {
-      toast.error("Invalid quantity or price not loaded.");
-      return;
-    }
+    if (!address || !chain || typeof mintPriceResult === 'undefined' || quantity <= 0) return;
     const totalCost = mintPriceResult * BigInt(quantity);
+    
+    const toastId = toast.loading("Initializing transaction...");
+    setActiveToastId(toastId);
 
     try {
       if (typeof allowance === 'undefined' || allowance < totalCost) {
-        toast.info("Approving HLV token spend...");
-        await writeContractAsync({
-          address: tokenContract.address,
-          abi: tokenContract.abi,
+        setMintingStep('approving');
+        toast.loading("Approval required, please confirm in wallet.", { id: toastId });
+        
+        const approvalHash = await writeContractAsync({
+          ...tokenContract,
           functionName: 'approve',
           args: [nftContract.address, totalCost],
           account: address,
-          chain: heliosTestnet,
+          chain: chain,
         });
-        toast.success("Approval successful! Please click Mint Now again.");
-        queryClient.invalidateQueries({ queryKey: [['allowance']] });
-        return;
+        
+        toast.loading("Processing approval...", { id: toastId, description: "Waiting for confirmation." });
+        const approvalReceipt = await waitForTransactionReceipt(wagmiConfig, { hash: approvalHash });
+
+        if (approvalReceipt.status === 'reverted') {
+          throw new Error('Approval transaction was reverted.');
+        }
+        
+        toast.success("Approval successful!", { id: toastId, duration: 2000 });
+        await refetchAllowance();
       }
 
-      toast.info("Sending mint transaction...");
-      await writeContractAsync({
-        address: nftContract.address,
-        abi: nftContract.abi,
+      setMintingStep('minting');
+      toast.loading("Minting your NFT...", { id: toastId, description: "Please confirm in your wallet." });
+      
+      const mintTxHash = await writeContractAsync({
+        ...nftContract,
         functionName: 'mint',
         args: [BigInt(quantity)],
         account: address,
-        chain: heliosTestnet,
+        chain: chain
       });
-    } catch (error: any) {
-      toast.error("Transaction failed", {
-        description: error.shortMessage || "The transaction was cancelled or failed.",
-        duration: 5000,
-      });
+      setTxHash(mintTxHash);
+
+    } catch (error: unknown) {
+      console.error("Minting process failed:", error);
+      const errorMessage = error instanceof TransactionExecutionError ? error.shortMessage : "The transaction was cancelled or failed.";
+      toast.error("Transaction Failed", { id: toastId, description: errorMessage });
+      setMintingStep('idle');
+      setActiveToastId(undefined);
     }
   };
 
   useEffect(() => {
-    if (isConfirmed && !toastShownRef.current) {
-      toast.success(`🎉 ${quantity} Quantum Relic(s) Minted Successfully!`, {
-        description: (
-          <a href={`${heliosTestnet.blockExplorers.default.url}/tx/${hash}`} target="_blank" rel="noopener noreferrer" className="underline">View on Explorer ↗</a>
-        ),
-        duration: 8000,
-      });
-      queryClient.invalidateQueries();
-      toastShownRef.current = true;
+    if (isConfirmed && receipt && activeToastId) {
+      if (mintingStep === 'minting') {
+          toast.success(`🎉 ${quantity} Quantum Relic(s) Minted Successfully!`, {
+            id: activeToastId,
+            description: <a href={`${heliosTestnet.blockExplorers.default.url}/tx/${txHash}`} target="_blank" rel="noopener noreferrer" className="underline">View on Explorer ↗</a>,
+            duration: 8000,
+          });
+          refetchTotalSupply();
+          refetchUserBalance();
+      }
+      setMintingStep('idle');
+      setTxHash(undefined);
+      setActiveToastId(undefined);
     }
-  }, [isConfirmed, hash, queryClient, quantity]);
+  }, [isConfirmed, receipt, txHash, activeToastId, quantity, mintingStep, refetchTotalSupply, refetchUserBalance]);
 
-  useEffect(() => { if (hash) { toastShownRef.current = false; } }, [hash]);
-
+  // --- UI State Calculation ---
   const currentSupplyNum = typeof totalSupply === 'bigint' ? Number(totalSupply) : 0;
   const maxSupplyNum = typeof maxSupply === 'bigint' ? Number(maxSupply) : 3999;
   const mintPriceHLV = typeof mintPriceResult === 'bigint' ? formatEther(mintPriceResult) : "0.39";
-  const userBalanceNum = typeof userBalance === 'bigint' ? Number(userBalance) : 0;
   const nftName = typeof nftNameResult === 'string' ? nftNameResult : 'Quantum Relic';
+  const userBalance = typeof userBalanceResult === 'bigint' ? userBalanceResult : 0n;
+  const tokenIndices = Array.from({ length: Number(userBalance) }, (_, i) => BigInt(i));
+
   const isSoldOut = currentSupplyNum >= maxSupplyNum;
   const isCorrectNetwork = chain?.id === heliosTestnet.id;
-  const isLoading = isMinting || isConfirming;
+  const isLoading = mintingStep !== 'idle';
+
+  const getButtonText = () => {
+    if (mintingStep === 'approving') return "Approving...";
+    if (mintingStep === 'minting') return "Minting...";
+    if (isLoading) return "Confirming...";
+    if (isSoldOut) return "Sold Out";
+    if (!isCorrectNetwork) return "Wrong Network";
+    return "Mint Now";
+  }
 
   const copyToClipboard = (text: string) => {
     if (!text) return;
@@ -188,55 +200,30 @@ const Mint = () => {
 
   return (
     <div className="min-h-screen bg-background">
-      <Helmet>
-        <title>Mint & History – Quantum Relics</title>
-      </Helmet>
+      <Helmet><title>Mint & History – Quantum Relics</title></Helmet>
         <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-12 pb-12">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-start">
-
-            <div className="w-full aspect-square lg:sticky lg:top-28">
-              <img
-                src={nftImageUrl}
-                alt="Quantum Relic"
-                className="object-cover w-full h-full rounded-xl shadow-lg top-0 transition-transform transform hover:scale-105 hover:shadow-xl"
-              />
-            </div>
-
+            <div className="w-full aspect-square lg:sticky lg:top-28"><img src={nftImageUrl} alt="Quantum Relic" className="object-cover w-full h-full rounded-xl shadow-lg top-0 transition-transform transform hover:scale-105 hover:shadow-xl" /></div>
             <div className="w-full flex flex-col gap-8">
               <div>
                 <h1 className="text-4xl font-bold mb-2">Quantum Relics</h1>
-                <p className="text-muted-foreground">
-                  Part of the Helivault NFT Collection
-                </p>
+                <p className="text-muted-foreground">Part of the Helivault NFT Collection</p>
               </div>
-
               <Card className="border-primary/50 border-2 bg-card">
                 <CardContent className="p-6 flex flex-col gap-4">
-                  <p className="text-4xl font-bold">
-                    {mintPriceHLV} HLV
-                  </p>
-
+                  <p className="text-4xl font-bold">{mintPriceHLV} HLV</p>
                   {isConnected && (
                     <div className="text-sm text-muted-foreground">
                       <span>{currentSupplyNum.toLocaleString()} / {maxSupplyNum.toLocaleString()} minted</span>
                       <span className="mx-2">•</span>
-                      <span>{userBalanceNum} minted by you</span>
+                      <span>{Number(userBalance)} minted by you</span>
                     </div>
                   )}
-
                   <div className="flex gap-4 items-center pt-2">
-                    <Input
-                      type="number"
-                      value={quantity}
-                      onChange={(e) => setQuantity(Math.max(1, parseInt(e.target.value) || 1))}
-                      className="w-24 h-12 text-center text-lg"
-                      disabled={isLoading}
-                    />
+                    <Input type="number" value={quantity} onChange={(e) => setQuantity(Math.max(1, parseInt(e.target.value) || 1))} className="w-24 h-12 text-center text-lg" disabled={isLoading} />
                     <div className="flex-1 w-full">
                       {isConnected ? (
-                        <Button onClick={handleMint} disabled={isLoading || isSoldOut || !isCorrectNetwork} className="w-full h-12 text-lg">
-                          {isLoading ? "Processing..." : isSoldOut ? "Sold Out" : !isCorrectNetwork ? "Wrong Network" : `Mint Now`}
-                        </Button>
+                        <Button onClick={handleMint} disabled={isLoading || isSoldOut || !isCorrectNetwork} className="w-full h-12 text-lg">{getButtonText()}</Button>
                       ) : (
                         <div className="flex justify-center h-12"><ConnectButton label="Connect Wallet to Mint" /></div>
                       )}
@@ -244,11 +231,8 @@ const Mint = () => {
                   </div>
                 </CardContent>
               </Card>
-
               <Card>
-                <CardHeader>
-                  <CardTitle>NFT Details</CardTitle>
-                </CardHeader>
+                <CardHeader><CardTitle>NFT Details</CardTitle></CardHeader>
                 <CardContent className="p-6 space-y-4">
                   <div className="flex justify-between items-center">
                     <span className="text-muted-foreground">Contract Address</span>
@@ -259,27 +243,16 @@ const Mint = () => {
                       </Button>
                     </a>
                   </div>
-                  <div className="flex justify-between items-center">
-                    <span className="text-muted-foreground">Token Standard</span>
-                    <span className="font-mono">ERC-721</span>
-                  </div>
-                  <div className="flex justify-between items-center">
-                    <span className="text-muted-foreground">Chain</span>
-                    <span className="font-mono text-right">{chain?.name || 'Unknown'}</span>
-                  </div>
+                  <div className="flex justify-between items-center"><span className="text-muted-foreground">Token Standard</span><span className="font-mono">ERC-721</span></div>
+                  <div className="flex justify-between items-center"><span className="text-muted-foreground">Chain</span><span className="font-mono text-right">{chain?.name || 'Unknown'}</span></div>
                 </CardContent>
               </Card>
-              
             </div>
           </div>
-          
-          {/* --- History Section Integrated Below --- */}
           <div className="mt-12">
             <Card>
               <CardHeader className="flex flex-row items-center space-y-0 pb-6">
-                <div className="w-10 h-10 bg-primary/10 rounded-lg flex items-center justify-center mr-4">
-                  <Coins className="w-5 h-5 text-primary" />
-                </div>
+                <div className="w-10 h-10 bg-primary/10 rounded-lg flex items-center justify-center mr-4"><Coins className="w-5 h-5 text-primary" /></div>
                 <CardTitle className="text-xl font-semibold">Mint History</CardTitle>
               </CardHeader>
               <CardContent>
@@ -302,13 +275,7 @@ const Mint = () => {
                         <tr><td colSpan={4} className="py-8 px-4 text-center">No NFTs found for this address.</td></tr>
                       ) : (
                         tokenIndices.map((index) => (
-                          <HistoryRow 
-                            key={index.toString()} 
-                            ownerAddress={address!} 
-                            index={index}
-                            nftName={nftName}
-                            mintPrice={mintPriceHLV}
-                          />
+                          <HistoryRow key={index.toString()} ownerAddress={address!} index={index} nftName={nftName} mintPrice={mintPriceHLV} />
                         ))
                       )}
                     </tbody>
@@ -317,7 +284,6 @@ const Mint = () => {
               </CardContent>
             </Card>
           </div>
-
         </main>
     </div>
   );
