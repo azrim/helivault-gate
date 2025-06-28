@@ -1,5 +1,5 @@
 import { Link, useLocation } from "react-router-dom";
-import { Home, Sparkles, Droplets, History, LucideIcon } from "lucide-react";
+import { Home, Sparkles, Droplets, ArrowLeftRight, Rocket, LucideIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { motion } from "framer-motion";
 import { Tooltip, TooltipContent, TooltipTrigger, TooltipProvider } from "@/components/ui/tooltip";
@@ -15,9 +15,10 @@ type NavItem = {
 // Define the navigation items with the new icons
 const navItems: NavItem[] = [
   { path: "/", label: "Home", icon: Home },
+  { path: "/bridge", label: "Bridge", icon: ArrowLeftRight },
+  { path: "/deploy", label: "Deploy", icon: Rocket },
   { path: "/mint", label: "Mint", icon: Sparkles },
   { path: "/faucet", label: "Faucet", icon: Droplets },
-  { path: "/history", label: "History", icon: History },
 ];
 
 const NavLink = ({ path, icon: Icon, label }: NavItem) => {

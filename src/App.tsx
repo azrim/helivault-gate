@@ -9,7 +9,8 @@ import { AnimatePresence } from "framer-motion";
 import Navigation from "./components/Navigation";
 import Home from "./pages/Home";
 import Mint from "./pages/Mint";
-import History from "./pages/History";
+import Bridge from "./pages/Bridge";
+import Deploy from "./pages/Deploy";
 import Faucet from "./pages/Faucet";
 import NotFound from "./pages/NotFound";
 import { Toaster } from "@/components/ui/toaster";
@@ -41,8 +42,9 @@ const AnimatedRoutes = () => {
       <AnimatePresence initial={false} custom={direction}>
         <Routes location={location} key={location.pathname}>
           <Route path="/" element={<PageWrapper><Home /></PageWrapper>} />
+          <Route path="/bridge" element={<PageWrapper><Bridge /></PageWrapper>} />
+          <Route path="/deploy" element={<PageWrapper><Deploy /></PageWrapper>} />
           <Route path="/mint" element={<PageWrapper><Mint /></PageWrapper>} />
-          <Route path="/history" element={<PageWrapper><History /></PageWrapper>} />
           <Route path="/faucet" element={<PageWrapper><Faucet /></PageWrapper>} />
           <Route path="*" element={<PageWrapper><NotFound /></PageWrapper>} />
         </Routes>

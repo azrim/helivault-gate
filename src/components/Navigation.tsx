@@ -2,8 +2,6 @@ import { Link, useLocation } from "react-router-dom";
 import { cn } from "@/lib/utils";
 import { ThemeSwitcher } from "./ThemeSwitcher";
 import { CustomConnectButton } from "./CustomConnectButton";
-import { Button } from "./ui/button";
-import { Menu } from "lucide-react";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { MobileBottomNav } from "./MobileBottomNav";
 import { motion } from "framer-motion";
@@ -17,9 +15,10 @@ type DesktopNavItemProps = {
 
 const desktopNavItems: DesktopNavItemProps[] = [
   { path: "/", label: "Home" },
+  { path: "/bridge", label: "Bridge" },
+  { path: "/deploy", label: "Deploy" },
   { path: "/mint", label: "Mint" },
   { path: "/faucet", label: "Faucet" },
-  { path: "/history", label: "History" },
 ];
 
 const DesktopNavLink = ({ path, label }: DesktopNavItemProps) => {

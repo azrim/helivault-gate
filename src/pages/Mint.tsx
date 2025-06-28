@@ -2,7 +2,7 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { Copy, Check } from "lucide-react";
+import { Copy, Check, Coins } from "lucide-react";
 import { useEffect, useState, useRef } from "react";
 import { Helmet } from "react-helmet-async";
 import { toast } from "sonner";
@@ -11,8 +11,49 @@ import { useQueryClient } from "@tanstack/react-query";
 import { QUANTUM_RELICS_CONTRACT } from "@/contracts/QuantumRelics";
 import { HELIVAULT_TOKEN_CONTRACT } from "@/contracts/HelivaultToken";
 import { heliosTestnet } from "@/lib/chains";
-import { formatEther, parseEther } from "viem";
+import { formatEther } from "viem";
 import { ConnectButton } from "@rainbow-me/rainbowkit";
+
+const contractConfig = QUANTUM_RELICS_CONTRACT;
+
+// Child component to fetch and render each row of the history table.
+// This is the key to avoiding the TypeScript error.
+const HistoryRow = ({ ownerAddress, index, nftName, mintPrice }: { ownerAddress: `0x${string}`, index: bigint, nftName: string, mintPrice: string }) => {
+  const { data: tokenIdResult, isLoading } = useReadContract({
+    address: contractConfig.address,
+    abi: contractConfig.abi,
+    functionName: 'tokenOfOwnerByIndex',
+    args: [ownerAddress, index],
+  });
+
+  const tokenId = typeof tokenIdResult === 'bigint' ? Number(tokenIdResult) : null;
+
+  if (isLoading) {
+    return (
+      <tr className="border-b border-border last:border-0">
+        <td colSpan={4} className="py-4 px-4 text-center">Loading token...</td>
+      </tr>
+    );
+  }
+
+  if (tokenId === null) return null;
+
+  return (
+    <tr className="border-b border-border last:border-0">
+      <td className="py-4 px-4">
+        <div className="flex items-center gap-3">
+          <div className={`w-8 h-8 rounded ${Number(index) % 2 === 0 ? "bg-gradient-to-br from-purple-400 to-blue-400" : "bg-gradient-to-br from-pink-400 to-purple-400"}`} />
+          <span className="font-medium">{nftName}</span>
+        </div>
+      </td>
+      <td className="py-4 px-4 text-center text-muted-foreground">#{tokenId}</td>
+      <td className="py-4 px-4 text-center font-medium">{mintPrice} HLV</td>
+      <td className="py-4 px-4 text-right">
+        <span className="inline-flex items-center px-2 py-1 rounded-full text-xs bg-success/10 text-success border border-success/20">Minted</span>
+      </td>
+    </tr>
+  );
+}
 
 const Mint = () => {
   const queryClient = useQueryClient();
@@ -26,46 +67,67 @@ const Mint = () => {
   const nftContract = QUANTUM_RELICS_CONTRACT;
   const tokenContract = HELIVAULT_TOKEN_CONTRACT;
 
-  const { data: totalSupply } = useReadContract({ ...nftContract, functionName: 'currentSupply' });
-  const { data: maxSupply } = useReadContract({ ...nftContract, functionName: 'MAX_SUPPLY' });
-  const { data: mintPrice } = useReadContract({ ...nftContract, functionName: 'MINT_PRICE' });
-  const { data: userBalance } = useReadContract({ ...nftContract, functionName: 'balanceOf', args: [address!], query: { enabled: isConnected && !!address } });
+  // --- Data Fetching for Mint Component ---
+  const { data: totalSupply } = useReadContract({ address: nftContract.address, abi: nftContract.abi, functionName: 'currentSupply' });
+  const { data: maxSupply } = useReadContract({ address: nftContract.address, abi: nftContract.abi, functionName: 'MAX_SUPPLY' });
+  const { data: mintPriceResult } = useReadContract({ address: nftContract.address, abi: nftContract.abi, functionName: 'MINT_PRICE' });
 
   const { data: allowance } = useReadContract({
-    ...tokenContract,
+    address: tokenContract.address,
+    abi: tokenContract.abi,
     functionName: 'allowance',
     args: [address!, nftContract.address],
     query: { enabled: isConnected && !!address, refetchInterval: 5000 },
   });
+  
+  // --- Data Fetching for History Component ---
+  const { data: userBalanceResult, isLoading: isBalanceLoading } = useReadContract({
+    address: nftContract.address,
+    abi: nftContract.abi,
+    functionName: 'balanceOf',
+    args: [address!],
+    query: { enabled: isConnected && !!address },
+  });
+
+  const { data: nftNameResult } = useReadContract({
+    address: nftContract.address,
+    abi: nftContract.abi,
+    functionName: 'name'
+  });
 
   const { isLoading: isConfirming, isSuccess: isConfirmed } = useWaitForTransactionReceipt({ hash });
 
+  const userBalance = typeof userBalanceResult === 'bigint' ? userBalanceResult : 0n;
+  const tokenIndices = Array.from({ length: Number(userBalance) }, (_, i) => BigInt(i));
+
   const handleMint = async () => {
     toastShownRef.current = false;
-    if (typeof mintPrice === 'undefined' || quantity <= 0) {
+    if (typeof mintPriceResult === 'undefined' || quantity <= 0) {
       toast.error("Invalid quantity or price not loaded.");
       return;
     }
-    const totalCost = mintPrice * BigInt(quantity);
+    const totalCost = mintPriceResult * BigInt(quantity);
 
     try {
       if (typeof allowance === 'undefined' || allowance < totalCost) {
         toast.info("Approving HLV token spend...");
         await writeContractAsync({
-          ...tokenContract,
+          address: tokenContract.address,
+          abi: tokenContract.abi,
           functionName: 'approve',
           args: [nftContract.address, totalCost],
-          account: address, // Added account
-          chain: heliosTestnet, // Added chain
+          account: address,
+          chain: heliosTestnet,
         });
         toast.success("Approval successful! Please click Mint Now again.");
         queryClient.invalidateQueries({ queryKey: [['allowance']] });
-        return; // Return to allow user to click mint again
+        return;
       }
 
       toast.info("Sending mint transaction...");
       await writeContractAsync({
-        ...nftContract,
+        address: nftContract.address,
+        abi: nftContract.abi,
         functionName: 'mint',
         args: [BigInt(quantity)],
         account: address,
@@ -96,8 +158,9 @@ const Mint = () => {
 
   const currentSupplyNum = typeof totalSupply === 'bigint' ? Number(totalSupply) : 0;
   const maxSupplyNum = typeof maxSupply === 'bigint' ? Number(maxSupply) : 3999;
-  const mintPriceHLV = typeof mintPrice === 'bigint' ? formatEther(mintPrice) : "0.39";
+  const mintPriceHLV = typeof mintPriceResult === 'bigint' ? formatEther(mintPriceResult) : "0.39";
   const userBalanceNum = typeof userBalance === 'bigint' ? Number(userBalance) : 0;
+  const nftName = typeof nftNameResult === 'string' ? nftNameResult : 'Quantum Relic';
   const isSoldOut = currentSupplyNum >= maxSupplyNum;
   const isCorrectNetwork = chain?.id === heliosTestnet.id;
   const isLoading = isMinting || isConfirming;
@@ -114,7 +177,7 @@ const Mint = () => {
   return (
     <div className="min-h-screen bg-background">
       <Helmet>
-        <title>Mint – Quantum Relics</title>
+        <title>Mint & History – Quantum Relics</title>
       </Helmet>
         <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-12 pb-12">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-start">
@@ -194,8 +257,55 @@ const Mint = () => {
                   </div>
                 </CardContent>
               </Card>
+              
             </div>
           </div>
+          
+          {/* --- History Section Integrated Below --- */}
+          <div className="mt-12">
+            <Card>
+              <CardHeader className="flex flex-row items-center space-y-0 pb-6">
+                <div className="w-10 h-10 bg-primary/10 rounded-lg flex items-center justify-center mr-4">
+                  <Coins className="w-5 h-5 text-primary" />
+                </div>
+                <CardTitle className="text-xl font-semibold">Mint History</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="overflow-x-auto p-6 space-y-4">
+                  <table className="w-full">
+                    <thead>
+                      <tr className="bg-secondary/50">
+                        <th className="text-center py-4 px-4 rounded-l-lg font-medium text-sm text-muted-foreground">NFT</th>
+                        <th className="text-center py-4 px-4 font-medium text-sm text-muted-foreground">Token ID</th>
+                        <th className="text-center py-4 px-4 font-medium text-sm text-muted-foreground">Price</th>
+                        <th className="text-center py-4 px-4 rounded-r-lg font-medium text-sm text-muted-foreground">Status</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {!isConnected ? (
+                        <tr><td colSpan={4} className="py-8 px-4 text-center text-muted-foreground"><div className="flex flex-col items-center gap-4">Please connect your wallet to view mint history.<ConnectButton /></div></td></tr>
+                      ) : isBalanceLoading ? (
+                        <tr><td colSpan={4} className="py-8 px-4 text-center">Loading NFT history...</td></tr>
+                      ) : tokenIndices.length === 0 ? (
+                        <tr><td colSpan={4} className="py-8 px-4 text-center">No NFTs found for this address.</td></tr>
+                      ) : (
+                        tokenIndices.map((index) => (
+                          <HistoryRow 
+                            key={index.toString()} 
+                            ownerAddress={address!} 
+                            index={index}
+                            nftName={nftName}
+                            mintPrice={mintPriceHLV}
+                          />
+                        ))
+                      )}
+                    </tbody>
+                  </table>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+
         </main>
     </div>
   );
