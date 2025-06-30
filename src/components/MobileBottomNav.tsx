@@ -1,5 +1,6 @@
+// src/components/MobileBottomNav.tsx
 import { Link, useLocation } from "react-router-dom";
-import { Home, Sparkles, Droplets, Flame, LucideIcon } from "lucide-react";
+import { Home, Sparkles, Droplets, Flame, ArrowLeftRight, Rocket, LucideIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { motion } from "framer-motion";
 import { Tooltip, TooltipContent, TooltipTrigger, TooltipProvider } from "@/components/ui/tooltip";
@@ -28,10 +29,11 @@ const NavLink = ({ path, icon: Icon, label }: NavItem) => {
   const handleClick = () => {
     const currentIndex = navItems.findIndex(item => item.path === location.pathname);
     const newIndex = navItems.findIndex(item => item.path === path);
+    // Corrected the logic here
     if (newIndex > currentIndex) {
-      setDirection('left');
-    } else {
       setDirection('right');
+    } else {
+      setDirection('left');
     }
   };
 

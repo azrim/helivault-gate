@@ -1,3 +1,4 @@
+// src/components/Navigation.tsx
 import { Link, useLocation } from "react-router-dom";
 import { cn } from "@/lib/utils";
 import { ThemeSwitcher } from "./ThemeSwitcher";
@@ -28,10 +29,11 @@ const DesktopNavLink = ({ path, label }: DesktopNavItemProps) => {
   const handleClick = () => {
     const currentIndex = desktopNavItems.findIndex(item => item.path === location.pathname);
     const newIndex = desktopNavItems.findIndex(item => item.path === path);
+    // Corrected the logic here
     if (newIndex > currentIndex) {
-      setDirection('left');
-    } else {
       setDirection('right');
+    } else {
+      setDirection('left');
     }
   };
 
