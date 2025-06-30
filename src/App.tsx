@@ -10,6 +10,7 @@ import Navigation from "./components/Navigation";
 import Home from "./pages/Home";
 import Mint from "./pages/Mint";
 import Faucet from "./pages/Faucet";
+import CheckIn from "./pages/CheckIn";
 import NotFound from "./pages/NotFound";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
@@ -42,6 +43,7 @@ const AnimatedRoutes = () => {
           <Route path="/" element={<PageWrapper><Home /></PageWrapper>} />
           <Route path="/mint" element={<PageWrapper><Mint /></PageWrapper>} />
           <Route path="/faucet" element={<PageWrapper><Faucet /></PageWrapper>} />
+          <Route path="/checkin" element={<PageWrapper><CheckIn /></PageWrapper>} />
           <Route path="*" element={<PageWrapper><NotFound /></PageWrapper>} />
         </Routes>
       </AnimatePresence>

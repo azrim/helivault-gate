@@ -1,5 +1,5 @@
 import { Link, useLocation } from "react-router-dom";
-import { Home, Sparkles, Droplets, ArrowLeftRight, Rocket, LucideIcon } from "lucide-react";
+import { Home, Sparkles, Droplets, Flame, LucideIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { motion } from "framer-motion";
 import { Tooltip, TooltipContent, TooltipTrigger, TooltipProvider } from "@/components/ui/tooltip";
@@ -17,6 +17,7 @@ const navItems: NavItem[] = [
   { path: "/", label: "Home", icon: Home },
   { path: "/mint", label: "Mint", icon: Sparkles },
   { path: "/faucet", label: "Faucet", icon: Droplets },
+  { path: "/checkin", label: "Check-in", icon: Flame },
 ];
 
 const NavLink = ({ path, icon: Icon, label }: NavItem) => {
