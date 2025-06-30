@@ -3,6 +3,14 @@
 @tailwind utilities;
 
 @layer base {
+  @font-face {
+    font-family: 'Satoshi';
+    src: url('/fonts/satoshi/Satoshi-Variable.woff2') format('woff2');
+    font-weight: 300 800;
+    font-display: swap;
+    font-style: normal;
+  }
+  
   /**
    * Tailwind CSS theme
    * tailwind.config.ts expects the following color variables to be expressed as HSL values.
