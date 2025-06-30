@@ -1,4 +1,3 @@
-// src/components/Navigation.tsx
 import { Link, useLocation } from "react-router-dom";
 import { cn } from "@/lib/utils";
 import { ThemeSwitcher } from "./ThemeSwitcher";
@@ -58,7 +57,7 @@ const DesktopNavLink = ({ path, label }: DesktopNavItemProps) => {
 // --- Mobile Top Header ---
 const MobileTopHeader = () => {
   return (
-    <header className="md:hidden sticky top-0 z-40 w-full border-b border-border/40 bg-background/95 backdrop-blur-sm">
+    <header className="md:hidden sticky top-0 z-40 w-full border-b border-border/40 bg-background/80 backdrop-blur-lg">
         <div className="flex items-center justify-between h-16 px-4">
             <Link to="/" className="flex items-center gap-2">
                 <img src="/helios-icon.png" alt="Helios Icon" className="h-8 w-8 rounded-full" />
@@ -92,7 +91,7 @@ const Navigation = () => {
 
   // On desktop, render the original top header
   return (
-    <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/95 backdrop-blur-sm">
+    <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/80 backdrop-blur-lg">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid h-16 grid-cols-3 items-center">
           <div className="flex items-center justify-start">

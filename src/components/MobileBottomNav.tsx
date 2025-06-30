@@ -1,6 +1,5 @@
-// src/components/MobileBottomNav.tsx
 import { Link, useLocation } from "react-router-dom";
-import { Home, Sparkles, Droplets, LucideIcon } from "lucide-react";
+import { Home, Sparkles, Droplets, ArrowLeftRight, Rocket, LucideIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { motion } from "framer-motion";
 import { Tooltip, TooltipContent, TooltipTrigger, TooltipProvider } from "@/components/ui/tooltip";
@@ -74,7 +73,7 @@ const NavLink = ({ path, icon: Icon, label }: NavItem) => {
 export const MobileBottomNav = () => {
   return (
     // This container is now docked to the bottom, not floating
-    <nav className="md:hidden fixed bottom-0 left-0 w-full z-50 bg-neutral-900/90 backdrop-blur-lg border-t border-white/10 pb-[env(safe-area-inset-bottom)]">
+    <nav className="md:hidden fixed bottom-0 left-0 w-full z-50 bg-background/80 backdrop-blur-lg border-t border-border/40 pb-[env(safe-area-inset-bottom)]">
       <div className="flex items-center justify-around h-16 px-2">
         {navItems.map((item) => (
           <NavLink key={item.path} {...item} />
