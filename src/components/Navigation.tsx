@@ -5,8 +5,19 @@ import { ThemeSwitcher } from "./ThemeSwitcher";
 import { CustomConnectButton } from "./CustomConnectButton";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { MobileBottomNav } from "./MobileBottomNav";
-import { motion } from "framer-motion";
+import { motion, Variants } from "framer-motion";
 import { useNavigationContext } from "@/context/NavigationContext";
+import {
+  Sheet,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+  SheetDescription,
+} from "@/components/ui/sheet";
+import { Menu, Palette, Wallet } from "lucide-react";
+import { Button } from "./ui/button";
+import { Separator } from "./ui/separator";
 
 // --- Desktop Navigation Link ---
 type DesktopNavItemProps = {
@@ -57,6 +68,12 @@ const DesktopNavLink = ({ path, label }: DesktopNavItemProps) => {
   );
 };
 
+// --- Framer Motion Variants for Menu Items ---
+const itemVariants: Variants = {
+  initial: { opacity: 0, x: -20 },
+  animate: { opacity: 1, x: 0, transition: { duration: 0.3, ease: "easeOut" } },
+};
+
 // --- Mobile Top Header ---
 const MobileTopHeader = () => {
   return (
@@ -66,10 +83,48 @@ const MobileTopHeader = () => {
                 <img src="/helios-icon.png" alt="Helios Icon" className="h-8 w-8 rounded-full" />
                 <span className="font-bold text-lg">Helivault</span>
             </Link>
-            <div className="flex items-center gap-2">
-                <ThemeSwitcher />
-                <CustomConnectButton />
-            </div>
+            <Sheet>
+              <SheetTrigger asChild>
+                <Button variant="ghost" size="icon">
+                  <Menu className="h-6 w-6" />
+                  <span className="sr-only">Open menu</span>
+                </Button>
+              </SheetTrigger>
+              <SheetContent side="right" className="w-[300px]">
+                <SheetHeader className="text-left">
+                  <SheetTitle>Menu</SheetTitle>
+                  <SheetDescription>
+                    Manage your wallet and preferences.
+                  </SheetDescription>
+                </SheetHeader>
+                <motion.div 
+                  className="mt-6 flex flex-col gap-6"
+                  initial="initial"
+                  animate="animate"
+                  transition={{ staggerChildren: 0.1 }}
+                >
+                  <Separator />
+                  <motion.div variants={itemVariants}>
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-3">
+                        <Palette className="h-5 w-5 text-muted-foreground" />
+                        <span className="font-medium">Theme</span>
+                      </div>
+                      <ThemeSwitcher />
+                    </div>
+                  </motion.div>
+                  <motion.div variants={itemVariants}>
+                    <div className="flex flex-col gap-3">
+                      <div className="flex items-center gap-3">
+                        <Wallet className="h-5 w-5 text-muted-foreground" />
+                        <span className="font-medium">Wallet</span>
+                      </div>
+                      <CustomConnectButton />
+                    </div>
+                  </motion.div>
+                </motion.div>
+              </SheetContent>
+            </Sheet>
         </div>
     </header>
   );
