@@ -1,5 +1,5 @@
 // src/pages/Home.tsx
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { ArrowRight, Sparkles, Droplets, Image } from "lucide-react";
@@ -26,6 +26,7 @@ const FeatureCard = ({ icon, title, description, link }) => (
 
 const Home = () => {
   const { isConnected } = useAccount();
+  const navigate = useNavigate();
 
   return (
     <div className="min-h-screen bg-background text-foreground">
@@ -60,10 +61,12 @@ const Home = () => {
             transition={{ delay: 0.6, type: "spring" }}
             className="mt-8"
           >
-            <Button asChild size="lg" className="bg-white text-black hover:bg-white/90">
-              <Link to="/mint">
-                Start Minting <ArrowRight className="ml-2 h-5 w-5" />
-              </Link>
+            <Button
+              size="lg"
+              variant="hero"
+              onClick={() => navigate('/mint')}
+            >
+              Start Minting <ArrowRight className="ml-2 h-5 w-5" />
             </Button>
           </motion.div>
         </div>
