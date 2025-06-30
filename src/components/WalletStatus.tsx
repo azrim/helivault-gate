@@ -16,7 +16,7 @@ const WalletStatus = () => {
   if (!isConnected) {
     return (
       <Card className="bg-warning/5 border-warning/20">
-        <CardContent className="p-6 text-center">
+        <CardContent className="p-6 pt-6 text-center">
           <Wallet className="w-12 h-12 text-warning mx-auto mb-4" />
           <h3 className="text-lg font-semibold mb-2">Wallet Not Connected</h3>
           <p className="text-muted-foreground mb-4">
@@ -35,7 +35,7 @@ const WalletStatus = () => {
     <Card
       className={`${isCorrectNetwork ? "bg-success/5 border-success/20" : "bg-warning/5 border-warning/20"}`}
     >
-      <CardContent className="p-6">
+      <CardContent className="p-6 pt-6">
         <div className="flex items-center justify-between mb-4">
           <h3
             className={`text-lg font-semibold ${isCorrectNetwork ? "text-success" : "text-warning"}`}

@@ -210,7 +210,7 @@ const Mint = () => {
                 <p className="text-muted-foreground">Part of the Helivault NFT Collection</p>
               </div>
               <Card className="border-primary/50 border-2 bg-card">
-                <CardContent className="p-6 flex flex-col gap-4">
+                <CardContent className="flex flex-col gap-4 pt-6">
                   <p className="text-4xl font-bold">{mintPriceHLV} HLV</p>
                   {isConnected && (
                     <div className="text-sm text-muted-foreground">
@@ -233,7 +233,7 @@ const Mint = () => {
               </Card>
               <Card>
                 <CardHeader><CardTitle>NFT Details</CardTitle></CardHeader>
-                <CardContent className="p-6 space-y-4">
+                <CardContent className="space-y-4">
                   <div className="flex justify-between items-center">
                     <span className="text-muted-foreground">Contract Address</span>
                     <a href={`${heliosTestnet.blockExplorers.default.url}/address/${nftContract.address}`} target="_blank" rel="noopener noreferrer" className="font-mono text-primary hover:underline flex items-center gap-2">
@@ -256,7 +256,7 @@ const Mint = () => {
                 <CardTitle className="text-xl font-semibold">Mint History</CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="overflow-x-auto p-6 space-y-4">
+                <div className="overflow-x-auto space-y-4">
                   <table className="w-full">
                     <thead>
                       <tr className="bg-secondary/50">
