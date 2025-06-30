@@ -1,3 +1,4 @@
+// src/components/Navigation.tsx
 import { Link, useLocation } from "react-router-dom";
 import { cn } from "@/lib/utils";
 import { ThemeSwitcher } from "./ThemeSwitcher";
@@ -15,8 +16,6 @@ type DesktopNavItemProps = {
 
 const desktopNavItems: DesktopNavItemProps[] = [
   { path: "/", label: "Home" },
-  { path: "/bridge", label: "Bridge" },
-  { path: "/deploy", label: "Deploy" },
   { path: "/mint", label: "Mint" },
   { path: "/faucet", label: "Faucet" },
 ];
