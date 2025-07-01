@@ -220,7 +220,7 @@ const Mint = () => {
                     </div>
                   )}
                   <div className="flex gap-4 items-center pt-2">
-                    <Input type="number" value={quantity} onChange={(e) => setQuantity(Math.max(1, parseInt(e.target.value) || 1))} className="w-24 h-12 text-center text-lg" disabled={isLoading} />
+                    <Input type="number" value={quantity} onChange={(e) => setQuantity(Math.max(1, parseInt(e.target.value) || 1))} className="w-[10rem] h-12 text-center text-lg" disabled={isLoading} />
                     <div className="flex-1 w-full">
                       {isConnected ? (
                         <Button onClick={handleMint} disabled={isLoading || isSoldOut || !isCorrectNetwork} className="w-full h-12 text-lg">{getButtonText()}</Button>
