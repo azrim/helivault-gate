@@ -10,6 +10,6 @@ export const heliosTestnet = {
     public: { http: ['https://testnet1.helioschainlabs.org'] },
   },
   blockExplorers: {
-    default: { name: 'Helios Explorer', url: 'https://explorer.helioschainlabs.org' },
+    default: { name: 'Helios Chain Explorer', url: 'https://explorer.helioschainlabs.org' },
   },
 } as const satisfies Chain;

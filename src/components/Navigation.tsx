@@ -30,6 +30,7 @@ const desktopNavItems: DesktopNavItemProps[] = [
   { path: "/mint", label: "Mint" },
   { path: "/faucet", label: "Faucet" },
   { path: "/checkin", label: "Check-in" },
+  { path: "/deploy", label: "Deploy" },
 ];
 
 const DesktopNavLink = ({ path, label }: DesktopNavItemProps) => {

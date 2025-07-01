@@ -11,6 +11,7 @@ import Home from "./pages/Home";
 import Mint from "./pages/Mint";
 import Faucet from "./pages/Faucet";
 import CheckIn from "./pages/CheckIn";
+import Deploy from "./pages/Deploy";
 import NotFound from "./pages/NotFound";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
@@ -44,6 +45,7 @@ const AnimatedRoutes = () => {
           <Route path="/mint" element={<PageWrapper><Mint /></PageWrapper>} />
           <Route path="/faucet" element={<PageWrapper><Faucet /></PageWrapper>} />
           <Route path="/checkin" element={<PageWrapper><CheckIn /></PageWrapper>} />
+          <Route path="/deploy" element={<PageWrapper><Deploy /></PageWrapper>} />
           <Route path="*" element={<PageWrapper><NotFound /></PageWrapper>} />
         </Routes>
       </AnimatePresence>
