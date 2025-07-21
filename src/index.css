@@ -17,33 +17,33 @@
    * A different format will require also updating the theme in tailwind.config.ts.
   */
   :root {
-    --background: 241 42% 96%; /* Lighter version of header for page background */
-    --foreground: 241 42% 15%; /* Darker version of header for text */
+    --background: 241 42% 93%; /* Lighter version of header for page background */
+    --foreground: 241 42% 10%; /* Darker version of header for text */
 
-    --card: 240 100% 98%; /* Very light blue for cards */
-    --card-foreground: 241 42% 15%;
+    --card: 240 100% 95%; /* Very light blue for cards */
+    --card-foreground: 241 42% 10%;
 
-    --popover: 240 100% 98%;
-    --popover-foreground: 241 42% 15%;
+    --popover: 240 100% 95%;
+    --popover-foreground: 241 42% 10%;
 
-    --primary: 225 100% 58%; /* Button Blue */
+    --primary: 225 100% 50%; /* Button Blue */
     --primary-foreground: 0 0% 100%;
 
-    --secondary: 240 100% 92%; /* Slightly darker light blue */
-    --secondary-foreground: 241 42% 15%;
+    --secondary: 240 100% 88%; /* Slightly darker light blue */
+    --secondary-foreground: 241 42% 10%;
 
-    --muted: 240 100% 92%;
-    --muted-foreground: 241 20% 50%;
+    --muted: 240 100% 88%;
+    --muted-foreground: 241 20% 45%;
 
-    --accent: 225 100% 58%;
+    --accent: 225 100% 50%;
     --accent-foreground: 0 0% 100%;
 
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 240 100% 88%;
-    --input: 240 100% 88%;
-    --ring: 225 100% 58%;
+    --border: 240 100% 80%;
+    --input: 240 100% 80%;
+    --ring: 225 100% 50%;
 
     --radius: 0.5rem;
 
@@ -52,8 +52,8 @@
     --success-foreground: 0 0% 100%;
     --warning: 48 95% 65%;
     --warning-foreground: 0 0% 100%;
-    --gradient-start: 225 100% 58%;
-    --gradient-end: 240 100% 65%;
+    --gradient-start: 225 100% 50%;
+    --gradient-end: 240 100% 55%;
     --success-gradient-start: 162 85% 55%;
     --success-gradient-end: 142 75% 60%;
 
@@ -75,33 +75,33 @@
   }
 
   .dark {
-    --background: 241 42% 8%; /* Dark Header Blue */
+    --background: 241 42% 6%; /* Dark Header Blue */
     --foreground: 0 0% 95%;
 
-    --card: 240 100% 12%; /* Darker version of Main Content Blue */
+    --card: 240 100% 10%; /* Darker version of Main Content Blue */
     --card-foreground: 0 0% 95%;
 
-    --popover: 240 100% 12%;
+    --popover: 240 100% 10%;
     --popover-foreground: 0 0% 95%;
 
-    --primary: 225 100% 65%; /* Lighter Button Blue for contrast */
-    --primary-foreground: 225 100% 10%;
+    --primary: 225 100% 60%; /* Lighter Button Blue for contrast */
+    --primary-foreground: 225 100% 8%;
 
-    --secondary: 240 100% 18%;
+    --secondary: 240 100% 15%;
     --secondary-foreground: 0 0% 95%;
 
-    --muted: 240 100% 18%;
-    --muted-foreground: 240 10% 65%;
+    --muted: 240 100% 15%;
+    --muted-foreground: 240 10% 60%;
 
-    --accent: 225 100% 65%;
-    --accent-foreground: 225 100% 10%;
+    --accent: 225 100% 60%;
+    --accent-foreground: 225 100% 8%;
 
     --destructive: 0 75% 55%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 240 100% 20%;
-    --input: 240 100% 20%;
-    --ring: 225 100% 65%;
+    --border: 240 100% 18%;
+    --input: 240 100% 18%;
+    --ring: 225 100% 60%;
     --sidebar-background: 240 5.9% 10%;
     --sidebar-foreground: 240 4.8% 95.9%;
     --sidebar-primary: 224.3 76.3% 48%;
