@@ -14,6 +14,10 @@ type NavItem = {
   icon: LucideIcon;
 };
 
+type NavLinkProps = NavItem & {
+  isActive: boolean;
+};
+
 // Define the navigation items with the new icons
 const navItems: NavItem[] = [
   { path: "/", label: "Home", icon: Home },
@@ -24,15 +28,12 @@ const navItems: NavItem[] = [
   { path: "/deploy", label: "Deploy", icon: Rocket },
 ];
 
-const NavLink = React.memo(({ path, icon: Icon, label }: NavItem) => {
-  const location = useLocation();
+const NavLink = React.memo(({ path, icon: Icon, label, isActive }: NavLinkProps) => {
   const { setDirection } = useNavigationContext();
-  const isActive = location.pathname === path;
 
   const handleClick = () => {
-    const currentIndex = navItems.findIndex(item => item.path === location.pathname);
+    const currentIndex = navItems.findIndex(item => item.path === window.location.pathname);
     const newIndex = navItems.findIndex(item => item.path === path);
-    // Corrected the logic here
     if (newIndex > currentIndex) {
       setDirection('right');
     } else {
@@ -78,12 +79,13 @@ NavLink.displayName = "NavLink";
 
 
 export const MobileBottomNav = () => {
+  const location = useLocation();
   return (
     // This container is now docked to the bottom, not floating
     <nav className="md:hidden fixed bottom-0 left-0 w-full z-50 bg-background/80 backdrop-blur-lg border-t border-border/40 pb-[env(safe-area-inset-bottom)]">
       <div className="flex items-center justify-around h-16 px-2">
         {navItems.map((item) => (
-          <NavLink key={item.path} {...item} />
+          <NavLink key={item.path} {...item} isActive={location.pathname === item.path} />
         ))}
       </div>
     </nav>
