@@ -1,4 +1,3 @@
-// src/components/MobileBottomNav.tsx
 import { Link, useLocation } from "react-router-dom";
 import { Home, Sparkles, Droplets, Flame, LayoutGrid as Gallery, Rocket, LucideIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -16,6 +15,7 @@ type NavItem = {
 
 type NavLinkProps = NavItem & {
   isActive: boolean;
+  onClick: (path: string) => void;
 };
 
 // Define the navigation items with the new icons
@@ -28,26 +28,14 @@ const navItems: NavItem[] = [
   { path: "/deploy", label: "Deploy", icon: Rocket },
 ];
 
-const NavLink = React.memo(({ path, icon: Icon, label, isActive }: NavLinkProps) => {
-  const { setDirection } = useNavigationContext();
-
-  const handleClick = () => {
-    const currentIndex = navItems.findIndex(item => item.path === window.location.pathname);
-    const newIndex = navItems.findIndex(item => item.path === path);
-    if (newIndex > currentIndex) {
-      setDirection('right');
-    } else {
-      setDirection('left');
-    }
-  };
-
+const NavLink = React.memo(({ path, icon: Icon, label, isActive, onClick }: NavLinkProps) => {
   return (
     <TooltipProvider delayDuration={100}>
       <Tooltip>
         <TooltipTrigger asChild>
           <Link
             to={path}
-            onClick={handleClick}
+            onClick={() => onClick(path)}
             className={cn(
               "relative flex items-center h-12 rounded-full transition-all duration-300 ease-out",
               isActive ? "text-primary-foreground gap-2 pr-4 pl-3" : "w-12 justify-center text-muted-foreground hover:bg-white/10"
@@ -80,12 +68,29 @@ NavLink.displayName = "NavLink";
 
 export const MobileBottomNav = () => {
   const location = useLocation();
+  const { setDirection } = useNavigationContext();
+
+  const handleClick = (newPath: string) => {
+    const currentIndex = navItems.findIndex(item => item.path === location.pathname);
+    const newIndex = navItems.findIndex(item => item.path === newPath);
+    if (newIndex > currentIndex) {
+      setDirection('right');
+    } else if (newIndex < currentIndex) {
+      setDirection('left');
+    }
+  };
+
   return (
     // This container is now docked to the bottom, not floating
     <nav className="md:hidden fixed bottom-0 left-0 w-full z-50 bg-background/80 backdrop-blur-lg border-t border-border/40 pb-[env(safe-area-inset-bottom)]">
       <div className="flex items-center justify-around h-16 px-2">
         {navItems.map((item) => (
-          <NavLink key={item.path} {...item} isActive={location.pathname === item.path} />
+          <NavLink 
+            key={item.path} 
+            {...item} 
+            isActive={location.pathname === item.path}
+            onClick={handleClick}
+          />
         ))}
       </div>
     </nav>
