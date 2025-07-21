@@ -19,6 +19,7 @@ import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { HelmetProvider } from "react-helmet-async";
 import { ThemeProvider } from "./components/ThemeProvider";
+import { useIsMobile } from "./hooks/use-mobile";
 import PageWrapper from "./components/PageWrapper";
 import { NavigationProvider, useNavigationContext } from "./context/NavigationContext";
 
@@ -37,9 +38,14 @@ const config = getDefaultConfig({
 const AnimatedRoutes = () => {
   const location = useLocation();
   const { direction } = useNavigationContext();
+  const isMobile = useIsMobile();
+
+  // On mobile, we have a top and bottom bar, each 4rem high.
+  // On desktop, we only have a top bar, 4rem high.
+  const minHeight = isMobile ? 'calc(100vh - 8rem)' : 'calc(100vh - 4rem)';
 
   return (
-    <div style={{ position: 'relative', minHeight: 'calc(100vh - 4rem)' }}>
+    <div style={{ position: 'relative', minHeight }}>
       <AnimatePresence initial={false} custom={direction}>
         <Routes location={location} key={location.pathname}>
           <Route path="/" element={<PageWrapper><Home /></PageWrapper>} />
