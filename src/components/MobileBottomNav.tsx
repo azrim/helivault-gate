@@ -5,6 +5,7 @@ import { cn } from "@/lib/utils";
 import { motion } from "framer-motion";
 import { Tooltip, TooltipContent, TooltipTrigger, TooltipProvider } from "@/components/ui/tooltip";
 import { useNavigationContext } from "@/context/NavigationContext";
+import React from "react";
 
 // Define the type for our navigation items
 type NavItem = {
@@ -12,8 +13,6 @@ type NavItem = {
   label: string;
   icon: LucideIcon;
 };
-
-// Define the navigation items with the new icons
 const navItems: NavItem[] = [
   { path: "/", label: "Home", icon: Home },
   { path: "/mint", label: "Mint", icon: Sparkles },
@@ -75,7 +74,7 @@ const NavLink = ({ path, icon: Icon, label }: NavItem) => {
 };
 
 
-export const MobileBottomNav = () => {
+export const MobileBottomNav = React.memo(() => {
   return (
     // This container is now docked to the bottom, not floating
     <nav className="md:hidden fixed bottom-0 left-0 w-full z-50 bg-background/80 backdrop-blur-lg border-t border-border/40 pb-[env(safe-area-inset-bottom)]">
@@ -86,4 +85,4 @@ export const MobileBottomNav = () => {
       </div>
     </nav>
   );
-};
+});
