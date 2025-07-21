@@ -82,7 +82,7 @@ export const MobileBottomNav = () => {
     // This container is now docked to the bottom, not floating
     <nav className="md:hidden fixed bottom-0 left-0 w-full z-50 bg-background/80 backdrop-blur-lg border-t border-border/40 pb-[env(safe-area-inset-bottom)]">
       <div className="flex items-center justify-around h-16 px-2">
-        {navItems..map((item) => (
+        {navItems.map((item) => (
           <NavLink key={item.path} {...item} />
         ))}
       </div>
