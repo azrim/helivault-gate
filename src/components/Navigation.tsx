@@ -28,6 +28,7 @@ type DesktopNavItemProps = {
 const desktopNavItems: DesktopNavItemProps[] = [
   { path: "/", label: "Home" },
   { path: "/mint", label: "Mint" },
+  { path: "/gallery", label: "Gallery" },
   { path: "/faucet", label: "Faucet" },
   { path: "/checkin", label: "Check-in" },
   { path: "/deploy", label: "Deploy" },

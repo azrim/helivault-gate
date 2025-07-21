@@ -13,6 +13,7 @@ import Faucet from "./pages/Faucet";
 import CheckIn from "./pages/CheckIn";
 import Deploy from "./pages/Deploy";
 import NotFound from "./pages/NotFound";
+import Gallery from "./pages/Gallery";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -46,6 +47,7 @@ const AnimatedRoutes = () => {
           <Route path="/faucet" element={<PageWrapper><Faucet /></PageWrapper>} />
           <Route path="/checkin" element={<PageWrapper><CheckIn /></PageWrapper>} />
           <Route path="/deploy" element={<PageWrapper><Deploy /></PageWrapper>} />
+          <Route path="/gallery" element={<PageWrapper><Gallery /></PageWrapper>} />
           <Route path="*" element={<PageWrapper><NotFound /></PageWrapper>} />
         </Routes>
       </AnimatePresence>

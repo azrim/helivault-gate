@@ -1,47 +1,13 @@
 // src/contracts/HelivaultNFT.ts
+// IMPORTANT: This is a placeholder file.
+// You must replace the address with your deployed HelivaultNFT contract address
+// and provide the full, correct ABI.
 
-export const HELIVAULT_CYPHERS_CONTRACT = {
-  address: "0x7E8E1081767bB8BdBF54323a93C9C36Dfd7073cF",
+export const HELIVAULT_NFT_CONTRACT = {
+  // TODO: Replace with your deployed contract address
+  address: "0x0000000000000000000000000000000000000000",
+  // TODO: Replace with your full contract ABI
   abi: [
-    {
-      "inputs": [
-        { "internalType": "string", "name": "baseURI_", "type": "string" },
-        { "internalType": "string", "name": "hiddenURI_", "type": "string" },
-        { "internalType": "uint96", "name": "royaltyBips", "type": "uint96" },
-        { "internalType": "uint256", "name": "maxSupply_", "type": "uint256" },
-        { "internalType": "uint256", "name": "initialMintPrice_", "type": "uint256" }
-      ],
-      "stateMutability": "nonpayable",
-      "type": "constructor"
-    },
-    {
-      "inputs": [{ "internalType": "uint256", "name": "quantity", "type": "uint256" }],
-      "name": "mint",
-      "outputs": [],
-      "stateMutability": "payable",
-      "type": "function"
-    },
-    {
-      "inputs": [],
-      "name": "totalSupply",
-      "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
-      "stateMutability": "view",
-      "type": "function"
-    },
-    {
-      "inputs": [],
-      "name": "maxSupply",
-      "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
-      "stateMutability": "view",
-      "type": "function"
-    },
-    {
-      "inputs": [],
-      "name": "mintPrice",
-      "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
-      "stateMutability": "view",
-      "type": "function"
-    },
     {
       "inputs": [{ "internalType": "address", "name": "owner", "type": "address" }],
       "name": "balanceOf",
@@ -60,31 +26,30 @@ export const HELIVAULT_CYPHERS_CONTRACT = {
       "type": "function"
     },
     {
-        "inputs": [],
-        "name": "name",
+        "inputs": [{ "internalType": "uint256", "name": "tokenId", "type": "uint256" }],
+        "name": "tokenURI",
         "outputs": [{ "internalType": "string", "name": "", "type": "string" }],
         "stateMutability": "view",
         "type": "function"
     },
     {
-        "inputs": [],
-        "name": "owner",
-        "outputs": [{ "internalType": "address", "name": "", "type": "address" }],
-        "stateMutability": "view",
-        "type": "function"
-    },
-    {
         "inputs": [
-            { "internalType": "uint256", "name": "tokenId", "type": "uint256" },
-            { "internalType": "uint256", "name": "salePrice", "type": "uint256" }
+          {
+            "internalType": "address",
+            "name": "owner",
+            "type": "address"
+          }
         ],
-        "name": "royaltyInfo",
+        "name": "tokensOfOwner",
         "outputs": [
-            { "internalType": "address", "name": "receiver", "type": "address" },
-            { "internalType": "uint256", "name": "royaltyAmount", "type": "uint256" }
+          {
+            "internalType": "uint256[]",
+            "name": "",
+            "type": "uint256[]"
+          }
         ],
         "stateMutability": "view",
         "type": "function"
-    }
+      }
   ],
 } as const;

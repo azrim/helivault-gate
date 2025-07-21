@@ -1,153 +1,160 @@
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { Input } from "@/components/ui/input";
-import {
-  Image,
-  Search,
-  Filter,
-  Grid3X3,
-  List,
-  Heart,
-  ExternalLink,
-} from "lucide-react";
-import Navigation from "@/components/Navigation";
+// src/pages/Gallery.tsx
+import { useState, useEffect } from 'react';
+import { useAccount, useReadContract } from 'wagmi';
+import { HELIVAULT_NFT_CONTRACT } from '@/contracts/HelivaultNFT';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Skeleton } from '@/components/ui/skeleton';
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
+import { LayoutGrid as GalleryIcon } from 'lucide-react';
+import { ConnectButton } from '@rainbow-me/rainbowkit';
+import { Helmet } from 'react-helmet-async';
+
+interface NftMetadata {
+  name: string;
+  description: string;
+  image: string;
+}
+
+const NftCard = ({ tokenId }: { tokenId: bigint }) => {
+  const { data: tokenURIResult, isLoading: isUriLoading } = useReadContract({
+    ...HELIVAULT_NFT_CONTRACT,
+    functionName: 'tokenURI',
+    args: [tokenId],
+  });
+
+  const [metadata, setMetadata] = useState<NftMetadata | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchMetadata = async () => {
+      if (tokenURIResult) {
+        try {
+          const response = await fetch(tokenURIResult as string);
+          const data: NftMetadata = await response.json();
+          setMetadata(data);
+        } catch (error) {
+          console.error("Failed to fetch NFT metadata:", error);
+        } finally {
+          setLoading(false);
+        }
+      } else if (!isUriLoading) {
+        setLoading(false);
+      }
+    };
+    fetchMetadata();
+  }, [tokenURIResult, isUriLoading]);
+
+  if (loading) {
+    return (
+      <Card className="overflow-hidden">
+        <Skeleton className="w-full h-48" />
+        <CardHeader>
+          <Skeleton className="h-6 w-3/4" />
+          <Skeleton className="h-4 w-1/2" />
+        </CardHeader>
+      </Card>
+    );
+  }
+
+  if (!metadata) {
+    return (
+      <Card className="overflow-hidden">
+        <div className="w-full h-48 bg-secondary flex items-center justify-center">
+          <p className="text-muted-foreground">Metadata not found</p>
+        </div>
+        <CardHeader>
+          <CardTitle>Token #{tokenId.toString()}</CardTitle>
+        </CardHeader>
+      </Card>
+    );
+  }
+
+  return (
+    <Card className="overflow-hidden transform transition-transform hover:scale-105 shadow-lg">
+      <img src={metadata.image} alt={metadata.name} className="w-full h-48 object-cover" />
+      <CardHeader>
+        <CardTitle>{metadata.name}</CardTitle>
+        <p className="text-sm text-muted-foreground">Token ID: {tokenId.toString()}</p>
+      </CardHeader>
+    </Card>
+  );
+};
 
 const Gallery = () => {
+  const { address, isConnected } = useAccount();
+  const [tokenIds, setTokenIds] = useState<bigint[]>([]);
+
+  const { data: balance, isLoading: isBalanceLoading } = useReadContract({
+    ...HELIVAULT_NFT_CONTRACT,
+    functionName: 'balanceOf',
+    args: [address!],
+    query: {
+      enabled: isConnected,
+    },
+  });
+
+  const { data: ownedTokens, isLoading: isTokensLoading } = useReadContract({
+    ...HELIVAULT_NFT_CONTRACT,
+    functionName: 'tokensOfOwner',
+    args: [address!],
+    query: {
+        enabled: isConnected && balance !== undefined && balance > 0,
+    },
+  });
+
+  useEffect(() => {
+    if (ownedTokens) {
+        // @ts-ignore
+      setTokenIds(ownedTokens);
+    }
+  }, [ownedTokens]);
+
+  const isLoading = isBalanceLoading || isTokensLoading;
+
   return (
-    <div>
-      <Navigation />
+    <div className="container mx-auto px-4 py-8">
+      <Helmet><title>My NFT Gallery – Helivault</title></Helmet>
+      <div className="flex items-center gap-4 mb-8">
+        <GalleryIcon className="w-8 h-8 text-primary" />
+        <h1 className="text-3xl font-bold">My NFT Gallery</h1>
+      </div>
 
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {/* Header */}
-        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8">
-          <div>
-            <h1 className="text-3xl font-bold mb-2">My Gallery</h1>
-            <p className="text-muted-foreground">
-              Discover and manage your NFT collection
-            </p>
+      {!isConnected ? (
+        <Alert className="max-w-md mx-auto">
+          <AlertTitle>Connect Your Wallet</AlertTitle>
+          <AlertDescription>
+            Please connect your wallet to see your Helivault NFTs.
+          </AlertDescription>
+          <div className="mt-4 flex justify-center">
+            <ConnectButton />
           </div>
-          <div className="flex items-center gap-2">
-            <Button variant="outline" size="sm">
-              <Grid3X3 className="w-4 h-4 mr-2" />
-              Grid
-            </Button>
-            <Button variant="ghost" size="sm">
-              <List className="w-4 h-4 mr-2" />
-              List
-            </Button>
-          </div>
-        </div>
-
-        {/* Filters */}
-        <Card className="mb-8">
-          <CardContent className="pt-6">
-            <div className="flex flex-col sm:flex-row gap-4">
-              <div className="flex-1 relative">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-                <Input
-                  placeholder="Search your collection..."
-                  className="pl-10"
-                />
-              </div>
-              <Button variant="outline">
-                <Filter className="w-4 h-4 mr-2" />
-                Filters
-              </Button>
-            </div>
-          </CardContent>
-        </Card>
-
-        {/* Collection Stats */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
-          <Card>
-            <CardContent className="pt-6">
-              <div className="text-2xl font-bold">24</div>
-              <p className="text-sm text-muted-foreground">Total NFTs</p>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardContent className="pt-6">
-              <div className="text-2xl font-bold">3</div>
-              <p className="text-sm text-muted-foreground">Collections</p>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardContent className="pt-6">
-              <div className="text-2xl font-bold text-success">2.4 ETH</div>
-              <p className="text-sm text-muted-foreground">Total Value</p>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardContent className="pt-6">
-              <div className="text-2xl font-bold text-primary">0.15 ETH</div>
-              <p className="text-sm text-muted-foreground">Avg. Floor</p>
-            </CardContent>
-          </Card>
-        </div>
-
-        {/* NFT Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-          {[1, 2, 3, 4, 5, 6, 7, 8].map((i) => (
-            <Card key={i} className="group hover:shadow-lg transition-shadow">
-              <CardContent className="p-0">
-                <div className="aspect-square bg-gradient-to-br from-primary/20 to-purple-500/20 rounded-t-lg relative overflow-hidden">
-                  <div className="absolute inset-0 flex items-center justify-center">
-                    <Image className="w-12 h-12 text-muted-foreground" />
-                  </div>
-                  <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                    <Button
-                      size="sm"
-                      variant="secondary"
-                      className="w-8 h-8 p-0"
-                    >
-                      <Heart className="w-4 h-4" />
-                    </Button>
-                  </div>
-                </div>
-                <div className="p-4">
-                  <div className="flex justify-between items-start mb-2">
-                    <h3 className="font-semibold truncate">
-                      Cosmic Warrior #{i}
-                    </h3>
-                    <Badge variant="secondary" className="text-xs ml-2">
-                      #{i}
-                    </Badge>
-                  </div>
-                  <p className="text-sm text-muted-foreground mb-3">
-                    Cosmic Collection
-                  </p>
-                  <div className="flex justify-between items-center">
-                    <div>
-                      <p className="text-xs text-muted-foreground">
-                        Floor Price
-                      </p>
-                      <p className="font-semibold">0.15 ETH</p>
-                    </div>
-                    <Button size="sm" variant="outline">
-                      <ExternalLink className="w-4 h-4" />
-                    </Button>
-                  </div>
-                </div>
-              </CardContent>
+        </Alert>
+      ) : isLoading ? (
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+          {Array.from({ length: 4 }).map((_, i) => (
+            <Card key={i} className="overflow-hidden">
+              <Skeleton className="w-full h-48" />
+              <CardHeader>
+                <Skeleton className="h-6 w-3/4" />
+                <Skeleton className="h-4 w-1/2" />
+              </CardHeader>
             </Card>
           ))}
         </div>
-
-        {/* Empty State for when no NFTs */}
-        <Card className="mt-8 text-center py-12">
-          <CardContent>
-            <Image className="w-16 h-16 text-muted-foreground mx-auto mb-4" />
-            <h3 className="text-lg font-semibold mb-2">
-              Your gallery is empty
-            </h3>
-            <p className="text-muted-foreground mb-4">
-              Start minting NFTs to build your collection
-            </p>
-            <Button>Create Your First NFT</Button>
-          </CardContent>
-        </Card>
-      </main>
+      ) : tokenIds.length === 0 ? (
+        <Alert>
+          <AlertTitle>No NFTs Found</AlertTitle>
+          <AlertDescription>
+            You do not own any Helivault NFTs yet. Visit the Mint page to get started!
+          </AlertDescription>
+        </Alert>
+      ) : (
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+          {tokenIds.map(tokenId => (
+            <NftCard key={tokenId.toString()} tokenId={tokenId} />
+          ))}
+        </div>
+      )}
     </div>
   );
 };
