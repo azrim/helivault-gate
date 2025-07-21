@@ -13,6 +13,8 @@ type NavItem = {
   label: string;
   icon: LucideIcon;
 };
+
+// Define the navigation items with the new icons
 const navItems: NavItem[] = [
   { path: "/", label: "Home", icon: Home },
   { path: "/mint", label: "Mint", icon: Sparkles },
@@ -22,7 +24,7 @@ const navItems: NavItem[] = [
   { path: "/deploy", label: "Deploy", icon: Rocket },
 ];
 
-const NavLink = ({ path, icon: Icon, label }: NavItem) => {
+const NavLink = React.memo(({ path, icon: Icon, label }: NavItem) => {
   const location = useLocation();
   const { setDirection } = useNavigationContext();
   const isActive = location.pathname === path;
@@ -71,18 +73,20 @@ const NavLink = ({ path, icon: Icon, label }: NavItem) => {
       </Tooltip>
     </TooltipProvider>
   );
-};
+});
+NavLink.displayName = "NavLink";
 
 
-export const MobileBottomNav = React.memo(() => {
+export const MobileBottomNav = () => {
   return (
     // This container is now docked to the bottom, not floating
     <nav className="md:hidden fixed bottom-0 left-0 w-full z-50 bg-background/80 backdrop-blur-lg border-t border-border/40 pb-[env(safe-area-inset-bottom)]">
       <div className="flex items-center justify-around h-16 px-2">
-        {navItems.map((item) => (
+        {navItems..map((item) => (
           <NavLink key={item.path} {...item} />
         ))}
       </div>
     </nav>
   );
-});
+};
+MobileBottomNav.displayName = "MobileBottomNav";
