@@ -64,12 +64,12 @@ const App = () => (
             <TooltipProvider>
               <Toaster />
               <Sonner />
-              <NavigationProvider>
-                <BrowserRouter>
+              <BrowserRouter>
+                <NavigationProvider>
                   <Navigation />
                   <AnimatedRoutes />
-                </BrowserRouter>
-              </NavigationProvider>
+                </NavigationProvider>
+              </BrowserRouter>
             </TooltipProvider>
           </ThemeProvider>
         </RainbowKitProvider>
