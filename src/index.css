@@ -17,33 +17,33 @@
    * A different format will require also updating the theme in tailwind.config.ts.
   */
   :root {
-    --background: 266 30% 94%;
-    --foreground: 272 15% 20%;
+    --background: 241 42% 96%; /* Lighter version of header for page background */
+    --foreground: 241 42% 15%; /* Darker version of header for text */
 
-    --card: 0 0% 100%;
-    --card-foreground: 272 15% 20%;
+    --card: 240 100% 98%; /* Very light blue for cards */
+    --card-foreground: 241 42% 15%;
 
-    --popover: 0 0% 100%;
-    --popover-foreground: 272 15% 20%;
+    --popover: 240 100% 98%;
+    --popover-foreground: 241 42% 15%;
 
-    --primary: 264 85% 50%;
+    --primary: 225 100% 58%; /* Button Blue */
     --primary-foreground: 0 0% 100%;
 
-    --secondary: 273 20% 96%;
-    --secondary-foreground: 272 15% 20%;
+    --secondary: 240 100% 92%; /* Slightly darker light blue */
+    --secondary-foreground: 241 42% 15%;
 
-    --muted: 273 20% 96%;
-    --muted-foreground: 220 10% 50%;
+    --muted: 240 100% 92%;
+    --muted-foreground: 241 20% 50%;
 
-    --accent: 264 85% 50%;
+    --accent: 225 100% 58%;
     --accent-foreground: 0 0% 100%;
 
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 272 15% 88%;
-    --input: 272 15% 88%;
-    --ring: 264 85% 50%;
+    --border: 240 100% 88%;
+    --input: 240 100% 88%;
+    --ring: 225 100% 58%;
 
     --radius: 0.5rem;
 
@@ -52,8 +52,8 @@
     --success-foreground: 0 0% 100%;
     --warning: 48 95% 65%;
     --warning-foreground: 0 0% 100%;
-    --gradient-start: 264 85% 50%;
-    --gradient-end: 280 75% 60%;
+    --gradient-start: 225 100% 58%;
+    --gradient-end: 240 100% 65%;
     --success-gradient-start: 162 85% 55%;
     --success-gradient-end: 142 75% 60%;
 
@@ -75,33 +75,33 @@
   }
 
   .dark {
-    --background: 272 30% 8%;
-    --foreground: 272 15% 95%;
+    --background: 241 42% 8%; /* Dark Header Blue */
+    --foreground: 0 0% 95%;
 
-    --card: 272 25% 12%;
-    --card-foreground: 272 15% 95%;
+    --card: 240 100% 12%; /* Darker version of Main Content Blue */
+    --card-foreground: 0 0% 95%;
 
-    --popover: 272 25% 12%;
-    --popover-foreground: 272 15% 95%;
+    --popover: 240 100% 12%;
+    --popover-foreground: 0 0% 95%;
 
-    --primary: 264 90% 60%;
-    --primary-foreground: 0 0% 100%;
+    --primary: 225 100% 65%; /* Lighter Button Blue for contrast */
+    --primary-foreground: 225 100% 10%;
 
-    --secondary: 272 20% 18%;
-    --secondary-foreground: 272 15% 95%;
+    --secondary: 240 100% 18%;
+    --secondary-foreground: 0 0% 95%;
 
-    --muted: 272 20% 18%;
-    --muted-foreground: 272 10% 65%;
+    --muted: 240 100% 18%;
+    --muted-foreground: 240 10% 65%;
 
-    --accent: 264 90% 60%;
-    --accent-foreground: 0 0% 100%;
+    --accent: 225 100% 65%;
+    --accent-foreground: 225 100% 10%;
 
     --destructive: 0 75% 55%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 272 20% 20%;
-    --input: 272 20% 20%;
-    --ring: 264 90% 60%;
+    --border: 240 100% 20%;
+    --input: 240 100% 20%;
+    --ring: 225 100% 65%;
     --sidebar-background: 240 5.9% 10%;
     --sidebar-foreground: 240 4.8% 95.9%;
     --sidebar-primary: 224.3 76.3% 48%;
