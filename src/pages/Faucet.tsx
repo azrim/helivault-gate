@@ -17,7 +17,7 @@ const Faucet = () => {
   const [cooldown, setCooldown] = useState(0);
   const [isClaimable, setIsClaimable] = useState(false);
 
-  const { data: hlvBalance, refetch: refetchHlvBalance } = useReadContract({
+  const { data: hvtBalance, refetch: refetchHvtBalance } = useReadContract({
     ...HELIVAULT_TOKEN_CONTRACT,
     functionName: 'balanceOf',
     args: [address!],
@@ -26,14 +26,14 @@ const Faucet = () => {
 
   const { data: lastClaimed, refetch: refetchLastClaimed } = useReadContract({
     ...HELIVAULT_TOKEN_CONTRACT,
-    functionName: 'lastClaimed',
+    functionName: 'lastFaucetUse',
     args: [address!],
     query: { enabled: isConnected && !!address },
   });
 
   const { data: faucetAmountResult } = useReadContract({
     ...HELIVAULT_TOKEN_CONTRACT,
-    functionName: 'FAUCET_AMOUNT',
+    functionName: 'faucetAmount',
   });
 
   const { isLoading: isConfirming, isSuccess: isConfirmed } = useWaitForTransactionReceipt({ hash });
@@ -42,7 +42,7 @@ const Faucet = () => {
     const calculateCooldown = () => {
       if (typeof lastClaimed === 'bigint') {
         const now = Math.floor(Date.now() / 1000);
-        const cooldownEnd = Number(lastClaimed) + (12 * 60 * 60);
+        const cooldownEnd = Number(lastClaimed) + (24 * 60 * 60);
         const remaining = cooldownEnd - now;
         if (remaining > 0) {
           setCooldown(remaining);
@@ -63,7 +63,7 @@ const Faucet = () => {
     try {
       await writeContractAsync({
         ...HELIVAULT_TOKEN_CONTRACT,
-        functionName: 'claim',
+        functionName: 'faucet',
         account: address,
         chain: heliosTestnet,
       });
@@ -77,11 +77,11 @@ const Faucet = () => {
 
   useEffect(() => {
     if (isConfirmed) {
-      toast.success("Successfully claimed HLV tokens!");
-      refetchHlvBalance();
+      toast.success("Successfully claimed HVT tokens!");
+      refetchHvtBalance();
       refetchLastClaimed();
     }
-  }, [isConfirmed, refetchHlvBalance, refetchLastClaimed]);
+  }, [isConfirmed, refetchHvtBalance, refetchLastClaimed]);
 
   const formatCooldown = (seconds: number) => {
     const h = Math.floor(seconds / 3600).toString().padStart(2, '0');
@@ -95,7 +95,7 @@ const Faucet = () => {
   return (
     <div className="min-h-screen bg-background">
       <Helmet>
-        <title>HLV Faucet – Helivault Gate</title>
+        <title>HVT Faucet – Helivault Gate</title>
       </Helmet>
       <main className="max-w-xl mx-auto px-4 sm:px-6 lg:px-8 pt-12 pb-12">
         <Card>
@@ -104,13 +104,13 @@ const Faucet = () => {
           </CardHeader>
           <CardContent className="text-center">
             <p className="text-muted-foreground mb-6">
-              Claim free HLV tokens to use for minting NFTs.
+              Claim free HVT tokens to use for minting NFTs.
             </p>
             <div className="p-6 space-y-4">
               <div className="bg-secondary/50 p-6 rounded-lg mb-6">
-                <p className="text-sm text-muted-foreground">Your HLV Balance</p>
+                <p className="text-sm text-muted-foreground">Your HVT Balance</p>
                 <p className="text-4xl font-bold">
-                  {typeof hlvBalance === 'bigint' ? Number(formatEther(hlvBalance)).toFixed(2) : "0.00"} HLV
+                  {typeof hvtBalance === 'bigint' ? Number(formatEther(hvtBalance)).toFixed(2) : "0.00"} HVT
                 </p>
               </div>
             </div>
@@ -119,12 +119,12 @@ const Faucet = () => {
               <div className="flex justify-between items-center">
                 <span className="text-muted-foreground">Claim Amount:</span>
                 <span className="font-bold">
-                  {typeof faucetAmountResult === 'bigint' ? formatEther(faucetAmountResult) : '3.9'} HLV
+                  {typeof faucetAmountResult === 'bigint' ? formatEther(faucetAmountResult) : '0.1'} HVT
                 </span>
               </div>
               <div className="flex justify-between items-center text-sm text-muted-foreground">
                 <span className="text-muted-foreground">Cooldown:</span>
-                <span className="font-bold">12 Hours</span>
+                <span className="font-bold">24 Hours</span>
               </div>
             </div>
 

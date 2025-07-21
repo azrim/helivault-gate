@@ -1,3 +1,4 @@
+// src/pages/Deploy.tsx
 import React, { useState } from 'react';
 import { ethers } from 'ethers';
 import { useAccount } from 'wagmi';
@@ -7,19 +8,14 @@ import { Progress } from '@/components/ui/progress';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Checkbox } from '@/components/ui/checkbox';
 import { CheckCircle, XCircle, Rocket, FileJson, ExternalLink } from 'lucide-react';
+import { toast } from 'sonner';
 
-import HelivaultToken from '../contracts/HelivaultToken.json';
-import AIAgent from '../contracts/AIAgent.json';
-import HyperionClient from '../contracts/HyperionClient.json';
-import Staking from '../contracts/Staking.json';
 import CronJob from '../contracts/CronJob.json';
+import HyperionClient from '../contracts/HyperionClient.json';
 
 const ALL_CONTRACTS = [
-  { name: 'HelivaultToken', artifact: HelivaultToken },
-  { name: 'AIAgent', artifact: AIAgent },
-  { name: 'HyperionClient', artifact: HyperionClient },
-  { name: 'Staking', artifact: Staking },
   { name: 'CronJob', artifact: CronJob },
+  { name: 'HyperionClient', artifact: HyperionClient },
 ];
 
 type DeploymentStatus = {
@@ -50,7 +46,7 @@ const Deploy: React.FC = () => {
 
   const handleDeploy = async () => {
     if (!isConnected) {
-      setError('Please connect your wallet first.');
+      toast.error('Please connect your wallet first.');
       return;
     }
 
@@ -63,7 +59,7 @@ const Deploy: React.FC = () => {
     let failedDeployments = 0;
 
     try {
-      const provider = new ethers.BrowserProvider(window.ethereum);
+      const provider = new ethers.BrowserProvider(window.ethereum as any);
       const signer = await provider.getSigner();
 
       for (let i = 0; i < contractsToDeploy.length; i++) {
@@ -77,13 +73,16 @@ const Deploy: React.FC = () => {
           
           const txHash = contract.deploymentTransaction()?.hash;
           setDeploymentStatus(prev => ({ ...prev, [name]: { status: 'deploying', txHash } }));
+          toast.info(`Deploying ${name}...`, { description: `Tx: ${txHash}` });
 
           await contract.waitForDeployment();
           const contractAddress = await contract.getAddress();
           setDeploymentStatus(prev => ({ ...prev, [name]: { status: 'deployed', txHash, address: contractAddress } }));
-        } catch (e) {
+          toast.success(`${name} deployed successfully!`, { description: `Address: ${contractAddress}` });
+        } catch (e: any) {
           console.error(`Failed to deploy ${name}:`, e);
           setDeploymentStatus(prev => ({ ...prev, [name]: { status: 'failed' } }));
+          toast.error(`Failed to deploy ${name}`, { description: e.message });
           failedDeployments++;
         } finally {
             setProgress(((i + 1) / contractsToDeploy.length) * 100);
@@ -94,9 +93,10 @@ const Deploy: React.FC = () => {
         setError(`${failedDeployments} contract(s) failed to deploy.`);
       }
 
-    } catch (e) {
+    } catch (e: any) {
       console.error(e);
       setError(e.message);
+      toast.error('An unexpected error occurred.', { description: e.message });
     } finally {
       setIsDeploying(false);
     }
@@ -110,10 +110,10 @@ const Deploy: React.FC = () => {
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <Rocket className="h-6 w-6" />
-            Deploy Staking Infrastructure
+            Deploy Automation Contracts
           </CardTitle>
           <CardDescription>
-            Select the contracts you wish to deploy. You can link them together after deployment.
+            Select the automation contracts you wish to deploy to the Helios network.
           </CardDescription>
         </CardHeader>
         <CardContent>

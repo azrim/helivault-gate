@@ -12,6 +12,7 @@ import Mint from "./pages/Mint";
 import Faucet from "./pages/Faucet";
 import CheckIn from "./pages/CheckIn";
 import Deploy from "./pages/Deploy";
+import Staking from "./pages/Staking";
 import NotFound from "./pages/NotFound";
 import Gallery from "./pages/Gallery";
 import { Toaster } from "@/components/ui/toaster";
@@ -28,7 +29,7 @@ import '@rainbow-me/rainbowkit/styles.css';
 const queryClient = new QueryClient();
 const walletConnectProjectId = 'b4a5bd4206fe36062ef6a8f389565fd2';
 
-const config = getDefaultConfig({
+export const config = getDefaultConfig({
   appName: 'Helivault',
   projectId: walletConnectProjectId,
   chains: [heliosTestnet],
@@ -54,6 +55,7 @@ const AnimatedRoutes = () => {
           <Route path="/checkin" element={<PageWrapper><CheckIn /></PageWrapper>} />
           <Route path="/deploy" element={<PageWrapper><Deploy /></PageWrapper>} />
           <Route path="/gallery" element={<PageWrapper><Gallery /></PageWrapper>} />
+          <Route path="/staking" element={<PageWrapper><Staking /></PageWrapper>} />
           <Route path="*" element={<PageWrapper><NotFound /></PageWrapper>} />
         </Routes>
       </AnimatePresence>

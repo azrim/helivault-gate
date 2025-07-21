@@ -1,13 +1,15 @@
 // src/pages/Gallery.tsx
 import { useState, useEffect } from 'react';
 import { useAccount, useReadContract } from 'wagmi';
-import { HELIVAULT_NFT_CONTRACT } from '@/contracts/HelivaultNFT';
+import { HELIVAULT_COLLECTIONS_CONTRACT } from '@/contracts/HelivaultCollections';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { LayoutGrid as GalleryIcon } from 'lucide-react';
 import { ConnectButton } from '@rainbow-me/rainbowkit';
 import { Helmet } from 'react-helmet-async';
+import { readContract } from '@wagmi/core'
+import { config } from '@/App';
 
 interface NftMetadata {
   name: string;
@@ -17,7 +19,7 @@ interface NftMetadata {
 
 const NftCard = ({ tokenId }: { tokenId: bigint }) => {
   const { data: tokenURIResult, isLoading: isUriLoading } = useReadContract({
-    ...HELIVAULT_NFT_CONTRACT,
+    ...HELIVAULT_COLLECTIONS_CONTRACT,
     functionName: 'tokenURI',
     args: [tokenId],
   });
@@ -83,9 +85,10 @@ const NftCard = ({ tokenId }: { tokenId: bigint }) => {
 const Gallery = () => {
   const { address, isConnected } = useAccount();
   const [tokenIds, setTokenIds] = useState<bigint[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
 
   const { data: balance, isLoading: isBalanceLoading } = useReadContract({
-    ...HELIVAULT_NFT_CONTRACT,
+    ...HELIVAULT_COLLECTIONS_CONTRACT,
     functionName: 'balanceOf',
     args: [address!],
     query: {
@@ -93,23 +96,24 @@ const Gallery = () => {
     },
   });
 
-  const { data: ownedTokens, isLoading: isTokensLoading } = useReadContract({
-    ...HELIVAULT_NFT_CONTRACT,
-    functionName: 'tokensOfOwner',
-    args: [address!],
-    query: {
-        enabled: isConnected && balance !== undefined && balance > 0,
-    },
-  });
-
   useEffect(() => {
-    if (ownedTokens) {
-        // @ts-ignore
-      setTokenIds(ownedTokens);
-    }
-  }, [ownedTokens]);
-
-  const isLoading = isBalanceLoading || isTokensLoading;
+    const fetchTokenIds = async () => {
+      if (balance) {
+        const ids = [];
+        for (let i = 0; i < balance; i++) {
+          const tokenId = await readContract(config, {
+            ...HELIVAULT_COLLECTIONS_CONTRACT,
+            functionName: 'tokenOfOwnerByIndex',
+            args: [address!, BigInt(i)],
+          });
+          ids.push(tokenId as bigint);
+        }
+        setTokenIds(ids);
+      }
+      setIsLoading(false);
+    };
+    fetchTokenIds();
+  }, [balance, address]);
 
   return (
     <div className="container mx-auto px-4 py-8">
@@ -129,7 +133,7 @@ const Gallery = () => {
             <ConnectButton />
           </div>
         </Alert>
-      ) : isLoading ? (
+      ) : isLoading || isBalanceLoading ? (
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
           {Array.from({ length: 4 }).map((_, i) => (
             <Card key={i} className="overflow-hidden">

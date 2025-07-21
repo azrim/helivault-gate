@@ -9,13 +9,13 @@ import { toast } from "sonner";
 import { useAccount, useReadContract, useWriteContract, useWaitForTransactionReceipt, useConfig } from "wagmi";
 import { waitForTransactionReceipt } from "wagmi/actions";
 import { useQueryClient } from "@tanstack/react-query";
-import { QUANTUM_RELICS_CONTRACT } from "@/contracts/QuantumRelics";
+import { HELIVAULT_COLLECTIONS_CONTRACT } from "@/contracts/HelivaultCollections";
 import { HELIVAULT_TOKEN_CONTRACT } from "@/contracts/HelivaultToken";
 import { heliosTestnet } from "@/lib/chains";
 import { formatEther, TransactionExecutionError, type WaitForTransactionReceiptReturnType } from "viem";
 import { ConnectButton } from "@rainbow-me/rainbowkit";
 
-const contractConfig = QUANTUM_RELICS_CONTRACT;
+const contractConfig = HELIVAULT_COLLECTIONS_CONTRACT;
 
 const HistoryRow = ({ ownerAddress, index, nftName, mintPrice }: { ownerAddress: `0x${string}`, index: bigint, nftName: string, mintPrice: string }) => {
   const { data: tokenIdResult, isLoading, isError, error, refetch } = useReadContract({
@@ -59,7 +59,7 @@ const HistoryRow = ({ ownerAddress, index, nftName, mintPrice }: { ownerAddress:
         </div>
       </td>
       <td className="py-4 px-4 text-center text-muted-foreground">#{tokenId}</td>
-      <td className="py-4 px-4 text-center font-medium">{mintPrice} HLV</td>
+      <td className="py-4 px-4 text-center font-medium">{mintPrice} HVT</td>
       <td className="py-4 px-4 text-right">
         <span className="inline-flex items-center px-2 py-1 rounded-full text-xs bg-success/10 text-success border border-success/20">Minted</span>
       </td>
@@ -79,14 +79,14 @@ const Mint = () => {
   const [txHash, setTxHash] = useState<`0x${string}` | undefined>();
   const [activeToastId, setActiveToastId] = useState<string | number | undefined>();
 
-  const nftContract = QUANTUM_RELICS_CONTRACT;
+  const nftContract = HELIVAULT_COLLECTIONS_CONTRACT;
   const tokenContract = HELIVAULT_TOKEN_CONTRACT;
   const isConnected = !!address;
 
   // --- Data Fetching ---
-  const { data: totalSupply, refetch: refetchTotalSupply } = useReadContract({ ...nftContract, functionName: 'currentSupply' });
-  const { data: maxSupply } = useReadContract({ ...nftContract, functionName: 'MAX_SUPPLY' });
-  const { data: mintPriceResult } = useReadContract({ ...nftContract, functionName: 'MINT_PRICE' });
+  const { data: totalSupply, refetch: refetchTotalSupply } = useReadContract({ ...nftContract, functionName: 'totalSupply' });
+  const { data: maxSupply } = useReadContract({ ...nftContract, functionName: 'maxSupply' });
+  const { data: mintPriceResult } = useReadContract({ ...nftContract, functionName: 'mintPrice' });
   const { data: userBalanceResult, isLoading: isBalanceLoading, refetch: refetchUserBalance } = useReadContract({ ...nftContract, functionName: 'balanceOf', args: [address!], query: { enabled: isConnected } });
   const { data: nftNameResult } = useReadContract({ ...nftContract, functionName: 'name' });
   const { data: allowance, refetch: refetchAllowance } = useReadContract({
@@ -101,13 +101,13 @@ const Mint = () => {
   // --- Main Minting Logic ---
   const handleMint = async () => {
     if (!address || !chain || typeof mintPriceResult === 'undefined' || quantity <= 0) return;
-    const totalCost = mintPriceResult * BigInt(quantity);
+    const totalCost = (mintPriceResult as bigint) * BigInt(quantity);
     
     const toastId = toast.loading("Initializing transaction...");
     setActiveToastId(toastId);
 
     try {
-      if (typeof allowance === 'undefined' || allowance < totalCost) {
+      if (typeof allowance !== 'bigint' || allowance < totalCost) {
         setMintingStep('approving');
         toast.loading("Approval required, please confirm in wallet.", { id: toastId });
         
@@ -171,7 +171,7 @@ const Mint = () => {
   // --- UI State Calculation ---
   const currentSupplyNum = typeof totalSupply === 'bigint' ? Number(totalSupply) : 0;
   const maxSupplyNum = typeof maxSupply === 'bigint' ? Number(maxSupply) : 3999;
-  const mintPriceHLV = typeof mintPriceResult === 'bigint' ? formatEther(mintPriceResult) : "0.39";
+  const mintPriceHVT = typeof mintPriceResult === 'bigint' ? formatEther(mintPriceResult) : "0.39";
   const nftName = typeof nftNameResult === 'string' ? nftNameResult : 'Quantum Relic';
   const userBalance = typeof userBalanceResult === 'bigint' ? userBalanceResult : 0n;
   const tokenIndices = Array.from({ length: Number(userBalance) }, (_, i) => BigInt(i));
@@ -211,7 +211,7 @@ const Mint = () => {
               </div>
               <Card className="border-primary/50 border-2 bg-card">
                 <CardContent className="flex flex-col gap-4 pt-6">
-                  <p className="text-4xl font-bold">{mintPriceHLV} HLV</p>
+                  <p className="text-4xl font-bold">{mintPriceHVT} HVT</p>
                   {isConnected && (
                     <div className="text-sm text-muted-foreground">
                       <span>{currentSupplyNum.toLocaleString()} / {maxSupplyNum.toLocaleString()} minted</span>
@@ -275,7 +275,7 @@ const Mint = () => {
                         <tr><td colSpan={4} className="py-8 px-4 text-center">No NFTs found for this address.</td></tr>
                       ) : (
                         tokenIndices.map((index) => (
-                          <HistoryRow key={index.toString()} ownerAddress={address!} index={index} nftName={nftName} mintPrice={mintPriceHLV} />
+                          <HistoryRow key={index.toString()} ownerAddress={address!} index={index} nftName={nftName} mintPrice={mintPriceHVT} />
                         ))
                       )}
                     </tbody>

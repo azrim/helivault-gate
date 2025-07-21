@@ -1,7 +1,8 @@
 // src/contracts/DailyCheckIn.ts
+import { heliosTestnet } from "@/lib/chains";
 
 export const DAILY_CHECK_IN_CONTRACT = {
-  address: "0xfd30758A9ef09EE9E0455Eb2916157bD41058650", 
+  address: "0x2133bcB200F12014eb1415e0b1D62B252e7dC38C" as `0x${string}`,
   abi: [
     {
       "anonymous": false,
@@ -87,4 +88,5 @@ export const DAILY_CHECK_IN_CONTRACT = {
       "type": "function"
     }
   ],
-} as const;
+  chain: heliosTestnet,
+};
