@@ -1,6 +1,6 @@
 // src/components/MobileBottomNav.tsx
 import { Link, useLocation } from "react-router-dom";
-import { Home, Sparkles, Droplets, Flame, LayoutGrid as Gallery, LucideIcon } from "lucide-react";
+import { Home, Sparkles, Droplets, Flame, LayoutGrid as Gallery, Rocket, LucideIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { motion } from "framer-motion";
 import { Tooltip, TooltipContent, TooltipTrigger, TooltipProvider } from "@/components/ui/tooltip";
@@ -20,6 +20,7 @@ const navItems: NavItem[] = [
   { path: "/gallery", label: "Gallery", icon: Gallery },
   { path: "/faucet", label: "Faucet", icon: Droplets },
   { path: "/checkin", label: "Check-in", icon: Flame },
+  { path: "/deploy", label: "Deploy", icon: Rocket },
 ];
 
 const NavLink = ({ path, icon: Icon, label }: NavItem) => {
