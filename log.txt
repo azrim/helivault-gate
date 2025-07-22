@@ -1,0 +1,30 @@
+[02:27:42.285] Running build in Washington, D.C., USA (East) – iad1
+[02:27:42.286] Build machine configuration: 2 cores, 8 GB
+[02:27:42.299] Cloning github.com/azrim/helivault-gate (Branch: main, Commit: 1f7be80)
+[02:27:42.742] Warning: Failed to fetch one or more git submodules
+[02:27:42.742] Cloning completed: 443.000ms
+[02:27:45.546] Restored build cache from previous deployment (UW7G7SrLcRBBYhz1RFrpkVqbCqSV)
+[02:27:50.592] Running "vercel build"
+[02:27:51.173] Vercel CLI 44.5.0
+[02:27:51.776] Installing dependencies...
+[02:27:55.881] 
+[02:27:55.882] added 179 packages, and removed 1 package in 4s
+[02:27:55.883] 
+[02:27:55.883] 227 packages are looking for funding
+[02:27:55.883]   run `npm fund` for details
+[02:27:56.579] [36mvite v6.3.5 [32mbuilding for production...[36m[39m
+[02:27:56.966] transforming...
+[02:27:58.055] 
+[02:27:58.056] /fonts/satoshi/Satoshi-Variable.woff2 referenced in /fonts/satoshi/Satoshi-Variable.woff2 didn't resolve at build time, it will remain unchanged to be resolved at runtime
+[02:27:59.112] [32m✓[39m 311 modules transformed.
+[02:27:59.115] [31m✗[39m Build failed in 2.51s
+[02:27:59.115] [31merror during build:
+[02:27:59.116] [31mCould not resolve "../../contracts/deployments.json" from "src/contracts/Lottery.ts"[31m
+[02:27:59.116] file: [36m/vercel/path0/src/contracts/Lottery.ts[31m
+[02:27:59.116]     at getRollupError (file:///vercel/path0/node_modules/rollup/dist/es/shared/parseAst.js:400:41)
+[02:27:59.116]     at error (file:///vercel/path0/node_modules/rollup/dist/es/shared/parseAst.js:396:42)
+[02:27:59.117]     at ModuleLoader.handleInvalidResolvedId (file:///vercel/path0/node_modules/rollup/dist/es/shared/node-entry.js:21379:24)
+[02:27:59.117]     at file:///vercel/path0/node_modules/rollup/dist/es/shared/node-entry.js:21339:26[39m
+[02:27:59.154] Error: Command "vite build" exited with 1
+[02:28:00.094] 
+[02:28:02.971] Exiting build container

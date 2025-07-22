@@ -7,6 +7,7 @@ import {
   LayoutGrid as Gallery,
   Rocket,
   Ticket,
+  User,
   LucideIcon,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -41,6 +42,7 @@ const navItems: NavItem[] = [
   { path: "/checkin", label: "Check-in", icon: Flame },
   { path: "/lottery", label: "Lottery", icon: Ticket },
   { path: "/deploy", label: "Deploy", icon: Rocket },
+  { path: "/profile", label: "Profile", icon: User },
 ];
 
 const NavLink = React.memo(

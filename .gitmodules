@@ -1,3 +1,0 @@
-[submodule "contracts"]
-	path = contracts
-	url = git@github.com:azrim/helivault-contracts.git
