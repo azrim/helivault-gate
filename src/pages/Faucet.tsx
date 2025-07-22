@@ -1,43 +1,34 @@
+// src/pages/Faucet.tsx
 import { useEffect, useState } from "react";
 import { Helmet } from "react-helmet-async";
-import {
-  useAccount,
-  useReadContract,
-  useWriteContract,
-  useWaitForTransactionReceipt,
-} from "wagmi";
+import { useAccount, useReadContract, useWriteContract, useWaitForTransactionReceipt, useBalance } from "wagmi";
 import { formatEther } from "viem";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { HELIVAULT_TOKEN_CONTRACT } from "@/contracts/HelivaultToken";
 import { heliosTestnet } from "@/lib/chains";
 import { ConnectButton } from "@rainbow-me/rainbowkit";
-import { Hourglass } from "lucide-react";
+import { Hourglass, Droplets } from "lucide-react";
+import { motion } from "framer-motion";
 
 const Faucet = () => {
   const { address, isConnected, chain } = useAccount();
-  const {
-    data: hash,
-    isPending: isClaiming,
-    writeContractAsync,
-  } = useWriteContract();
+  const { data: hash, writeContractAsync } = useWriteContract();
 
   const [cooldown, setCooldown] = useState(0);
-  const [isClaimable, setIsClaimable] = useState(false);
 
-  const { data: hvtBalance, refetch: refetchHvtBalance } = useReadContract({
-    ...HELIVAULT_TOKEN_CONTRACT,
-    functionName: "balanceOf",
-    args: [address!],
-    query: { enabled: isConnected && !!address },
+  const { data: hvtBalance, refetch: refetchHvtBalance } = useBalance({
+    address: address,
+    token: HELIVAULT_TOKEN_CONTRACT.address,
+    query: { enabled: isConnected },
   });
 
   const { data: lastClaimed, refetch: refetchLastClaimed } = useReadContract({
     ...HELIVAULT_TOKEN_CONTRACT,
     functionName: "lastFaucetUse",
     args: [address!],
-    query: { enabled: isConnected && !!address },
+    query: { enabled: isConnected },
   });
 
   const { data: faucetAmountResult } = useReadContract({
@@ -45,8 +36,7 @@ const Faucet = () => {
     functionName: "faucetAmount",
   });
 
-  const { isLoading: isConfirming, isSuccess: isConfirmed } =
-    useWaitForTransactionReceipt({ hash });
+  const { isLoading: isConfirming, isSuccess: isConfirmed } = useWaitForTransactionReceipt({ hash });
 
   useEffect(() => {
     const calculateCooldown = () => {
@@ -54,16 +44,9 @@ const Faucet = () => {
         const now = Math.floor(Date.now() / 1000);
         const cooldownEnd = Number(lastClaimed) + 24 * 60 * 60;
         const remaining = cooldownEnd - now;
-        if (remaining > 0) {
-          setCooldown(remaining);
-          setIsClaimable(false);
-        } else {
-          setCooldown(0);
-          setIsClaimable(true);
-        }
+        setCooldown(remaining > 0 ? remaining : 0);
       }
     };
-
     calculateCooldown();
     const interval = setInterval(calculateCooldown, 1000);
     return () => clearInterval(interval);
@@ -71,17 +54,14 @@ const Faucet = () => {
 
   const handleClaim = async () => {
     try {
-      await writeContractAsync({
+      const txHash = await writeContractAsync({
         ...HELIVAULT_TOKEN_CONTRACT,
         functionName: "faucet",
-        account: address,
-        chain: heliosTestnet,
       });
+      setHash(txHash);
       toast.info("Claim transaction sent...");
     } catch (error: any) {
-      toast.error("Claim failed", {
-        description: error.shortMessage || "An error occurred.",
-      });
+      toast.error("Claim failed", { description: error.shortMessage || "An error occurred." });
     }
   };
 
@@ -94,80 +74,67 @@ const Faucet = () => {
   }, [isConfirmed, refetchHvtBalance, refetchLastClaimed]);
 
   const formatCooldown = (seconds: number) => {
-    const h = Math.floor(seconds / 3600)
-      .toString()
-      .padStart(2, "0");
-    const m = Math.floor((seconds % 3600) / 60)
-      .toString()
-      .padStart(2, "0");
+    const h = Math.floor(seconds / 3600).toString().padStart(2, "0");
+    const m = Math.floor((seconds % 3600) / 60).toString().padStart(2, "0");
     const s = (seconds % 60).toString().padStart(2, "0");
     return `${h}:${m}:${s}`;
   };
 
+  const isClaimable = cooldown <= 0;
   const isCorrectNetwork = chain?.id === heliosTestnet.id;
 
   return (
-    <div className="min-h-screen bg-background">
+    <>
       <Helmet>
         <title>HVT Faucet – Helivault Gate</title>
       </Helmet>
-      <main className="max-w-xl mx-auto px-4 sm:px-6 lg:px-8 pt-12 pb-12">
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-center text-2xl">
-              Helivault Token Faucet
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="text-center">
-            <p className="text-muted-foreground mb-6">
-              Claim free HVT tokens to use for minting NFTs.
-            </p>
-            <div className="p-6 space-y-4">
-              <div className="bg-secondary/50 p-6 rounded-lg mb-6">
-                <p className="text-sm text-muted-foreground">
-                  Your HVT Balance
-                </p>
+      <div className="space-y-16 pb-24">
+        {/* Header */}
+        <section className="text-center pt-24 pb-12">
+          <motion.h1
+            className="text-5xl md:text-7xl font-bold tracking-tighter mb-6 hero-glow"
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+          >
+            HVT Token <span className="text-primary">Faucet</span>
+          </motion.h1>
+          <motion.p
+            className="max-w-2xl mx-auto text-lg text-muted-foreground"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.3 }}
+          >
+            Get free Helivault Tokens (HVT) to use for minting NFTs and interacting with our ecosystem.
+          </motion.p>
+        </section>
+
+        {/* Faucet Section */}
+        <section className="max-w-xl mx-auto px-4 sm:px-6 lg:px-8">
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-3">
+                <Droplets className="h-6 w-6 text-primary" />
+                <span>Claim Your Tokens</span>
+              </CardTitle>
+              <CardDescription>
+                You can claim {typeof faucetAmountResult === "bigint" ? formatEther(faucetAmountResult) : "0.1"} HVT every 24 hours.
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="text-center space-y-8">
+              <div className="bg-secondary p-6 rounded-lg">
+                <p className="text-sm text-muted-foreground">Your HVT Balance</p>
                 <p className="text-4xl font-bold">
-                  {typeof hvtBalance === "bigint"
-                    ? Number(formatEther(hvtBalance)).toFixed(2)
-                    : "0.00"}{" "}
-                  HVT
+                  {hvtBalance ? `${parseFloat(hvtBalance.formatted).toFixed(2)} HVT` : "0.00 HVT"}
                 </p>
               </div>
-            </div>
 
-            <div className="p-6 space-y-4">
-              <div className="flex justify-between items-center">
-                <span className="text-muted-foreground">Claim Amount:</span>
-                <span className="font-bold">
-                  {typeof faucetAmountResult === "bigint"
-                    ? formatEther(faucetAmountResult)
-                    : "0.1"}{" "}
-                  HVT
-                </span>
-              </div>
-              <div className="flex justify-between items-center text-sm text-muted-foreground">
-                <span className="text-muted-foreground">Cooldown:</span>
-                <span className="font-bold">24 Hours</span>
-              </div>
-            </div>
-
-            <div className="mt-8 p-6 space-y-4">
               {!isConnected ? (
-                <div className="flex justify-center">
-                  <ConnectButton label="Connect Wallet to Claim" />
-                </div>
+                <ConnectButton label="Connect Wallet to Claim" />
               ) : !isCorrectNetwork ? (
-                <div className="flex justify-center">
-                  <ConnectButton label="Wrong Network" />
-                </div>
+                <ConnectButton label="Wrong Network" />
               ) : isClaimable ? (
-                <Button
-                  onClick={handleClaim}
-                  disabled={isClaiming || isConfirming}
-                  className="w-full h-12 text-lg"
-                >
-                  {isClaiming || isConfirming ? "Claiming..." : "Claim Tokens"}
+                <Button onClick={handleClaim} disabled={isConfirming} className="w-full h-12 text-lg">
+                  {isConfirming ? "Claiming..." : "Claim Tokens"}
                 </Button>
               ) : (
                 <Button disabled className="w-full h-12 text-lg">
@@ -175,11 +142,11 @@ const Faucet = () => {
                   Claim in {formatCooldown(cooldown)}
                 </Button>
               )}
-            </div>
-          </CardContent>
-        </Card>
-      </main>
-    </div>
+            </CardContent>
+          </Card>
+        </section>
+      </div>
+    </>
   );
 };
 

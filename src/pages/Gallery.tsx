@@ -2,14 +2,17 @@
 import { useState, useEffect } from "react";
 import { useAccount, useReadContract } from "wagmi";
 import { HELIVAULT_COLLECTIONS_CONTRACT } from "@/contracts/HelivaultCollections";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { LayoutGrid as GalleryIcon } from "lucide-react";
+import { Image as ImageIcon, Wallet } from "lucide-react";
 import { ConnectButton } from "@rainbow-me/rainbowkit";
 import { Helmet } from "react-helmet-async";
 import { readContract } from "@wagmi/core";
 import { config } from "@/App";
+import { motion } from "framer-motion";
+import { Link } from "react-router-dom";
+import { Button } from "@/components/ui/button";
 
 interface NftMetadata {
   name: string;
@@ -18,7 +21,7 @@ interface NftMetadata {
 }
 
 const NftCard = ({ tokenId }: { tokenId: bigint }) => {
-  const { data: tokenURIResult, isLoading: isUriLoading } = useReadContract({
+  const { data: tokenURIResult } = useReadContract({
     ...HELIVAULT_COLLECTIONS_CONTRACT,
     functionName: "tokenURI",
     args: [tokenId],
@@ -29,9 +32,9 @@ const NftCard = ({ tokenId }: { tokenId: bigint }) => {
 
   useEffect(() => {
     const fetchMetadata = async () => {
-      if (tokenURIResult) {
+      if (typeof tokenURIResult === "string" && tokenURIResult) {
         try {
-          const response = await fetch(tokenURIResult as string);
+          const response = await fetch(tokenURIResult.replace("ipfs://", "https://ipfs.io/ipfs/"));
           const data: NftMetadata = await response.json();
           setMetadata(data);
         } catch (error) {
@@ -39,52 +42,27 @@ const NftCard = ({ tokenId }: { tokenId: bigint }) => {
         } finally {
           setLoading(false);
         }
-      } else if (!isUriLoading) {
+      } else {
         setLoading(false);
       }
     };
     fetchMetadata();
-  }, [tokenURIResult, isUriLoading]);
+  }, [tokenURIResult]);
 
   if (loading) {
-    return (
-      <Card className="overflow-hidden">
-        <Skeleton className="w-full h-48" />
-        <CardHeader>
-          <Skeleton className="h-6 w-3/4" />
-          <Skeleton className="h-4 w-1/2" />
-        </CardHeader>
-      </Card>
-    );
-  }
-
-  if (!metadata) {
-    return (
-      <Card className="overflow-hidden">
-        <div className="w-full h-48 bg-secondary flex items-center justify-center">
-          <p className="text-muted-foreground">Metadata not found</p>
-        </div>
-        <CardHeader>
-          <CardTitle>Token #{tokenId.toString()}</CardTitle>
-        </CardHeader>
-      </Card>
-    );
+    return <Skeleton className="w-full h-64 rounded-lg" />;
   }
 
   return (
-    <Card className="overflow-hidden transform transition-transform hover:scale-105 shadow-lg">
+    <motion.div whileHover={{ y: -5 }} className="bg-card p-4 rounded-lg space-y-3">
       <img
-        src={metadata.image}
-        alt={metadata.name}
-        className="w-full h-48 object-cover"
+        src={metadata?.image.replace("ipfs://", "https://ipfs.io/ipfs/")}
+        alt={metadata?.name || `Token #${tokenId}`}
+        className="w-full h-48 object-cover rounded-md"
       />
-      <CardHeader>
-        <CardTitle>{metadata.name}</CardTitle>
-        <p className="text-sm text-muted-foreground">
-          Token ID: {tokenId.toString()}
-        </p>
-      </CardHeader>
-    </Card>
+      <h3 className="font-bold text-lg">{metadata?.name || `Token #${tokenId}`}</h3>
+      <p className="text-sm text-muted-foreground">Token ID: {tokenId.toString()}</p>
+    </motion.div>
   );
 };
 
@@ -93,82 +71,114 @@ const Gallery = () => {
   const [tokenIds, setTokenIds] = useState<bigint[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
-  const { data: balance, isLoading: isBalanceLoading } = useReadContract({
+  const { data: balance } = useReadContract({
     ...HELIVAULT_COLLECTIONS_CONTRACT,
     functionName: "balanceOf",
     args: [address!],
-    query: {
-      enabled: isConnected,
-    },
+    query: { enabled: isConnected },
   });
 
   useEffect(() => {
     const fetchTokenIds = async () => {
-      if (balance) {
-        const ids = [];
-        for (let i = 0; i < balance; i++) {
-          const tokenId = await readContract(config, {
-            ...HELIVAULT_COLLECTIONS_CONTRACT,
-            functionName: "tokenOfOwnerByIndex",
-            args: [address!, BigInt(i)],
-          });
-          ids.push(tokenId as bigint);
+      if (isConnected && typeof balance === 'bigint') {
+        try {
+          const ids = await Promise.all(
+            Array.from({ length: Number(balance) }).map((_, i) =>
+              readContract(config, {
+                ...HELIVAULT_COLLECTIONS_CONTRACT,
+                functionName: "tokenOfOwnerByIndex",
+                args: [address!, BigInt(i)],
+              })
+            )
+          );
+          setTokenIds(ids as bigint[]);
+        } catch (error) {
+          console.error("Error fetching token IDs:", error);
+        } finally {
+          setIsLoading(false);
         }
-        setTokenIds(ids);
+      } else if (!isConnected) {
+        setIsLoading(false);
       }
-      setIsLoading(false);
     };
     fetchTokenIds();
-  }, [balance, address]);
+  }, [balance, address, isConnected]);
 
-  return (
-    <div className="container mx-auto px-4 py-8">
-      <Helmet>
-        <title>My NFT Gallery – Helivault</title>
-      </Helmet>
-      <div className="flex items-center gap-4 mb-8">
-        <GalleryIcon className="w-8 h-8 text-primary" />
-        <h1 className="text-3xl font-bold">My NFT Gallery</h1>
-      </div>
+  const renderContent = () => {
+    if (!isConnected) {
+      return (
+        <div className="text-center space-y-4">
+          <Wallet className="h-12 w-12 mx-auto text-muted-foreground" />
+          <h3 className="text-xl font-semibold">Connect Your Wallet</h3>
+          <p className="text-muted-foreground">Please connect your wallet to view your NFT gallery.</p>
+          <ConnectButton />
+        </div>
+      );
+    }
 
-      {!isConnected ? (
-        <Alert className="max-w-md mx-auto">
-          <AlertTitle>Connect Your Wallet</AlertTitle>
-          <AlertDescription>
-            Please connect your wallet to see your Helivault NFTs.
-          </AlertDescription>
-          <div className="mt-4 flex justify-center">
-            <ConnectButton />
-          </div>
-        </Alert>
-      ) : isLoading || isBalanceLoading ? (
+    if (isLoading) {
+      return (
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
           {Array.from({ length: 4 }).map((_, i) => (
-            <Card key={i} className="overflow-hidden">
-              <Skeleton className="w-full h-48" />
-              <CardHeader>
-                <Skeleton className="h-6 w-3/4" />
-                <Skeleton className="h-4 w-1/2" />
-              </CardHeader>
-            </Card>
+            <Skeleton key={i} className="w-full h-64 rounded-lg" />
           ))}
         </div>
-      ) : tokenIds.length === 0 ? (
-        <Alert>
-          <AlertTitle>No NFTs Found</AlertTitle>
-          <AlertDescription>
-            You do not own any Helivault NFTs yet. Visit the Mint page to get
-            started!
-          </AlertDescription>
-        </Alert>
-      ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-          {tokenIds.map((tokenId) => (
-            <NftCard key={tokenId.toString()} tokenId={tokenId} />
-          ))}
+      );
+    }
+
+    if (tokenIds.length === 0) {
+      return (
+        <div className="text-center space-y-4">
+          <ImageIcon className="h-12 w-12 mx-auto text-muted-foreground" />
+          <h3 className="text-xl font-semibold">Your Gallery is Empty</h3>
+          <p className="text-muted-foreground">You haven't minted any NFTs yet. Let's change that!</p>
+          <Button asChild>
+            <Link to="/mint">Mint Your First NFT</Link>
+          </Button>
         </div>
-      )}
-    </div>
+      );
+    }
+
+    return (
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+        {tokenIds.map((tokenId) => (
+          <NftCard key={tokenId.toString()} tokenId={tokenId} />
+        ))}
+      </div>
+    );
+  };
+
+  return (
+    <>
+      <Helmet>
+        <title>My Gallery – Helivault Gate</title>
+      </Helmet>
+      <div className="space-y-16 pb-24">
+        {/* Header */}
+        <section className="text-center pt-24 pb-12">
+          <motion.h1
+            className="text-5xl md:text-7xl font-bold tracking-tighter mb-6 hero-glow"
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+          >
+            Your <span className="text-primary">Digital Collection</span>
+          </motion.h1>
+          <motion.p
+            className="max-w-2xl mx-auto text-lg text-muted-foreground"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.3 }}
+          >
+            Here are the unique digital relics you've collected from the Helivault ecosystem.
+          </motion.p>
+        </section>
+
+        {/* Gallery Section */}
+        <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          {renderContent()}
+        </section>
+      </div>
+    </>
   );
 };
 
