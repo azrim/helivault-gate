@@ -5,9 +5,9 @@ import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { ConnectButton } from "@rainbow-me/rainbowkit";
-import { LOTTERY_CONTRACT } from "@/contracts/Lottery"; // This will be created next
+import { LOTTERY_CONTRACT } from "@/contracts/Lottery";
 import { heliosTestnet } from "@/lib/chains";
-import { formatEther } from "viem";
+import { formatEther, decodeEventLog } from "viem";
 import { motion, AnimatePresence } from "framer-motion";
 import { Ticket, Star, PartyPopper } from "lucide-react";
 
@@ -44,14 +44,27 @@ const Lottery = () => {
     hash,
     onSuccess: (data) => {
       toast.success("Spin confirmed!");
-      const winnerPaidLog = data.logs.find(log => log.topics[0] === "0x..."); // Replace with actual event topic
-      if (winnerPaidLog) {
-        // This part is tricky without an indexer, we'll simulate it
-        // For a real app, use an event listener or indexer to get the win amount
-        setWinAmount(lastWinnerAmount ?? null); // A bit of a hack
-      } else {
-        setWinAmount(null);
+      let amountWon: bigint | null = null;
+      
+      // Decode the event log to find the actual amount won
+      for (const log of data.logs) {
+        try {
+          const decodedEvent = decodeEventLog({
+            abi: LOTTERY_CONTRACT.abi,
+            data: log.data,
+            topics: log.topics,
+          });
+
+          if (decodedEvent.eventName === "WinnerPaid") {
+            amountWon = (decodedEvent.args as { winner: string; amount: bigint }).amount;
+            break;
+          }
+        } catch (e) {
+          // Ignore errors from logs that don't match the ABI
+        }
       }
+
+      setWinAmount(amountWon);
       setShowResult(true);
       refetchContractBalance();
       refetchLastWinner();
@@ -88,7 +101,7 @@ const Lottery = () => {
       <Card className="overflow-hidden">
         <CardHeader className="bg-gradient-to-r from-purple-500 to-indigo-600 text-white">
           <CardTitle className="flex items-center gap-2"><Ticket /> Helios Lottery</CardTitle>
-          <CardDescription className="text-purple-200">Pay the price, spin the wheel, and test your luck!</CardDescription>
+          <CardDescription className="text-purple-200">Every spin is a win! Pay the price to win a random amount of HLS.</CardDescription>
         </CardHeader>
         <CardContent className="text-center space-y-6 pt-6">
           <div className="grid grid-cols-2 gap-4 text-left">
@@ -135,8 +148,8 @@ const Lottery = () => {
                 ) : (
                   <>
                     <Star className="h-16 w-16 mx-auto text-yellow-500" />
-                    <p className="text-2xl font-bold">Better Luck Next Time!</p>
-                    <p className="text-lg text-muted-foreground">You didn't win this time. Try again!</p>
+                    <p className="text-2xl font-bold">No Prize This Time</p>
+                    <p className="text-lg text-muted-foreground">The prize pool might be empty. Please ask the owner to fund it.</p>
                   </>
                 )}
                 <Button onClick={() => setShowResult(false)} variant="secondary">Play Again</Button>
@@ -152,7 +165,7 @@ const Lottery = () => {
             <CardTitle className="text-center">Last Winner</CardTitle>
           </CardHeader>
           <CardContent className="text-center">
-            <p>{lastWinner}</p>
+            <p className="truncate">{lastWinner}</p>
             <p>Won {lastWinnerAmount ? formatEther(lastWinnerAmount) : '0'} HLS</p>
           </CardContent>
         </Card>
