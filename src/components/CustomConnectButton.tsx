@@ -1,11 +1,10 @@
+// src/components/CustomConnectButton.tsx
 import { ConnectButton } from "@rainbow-me/rainbowkit";
 import { useBalance } from "wagmi";
 import { Button } from "./ui/button";
+import { Network } from "lucide-react";
 
 export const CustomConnectButton = () => {
-  const { address } = useBalance();
-  const { data: balance } = useBalance({ address: address });
-
   return (
     <ConnectButton.Custom>
       {({
@@ -43,18 +42,16 @@ export const CustomConnectButton = () => {
         return (
           <div
             onClick={openAccountModal}
-            className="flex items-center gap-3 cursor-pointer"
+            className="flex items-center gap-3 cursor-pointer bg-secondary/70 hover:bg-secondary transition-colors px-3 py-2 rounded-full"
           >
-            <div className="px-3 py-2 rounded-md bg-secondary text-foreground font-medium">
-              <span>
-                {balance?.formatted
-                  ? `${parseFloat(balance.formatted).toFixed(3)} ${balance.symbol}`
-                  : "Loading..."}
-              </span>
-            </div>
-            <div className="px-3 py-2 rounded-md bg-secondary text-foreground font-medium">
-              <span>{account.displayName}</span>
-            </div>
+            <Network className="h-5 w-5 text-muted-foreground" />
+            <span className="font-medium text-sm">
+              {account.balanceFormatted
+                ? `${parseFloat(account.balanceFormatted).toFixed(3)} ${account.balanceSymbol}`
+                : "Loading..."}
+            </span>
+            <div className="h-4 w-px bg-border" />
+            <span className="font-medium text-sm">{account.displayName}</span>
           </div>
         );
       }}
