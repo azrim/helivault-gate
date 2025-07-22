@@ -1,5 +1,5 @@
 // src/pages/Staking.tsx
-import { useState, useEffect, useCallback } from "react";
+import { useState, useCallback } from "react";
 import { useAccount, useReadContract, useWriteContract, useWaitForTransactionReceipt, useBalance } from "wagmi";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
@@ -18,6 +18,33 @@ const Staking = () => {
 
   const [stakeAmount, setStakeAmount] = useState("");
   const [unstakeAmount, setUnstakeAmount] = useState("");
+
+  // --- Data Refetching ---
+  const refetchAll = useCallback(() => {
+    refetchHvtBalance();
+    refetchStakedBalance();
+    refetchRewards();
+    refetchAllowance();
+  }, []);
+
+  // --- Transaction Confirmation ---
+  const { isLoading: isConfirming } = useWaitForTransactionReceipt({
+    hash,
+    onSuccess: (data) => {
+      toast.success("Transaction confirmed!", {
+        description: `Transaction hash: ${data.transactionHash}`,
+      });
+      refetchAll();
+      setStakeAmount("");
+      setUnstakeAmount("");
+      setHash(undefined);
+    },
+    onError: (error) => {
+      toast.error("Transaction confirmation failed", {
+        description: error.message,
+      });
+    },
+  });
 
   // --- Contract Reads ---
   const { data: hvtBalance, refetch: refetchHvtBalance } = useBalance({
@@ -47,87 +74,49 @@ const Staking = () => {
     query: { enabled: isConnected },
   });
 
-  const { isLoading: isConfirming, isSuccess: isConfirmed } = useWaitForTransactionReceipt({ hash });
-
-  const refetchAll = useCallback(() => {
-    refetchHvtBalance();
-    refetchStakedBalance();
-    refetchRewards();
-    refetchAllowance();
-  }, [refetchHvtBalance, refetchStakedBalance, refetchRewards, refetchAllowance]);
-
   // --- Contract Writes ---
-  const handleApprove = async () => {
+  const handleWrite = async (func: () => Promise<`0x${string}` | undefined>, type: string) => {
     try {
-      const txHash = await writeContractAsync({
-        ...HELIVAULT_TOKEN_CONTRACT,
-        functionName: 'approve',
-        args: [STAKING_CONTRACT.address as `0x${string}`, parseEther(stakeAmount)],
-        account: address,
-        chain: heliosTestnet,
-      });
-      setHash(txHash);
-      toast.info("Approval transaction sent...");
+      const txHash = await func();
+      if (txHash) {
+        setHash(txHash);
+        toast.info(`${type} transaction sent...`);
+      }
     } catch (error: any) {
-      toast.error("Approval failed", { description: error.shortMessage || "An error occurred." });
+      toast.error(`${type} failed`, { description: error.shortMessage || "An error occurred." });
     }
   };
 
-  const handleStake = async () => {
-    try {
-      const txHash = await writeContractAsync({
-        ...STAKING_CONTRACT,
-        functionName: 'stake',
-        args: [parseEther(stakeAmount)],
-        account: address,
-        chain: heliosTestnet,
-      });
-      setHash(txHash);
-      toast.info("Stake transaction sent...");
-    } catch (error: any) {
-      toast.error("Staking failed", { description: error.shortMessage || "An error occurred." });
-    }
-  };
+  const handleApprove = () => handleWrite(() => writeContractAsync({
+    ...HELIVAULT_TOKEN_CONTRACT,
+    functionName: 'approve',
+    args: [STAKING_CONTRACT.address as `0x${string}`, parseEther(stakeAmount)],
+    account: address,
+    chain: heliosTestnet,
+  }), "Approval");
+
+  const handleStake = () => handleWrite(() => writeContractAsync({
+    ...STAKING_CONTRACT,
+    functionName: 'stake',
+    args: [parseEther(stakeAmount)],
+    account: address,
+    chain: heliosTestnet,
+  }), "Stake");
   
-  const handleUnstake = async () => {
-    try {
-      const txHash = await writeContractAsync({
-        ...STAKING_CONTRACT,
-        functionName: 'unstake',
-        args: [parseEther(unstakeAmount)],
-        account: address,
-        chain: heliosTestnet,
-      });
-      setHash(txHash);
-      toast.info("Unstake transaction sent...");
-    } catch (error: any) {
-      toast.error("Unstaking failed", { description: error.shortMessage || "An error occurred." });
-    }
-  };
+  const handleUnstake = () => handleWrite(() => writeContractAsync({
+    ...STAKING_CONTRACT,
+    functionName: 'unstake',
+    args: [parseEther(unstakeAmount)],
+    account: address,
+    chain: heliosTestnet,
+  }), "Unstake");
 
-  const handleClaim = async () => {
-    try {
-      const txHash = await writeContractAsync({
-        ...STAKING_CONTRACT,
-        functionName: 'claimRewards',
-        account: address,
-        chain: heliosTestnet,
-      });
-      setHash(txHash);
-      toast.info("Claim transaction sent...");
-    } catch (error: any) {
-      toast.error("Claiming failed", { description: error.shortMessage || "An error occurred." });
-    }
-  };
-
-  useEffect(() => {
-    if (isConfirmed) {
-      toast.success("Transaction confirmed!");
-      refetchAll();
-      setStakeAmount("");
-      setUnstakeAmount("");
-    }
-  }, [isConfirmed, refetchAll]);
+  const handleClaim = () => handleWrite(() => writeContractAsync({
+    ...STAKING_CONTRACT,
+    functionName: 'claimRewards',
+    account: address,
+    chain: heliosTestnet,
+  }), "Claim");
 
   const isCorrectNetwork = chain?.id === heliosTestnet.id;
   const needsApproval = typeof allowance === 'bigint' && typeof stakeAmount === 'string' && stakeAmount && allowance < parseEther(stakeAmount);
