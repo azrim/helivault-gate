@@ -14,7 +14,7 @@ import {
   SheetTrigger,
   SheetDescription,
 } from "@/components/ui/sheet";
-import { Menu, Palette, Wallet, ChevronDown } from "lucide-react";
+import { Menu, Palette, Wallet } from "lucide-react";
 import { Button } from "./ui/button";
 import { Separator } from "./ui/separator";
 
@@ -22,20 +22,19 @@ import { Separator } from "./ui/separator";
 type DesktopNavItemProps = {
   path: string;
   label: string;
-  hasDropdown?: boolean;
 };
 
 const desktopNavItems: DesktopNavItemProps[] = [
   { path: "/", label: "Home" },
-  { path: "/mint", label: "Mint", hasDropdown: true },
-  { path: "/gallery", label: "Gallery", hasDropdown: true },
+  { path: "/mint", label: "Mint" },
+  { path: "/gallery", label: "Gallery" },
   { path: "/faucet", label: "Faucet" },
   { path: "/checkin", label: "Check-in" },
   { path: "/lottery", label: "Lottery" },
-  { path: "/deploy", label: "Deploy", hasDropdown: true },
+  { path: "/deploy", label: "Deploy" },
 ];
 
-const DesktopNavLink = ({ path, label, hasDropdown }: DesktopNavItemProps) => {
+const DesktopNavLink = ({ path, label }: DesktopNavItemProps) => {
   const location = useLocation();
   const { setDirection } = useNavigationContext();
   const isActive = location.pathname === path;
@@ -64,7 +63,6 @@ const DesktopNavLink = ({ path, label, hasDropdown }: DesktopNavItemProps) => {
       )}
     >
       {label}
-      {hasDropdown && <ChevronDown className="h-4 w-4" />}
     </Link>
   );
 };
@@ -138,7 +136,7 @@ const Navigation = () => {
   return (
     <header className="sticky top-4 z-50">
       <div className="max-w-7xl mx-auto px-4">
-        <div className="flex items-center justify-between h-16 p-2 bg-background/80 backdrop-blur-lg rounded-2xl border border-border">
+        <div className="flex items-center justify-between h-16 p-2 bg-card/80 backdrop-blur-lg rounded-2xl">
           <div className="flex items-center justify-start">
             <Link to="/" className="flex items-center gap-3 ml-2">
               <img
