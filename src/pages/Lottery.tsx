@@ -32,12 +32,6 @@ const Lottery = () => {
   const [showResult, setShowResult] = useState(false);
   const [winAmount, setWinAmount] = useState<bigint | null>(null);
 
-  const refetchData = useCallback(() => {
-    refetchContractBalance();
-    refetchLastWinner();
-    refetchLastWinnerAmount();
-  }, [refetchContractBalance, refetchLastWinner, refetchLastWinnerAmount]);
-
   // --- Contract Reads ---
   const { data: entryPrice } = useReadContract({
     ...LOTTERY_CONTRACT,
@@ -61,6 +55,12 @@ const Lottery = () => {
       ...LOTTERY_CONTRACT,
       functionName: "lastWinnerAmount",
     });
+
+  const refetchData = useCallback(() => {
+    refetchContractBalance();
+    refetchLastWinner();
+    refetchLastWinnerAmount();
+  }, [refetchContractBalance, refetchLastWinner, refetchLastWinnerAmount]);
 
   // --- Transaction Confirmation ---
   const { isSuccess: isConfirmed, isLoading: isConfirming } =
