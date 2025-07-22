@@ -78,7 +78,9 @@ const MobileTopHeader = () => {
             alt="Helios Icon"
             className="h-8 w-8 rounded-full"
           />
-          <span className="font-bold text-lg">Helios Explorer</span>
+          <span className="font-bold text-lg">
+            Helivault <span className="text-primary">Gate</span>
+          </span>
         </Link>
         <Sheet>
           <SheetTrigger asChild>
@@ -145,7 +147,7 @@ const Navigation = () => {
                 className="h-8 w-8 rounded-full"
               />
               <span className="hidden sm:block text-xl font-bold text-foreground whitespace-nowrap">
-                Helios Testnet Explorer
+                Helivault <span className="text-primary">Gate</span>
               </span>
             </Link>
           </div>
