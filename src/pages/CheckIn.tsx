@@ -1,6 +1,11 @@
 // src/pages/CheckIn.tsx
 import { useState, useEffect } from "react";
-import { useAccount, useReadContract, useWriteContract, useWaitForTransactionReceipt } from "wagmi";
+import {
+  useAccount,
+  useReadContract,
+  useWriteContract,
+  useWaitForTransactionReceipt,
+} from "wagmi";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -17,24 +22,30 @@ const CheckIn = () => {
 
   const { data: streak, refetch: refetchStreak } = useReadContract({
     ...DAILY_CHECK_IN_CONTRACT,
-    functionName: 'getStreak',
+    functionName: "getStreak",
     args: [address!],
     query: { enabled: isConnected },
   });
 
   const { data: lastCheckIn, refetch: refetchLastCheckIn } = useReadContract({
     ...DAILY_CHECK_IN_CONTRACT,
-    functionName: 'lastCheckIn',
+    functionName: "lastCheckIn",
     args: [address!],
     query: { enabled: isConnected },
   });
-  
-  const { isLoading: isConfirming, isSuccess: isConfirmed } = useWaitForTransactionReceipt({ hash });
+
+  const { isLoading: isConfirming, isSuccess: isConfirmed } =
+    useWaitForTransactionReceipt({ hash });
 
   useEffect(() => {
-    if (typeof lastCheckIn === 'bigint') {
+    if (typeof lastCheckIn === "bigint") {
       const today = new Date().setHours(0, 0, 0, 0);
-      const lastCheckInDay = new Date(Number(lastCheckIn) * 1000).setHours(0, 0, 0, 0);
+      const lastCheckInDay = new Date(Number(lastCheckIn) * 1000).setHours(
+        0,
+        0,
+        0,
+        0,
+      );
       setCanCheckIn(today > lastCheckInDay);
     } else {
       setCanCheckIn(true);
@@ -45,7 +56,7 @@ const CheckIn = () => {
     try {
       await writeContractAsync({
         ...DAILY_CHECK_IN_CONTRACT,
-        functionName: 'checkIn',
+        functionName: "checkIn",
         account: address,
         chain: heliosTestnet,
       });
@@ -90,16 +101,20 @@ const CheckIn = () => {
                 <ConnectButton label="Connect Wallet to Check-in" />
               </div>
             ) : !isCorrectNetwork ? (
-               <div className="flex justify-center">
-                  <ConnectButton label="Wrong Network" />
-                </div>
+              <div className="flex justify-center">
+                <ConnectButton label="Wrong Network" />
+              </div>
             ) : (
               <Button
                 onClick={handleCheckIn}
                 disabled={!canCheckIn || isConfirming}
                 className="w-full h-12 text-lg"
               >
-                {isConfirming ? "Confirming..." : (canCheckIn ? "Check-in Now" : "Already Checked In Today")}
+                {isConfirming
+                  ? "Confirming..."
+                  : canCheckIn
+                    ? "Check-in Now"
+                    : "Already Checked In Today"}
               </Button>
             )}
           </div>

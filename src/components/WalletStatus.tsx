@@ -20,8 +20,7 @@ const WalletStatus = () => {
           <Wallet className="w-12 h-12 text-warning mx-auto mb-4" />
           <h3 className="text-lg font-semibold mb-2">Wallet Not Connected</h3>
           <p className="text-muted-foreground mb-4">
-            Connect your wallet to start minting NFTs and track your
-            collection.
+            Connect your wallet to start minting NFTs and track your collection.
           </p>
           <div className="flex justify-center">
             <ConnectButton />
@@ -70,11 +69,15 @@ const WalletStatus = () => {
           </div>
           <div className="flex justify-between items-center">
             <span className="text-sm text-muted-foreground">Balance</span>
-            <span className="font-medium">{balance ? `${Number(balance.formatted).toFixed(4)} ${balance.symbol}` : '0.00 HLS'}</span>
+            <span className="font-medium">
+              {balance
+                ? `${Number(balance.formatted).toFixed(4)} ${balance.symbol}`
+                : "0.00 HLS"}
+            </span>
           </div>
           {!isCorrectNetwork && (
             <div className="mt-4">
-               <ConnectButton />
+              <ConnectButton />
             </div>
           )}
         </div>

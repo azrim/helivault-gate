@@ -1,4 +1,4 @@
-import { ConnectButton } from '@rainbow-me/rainbowkit';
+import { ConnectButton } from "@rainbow-me/rainbowkit";
 
 export const CustomConnectButton = () => {
   return (
@@ -12,29 +12,28 @@ export const CustomConnectButton = () => {
         authenticationStatus,
         mounted,
       }) => {
-        const ready = mounted && authenticationStatus !== 'loading';
+        const ready = mounted && authenticationStatus !== "loading";
         const connected =
           ready &&
           account &&
           chain &&
-          (!authenticationStatus ||
-            authenticationStatus === 'authenticated');
+          (!authenticationStatus || authenticationStatus === "authenticated");
 
         // Determine the text for the status indicator
         const statusText = !connected
-          ? 'Not Connected'
+          ? "Not Connected"
           : chain.unsupported
-          ? 'Wrong Network'
-          : 'Connected';
-        
+            ? "Wrong Network"
+            : "Connected";
+
         return (
           <div
             {...(!ready && {
-              'aria-hidden': true,
+              "aria-hidden": true,
               style: {
                 opacity: 0,
-                pointerEvents: 'none',
-                userSelect: 'none',
+                pointerEvents: "none",
+                userSelect: "none",
               },
             })}
             // The outer pill container
@@ -44,7 +43,7 @@ export const CustomConnectButton = () => {
             <span className="pl-3 pr-1 text-sm font-medium text-muted-foreground">
               {statusText}
             </span>
-            
+
             {/* Right Side: The smaller, gradient action button */}
             <button
               onClick={() => {
@@ -61,10 +60,10 @@ export const CustomConnectButton = () => {
             >
               {(() => {
                 if (!connected) {
-                  return 'Connect Wallet';
+                  return "Connect Wallet";
                 }
                 if (chain.unsupported) {
-                  return 'Switch Network';
+                  return "Switch Network";
                 }
                 return account.displayName;
               })()}

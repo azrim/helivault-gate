@@ -53,7 +53,8 @@ const Home = () => {
             transition={{ delay: 0.4, duration: 0.8 }}
             className="mt-4 max-w-2xl mx-auto text-lg md:text-xl text-primary-foreground/80"
           >
-            Your portal to the decentralized world of NFTs. Mint, collect, and trade unique digital assets on the Helios blockchain.
+            Your portal to the decentralized world of NFTs. Mint, collect, and
+            trade unique digital assets on the Helios blockchain.
           </motion.p>
           <motion.div
             initial={{ opacity: 0, scale: 0.8 }}
@@ -61,11 +62,7 @@ const Home = () => {
             transition={{ delay: 0.6, type: "spring" }}
             className="mt-8"
           >
-            <Button
-              size="lg"
-              variant="hero"
-              onClick={() => navigate('/mint')}
-            >
+            <Button size="lg" variant="hero" onClick={() => navigate("/mint")}>
               Start Minting <ArrowRight className="ml-2 h-5 w-5" />
             </Button>
           </motion.div>
@@ -78,7 +75,9 @@ const Home = () => {
         <section className="mb-16">
           <div className="text-center mb-12">
             <h2 className="text-3xl font-bold">What We Offer</h2>
-            <p className="text-muted-foreground mt-2">Explore the core features of the Helivault Gate.</p>
+            <p className="text-muted-foreground mt-2">
+              Explore the core features of the Helivault Gate.
+            </p>
           </div>
           <div className="grid md:grid-cols-3 gap-8">
             <FeatureCard
@@ -106,7 +105,9 @@ const Home = () => {
         <section>
           <div className="text-center mb-12">
             <h2 className="text-3xl font-bold">Wallet Status</h2>
-            <p className="text-muted-foreground mt-2">Check your connection status and balance.</p>
+            <p className="text-muted-foreground mt-2">
+              Check your connection status and balance.
+            </p>
           </div>
           <div className="max-w-md mx-auto">
             <WalletStatus />

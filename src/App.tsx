@@ -23,15 +23,18 @@ import { ThemeProvider } from "./components/ThemeProvider";
 import { useIsMobile } from "./hooks/use-mobile";
 import PageWrapper from "./components/PageWrapper";
 import { DeploymentProvider } from "./context/DeploymentContext";
-import { NavigationProvider, useNavigationContext } from "./context/NavigationContext";
+import {
+  NavigationProvider,
+  useNavigationContext,
+} from "./context/NavigationContext";
 
-import '@rainbow-me/rainbowkit/styles.css';
+import "@rainbow-me/rainbowkit/styles.css";
 
 const queryClient = new QueryClient();
-const walletConnectProjectId = 'b4a5bd4206fe36062ef6a8f389565fd2';
+const walletConnectProjectId = "b4a5bd4206fe36062ef6a8f389565fd2";
 
 export const config = getDefaultConfig({
-  appName: 'Helivault',
+  appName: "Helivault",
   projectId: walletConnectProjectId,
   chains: [heliosTestnet],
   ssr: false,
@@ -44,20 +47,76 @@ const AnimatedRoutes = () => {
 
   // On mobile, we have a top and bottom bar, each 4rem high.
   // On desktop, we only have a top bar, 4rem high.
-  const minHeight = isMobile ? 'calc(100vh - 8rem)' : 'calc(100vh - 4rem)';
+  const minHeight = isMobile ? "calc(100vh - 8rem)" : "calc(100vh - 4rem)";
 
   return (
-    <div style={{ position: 'relative', minHeight }}>
+    <div style={{ position: "relative", minHeight }}>
       <AnimatePresence initial={false} custom={direction}>
         <Routes location={location} key={location.pathname}>
-          <Route path="/" element={<PageWrapper><Home /></PageWrapper>} />
-          <Route path="/mint" element={<PageWrapper><Mint /></PageWrapper>} />
-          <Route path="/faucet" element={<PageWrapper><Faucet /></PageWrapper>} />
-          <Route path="/checkin" element={<PageWrapper><CheckIn /></PageWrapper>} />
-          <Route path="/deploy" element={<PageWrapper><Deploy /></PageWrapper>} />
-          <Route path="/gallery" element={<PageWrapper><Gallery /></PageWrapper>} />
-          <Route path="/lottery" element={<PageWrapper><Lottery /></PageWrapper>} />
-          <Route path="*" element={<PageWrapper><NotFound /></PageWrapper>} />
+          <Route
+            path="/"
+            element={
+              <PageWrapper>
+                <Home />
+              </PageWrapper>
+            }
+          />
+          <Route
+            path="/mint"
+            element={
+              <PageWrapper>
+                <Mint />
+              </PageWrapper>
+            }
+          />
+          <Route
+            path="/faucet"
+            element={
+              <PageWrapper>
+                <Faucet />
+              </PageWrapper>
+            }
+          />
+          <Route
+            path="/checkin"
+            element={
+              <PageWrapper>
+                <CheckIn />
+              </PageWrapper>
+            }
+          />
+          <Route
+            path="/deploy"
+            element={
+              <PageWrapper>
+                <Deploy />
+              </PageWrapper>
+            }
+          />
+          <Route
+            path="/gallery"
+            element={
+              <PageWrapper>
+                <Gallery />
+              </PageWrapper>
+            }
+          />
+          <Route
+            path="/lottery"
+            element={
+              <PageWrapper>
+                <Lottery />
+              </PageWrapper>
+            }
+          />
+          <Route
+            path="*"
+            element={
+              <PageWrapper>
+                <NotFound />
+              </PageWrapper>
+            }
+          />
         </Routes>
       </AnimatePresence>
     </div>

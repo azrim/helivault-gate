@@ -31,7 +31,7 @@ export function ThemeSwitcher() {
       size="icon"
       onClick={toggleTheme}
       // overflow-hidden is important for the animation
-      className="relative h-10 w-10 overflow-hidden" 
+      className="relative h-10 w-10 overflow-hidden"
     >
       <AnimatePresence initial={false} mode="wait">
         <motion.div

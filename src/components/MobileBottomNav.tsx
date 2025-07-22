@@ -1,8 +1,22 @@
 import { Link, useLocation } from "react-router-dom";
-import { Home, Sparkles, Droplets, Flame, LayoutGrid as Gallery, Rocket, Ticket, LucideIcon } from "lucide-react";
+import {
+  Home,
+  Sparkles,
+  Droplets,
+  Flame,
+  LayoutGrid as Gallery,
+  Rocket,
+  Ticket,
+  LucideIcon,
+} from "lucide-react";
 import { cn } from "@/lib/utils";
 import { motion } from "framer-motion";
-import { Tooltip, TooltipContent, TooltipTrigger, TooltipProvider } from "@/components/ui/tooltip";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+  TooltipProvider,
+} from "@/components/ui/tooltip";
 import { useNavigationContext } from "@/context/NavigationContext";
 import React from "react";
 
@@ -29,55 +43,64 @@ const navItems: NavItem[] = [
   { path: "/deploy", label: "Deploy", icon: Rocket },
 ];
 
-const NavLink = React.memo(({ path, icon: Icon, label, isActive, onClick }: NavLinkProps) => {
-  return (
-    <TooltipProvider delayDuration={100}>
-      <Tooltip>
-        <TooltipTrigger asChild>
-          <Link
-            to={path}
-            onClick={() => onClick(path)}
-            className={cn(
-              "relative flex items-center h-12 rounded-full transition-all duration-300 ease-out",
-              isActive ? "text-primary-foreground gap-2 pr-4 pl-3" : "w-12 justify-center text-muted-foreground hover:bg-white/10"
-            )}
-          >
-            {isActive && (
-              <motion.div
-                layoutId="active-mobile-pill"
-                className="absolute inset-0 bg-primary rounded-full"
-                transition={{ type: "spring", stiffness: 350, damping: 30 }}
-              />
-            )}
-            <div className="relative z-10">
-              <Icon className="h-6 w-6" />
-            </div>
-            {isActive && (
-              <span className="relative z-10 text-sm font-medium">{label}</span>
-            )}
-          </Link>
-        </TooltipTrigger>
-        {!isActive && (
-          <TooltipContent side="top"><p>{label}</p></TooltipContent>
-        )}
-      </Tooltip>
-    </TooltipProvider>
-  );
-});
+const NavLink = React.memo(
+  ({ path, icon: Icon, label, isActive, onClick }: NavLinkProps) => {
+    return (
+      <TooltipProvider delayDuration={100}>
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <Link
+              to={path}
+              onClick={() => onClick(path)}
+              className={cn(
+                "relative flex items-center h-12 rounded-full transition-all duration-300 ease-out",
+                isActive
+                  ? "text-primary-foreground gap-2 pr-4 pl-3"
+                  : "w-12 justify-center text-muted-foreground hover:bg-white/10",
+              )}
+            >
+              {isActive && (
+                <motion.div
+                  layoutId="active-mobile-pill"
+                  className="absolute inset-0 bg-primary rounded-full"
+                  transition={{ type: "spring", stiffness: 350, damping: 30 }}
+                />
+              )}
+              <div className="relative z-10">
+                <Icon className="h-6 w-6" />
+              </div>
+              {isActive && (
+                <span className="relative z-10 text-sm font-medium">
+                  {label}
+                </span>
+              )}
+            </Link>
+          </TooltipTrigger>
+          {!isActive && (
+            <TooltipContent side="top">
+              <p>{label}</p>
+            </TooltipContent>
+          )}
+        </Tooltip>
+      </TooltipProvider>
+    );
+  },
+);
 NavLink.displayName = "NavLink";
-
 
 export const MobileBottomNav = () => {
   const location = useLocation();
   const { setDirection } = useNavigationContext();
 
   const handleClick = (newPath: string) => {
-    const currentIndex = navItems.findIndex(item => item.path === location.pathname);
-    const newIndex = navItems.findIndex(item => item.path === newPath);
+    const currentIndex = navItems.findIndex(
+      (item) => item.path === location.pathname,
+    );
+    const newIndex = navItems.findIndex((item) => item.path === newPath);
     if (newIndex > currentIndex) {
-      setDirection('right');
+      setDirection("right");
     } else if (newIndex < currentIndex) {
-      setDirection('left');
+      setDirection("left");
     }
   };
 
@@ -86,9 +109,9 @@ export const MobileBottomNav = () => {
     <nav className="md:hidden fixed bottom-0 left-0 w-full z-50 bg-background/80 backdrop-blur-lg border-t border-border/40 pb-[env(safe-area-inset-bottom)]">
       <div className="flex items-center justify-around h-16 px-2">
         {navItems.map((item) => (
-          <NavLink 
-            key={item.path} 
-            {...item} 
+          <NavLink
+            key={item.path}
+            {...item}
             isActive={location.pathname === item.path}
             onClick={handleClick}
           />

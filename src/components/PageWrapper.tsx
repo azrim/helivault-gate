@@ -5,17 +5,17 @@ import { useNavigationContext } from "@/context/NavigationContext";
 
 const pageVariants: Variants = {
   initial: (direction: "left" | "right") => ({
-    x: direction === 'left' ? "100%" : "-100%",
-    position: 'absolute' as const,
-    width: '100%',
+    x: direction === "left" ? "100%" : "-100%",
+    position: "absolute" as const,
+    width: "100%",
   }),
   in: {
     x: 0,
   },
   out: (direction: "left" | "right") => ({
-    x: direction === 'left' ? "-100%" : "100%",
-    position: 'absolute' as const,
-    width: '100%',
+    x: direction === "left" ? "-100%" : "100%",
+    position: "absolute" as const,
+    width: "100%",
   }),
 };
 
@@ -36,7 +36,7 @@ const PageWrapper = ({ children }: { children: React.ReactNode }) => {
       exit="out"
       variants={pageVariants}
       transition={pageTransition}
-      style={{ willChange: 'transform' }}
+      style={{ willChange: "transform" }}
     >
       {children}
     </motion.div>

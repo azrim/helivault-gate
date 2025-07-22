@@ -1,15 +1,15 @@
 // src/pages/Gallery.tsx
-import { useState, useEffect } from 'react';
-import { useAccount, useReadContract } from 'wagmi';
-import { HELIVAULT_COLLECTIONS_CONTRACT } from '@/contracts/HelivaultCollections';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Skeleton } from '@/components/ui/skeleton';
-import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
-import { LayoutGrid as GalleryIcon } from 'lucide-react';
-import { ConnectButton } from '@rainbow-me/rainbowkit';
-import { Helmet } from 'react-helmet-async';
-import { readContract } from '@wagmi/core'
-import { config } from '@/App';
+import { useState, useEffect } from "react";
+import { useAccount, useReadContract } from "wagmi";
+import { HELIVAULT_COLLECTIONS_CONTRACT } from "@/contracts/HelivaultCollections";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Skeleton } from "@/components/ui/skeleton";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { LayoutGrid as GalleryIcon } from "lucide-react";
+import { ConnectButton } from "@rainbow-me/rainbowkit";
+import { Helmet } from "react-helmet-async";
+import { readContract } from "@wagmi/core";
+import { config } from "@/App";
 
 interface NftMetadata {
   name: string;
@@ -20,7 +20,7 @@ interface NftMetadata {
 const NftCard = ({ tokenId }: { tokenId: bigint }) => {
   const { data: tokenURIResult, isLoading: isUriLoading } = useReadContract({
     ...HELIVAULT_COLLECTIONS_CONTRACT,
-    functionName: 'tokenURI',
+    functionName: "tokenURI",
     args: [tokenId],
   });
 
@@ -73,10 +73,16 @@ const NftCard = ({ tokenId }: { tokenId: bigint }) => {
 
   return (
     <Card className="overflow-hidden transform transition-transform hover:scale-105 shadow-lg">
-      <img src={metadata.image} alt={metadata.name} className="w-full h-48 object-cover" />
+      <img
+        src={metadata.image}
+        alt={metadata.name}
+        className="w-full h-48 object-cover"
+      />
       <CardHeader>
         <CardTitle>{metadata.name}</CardTitle>
-        <p className="text-sm text-muted-foreground">Token ID: {tokenId.toString()}</p>
+        <p className="text-sm text-muted-foreground">
+          Token ID: {tokenId.toString()}
+        </p>
       </CardHeader>
     </Card>
   );
@@ -89,7 +95,7 @@ const Gallery = () => {
 
   const { data: balance, isLoading: isBalanceLoading } = useReadContract({
     ...HELIVAULT_COLLECTIONS_CONTRACT,
-    functionName: 'balanceOf',
+    functionName: "balanceOf",
     args: [address!],
     query: {
       enabled: isConnected,
@@ -103,7 +109,7 @@ const Gallery = () => {
         for (let i = 0; i < balance; i++) {
           const tokenId = await readContract(config, {
             ...HELIVAULT_COLLECTIONS_CONTRACT,
-            functionName: 'tokenOfOwnerByIndex',
+            functionName: "tokenOfOwnerByIndex",
             args: [address!, BigInt(i)],
           });
           ids.push(tokenId as bigint);
@@ -117,7 +123,9 @@ const Gallery = () => {
 
   return (
     <div className="container mx-auto px-4 py-8">
-      <Helmet><title>My NFT Gallery – Helivault</title></Helmet>
+      <Helmet>
+        <title>My NFT Gallery – Helivault</title>
+      </Helmet>
       <div className="flex items-center gap-4 mb-8">
         <GalleryIcon className="w-8 h-8 text-primary" />
         <h1 className="text-3xl font-bold">My NFT Gallery</h1>
@@ -149,12 +157,13 @@ const Gallery = () => {
         <Alert>
           <AlertTitle>No NFTs Found</AlertTitle>
           <AlertDescription>
-            You do not own any Helivault NFTs yet. Visit the Mint page to get started!
+            You do not own any Helivault NFTs yet. Visit the Mint page to get
+            started!
           </AlertDescription>
         </Alert>
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-          {tokenIds.map(tokenId => (
+          {tokenIds.map((tokenId) => (
             <NftCard key={tokenId.toString()} tokenId={tokenId} />
           ))}
         </div>
