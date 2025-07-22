@@ -1,5 +1,5 @@
 // src/pages/Staking.tsx
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useAccount, useReadContract, useWriteContract, useWaitForTransactionReceipt, useBalance } from "wagmi";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
@@ -47,6 +47,13 @@ const Staking = () => {
   });
 
   const { isLoading: isConfirming, isSuccess: isConfirmed } = useWaitForTransactionReceipt({ hash });
+
+  const refetchAll = useCallback(() => {
+    refetchHvtBalance();
+    refetchStakedBalance();
+    refetchRewards();
+    refetchAllowance();
+  }, [refetchHvtBalance, refetchStakedBalance, refetchRewards, refetchAllowance]);
 
   // --- Contract Writes ---
   const handleApprove = async () => {
@@ -111,14 +118,11 @@ const Staking = () => {
   useEffect(() => {
     if (isConfirmed) {
       toast.success("Transaction confirmed!");
-      refetchHvtBalance();
-      refetchStakedBalance();
-      refetchRewards();
-      refetchAllowance();
+      refetchAll();
       setStakeAmount("");
       setUnstakeAmount("");
     }
-  }, [isConfirmed, refetchHvtBalance, refetchStakedBalance, refetchRewards, refetchAllowance]);
+  }, [isConfirmed, refetchAll]);
 
   const isCorrectNetwork = chain?.id === heliosTestnet.id;
   const needsApproval = typeof allowance === 'bigint' && typeof stakeAmount === 'string' && stakeAmount && allowance < parseEther(stakeAmount);
