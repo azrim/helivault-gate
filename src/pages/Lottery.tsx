@@ -1,6 +1,6 @@
 // src/pages/Lottery.tsx
 import { useState, useEffect, useCallback } from "react";
-import { useAccount, useReadContract, useWriteContract, useBalance, useWaitForTransactionReceipt } from "wagmi";
+import { useAccount, useReadContract, useWriteContract, useBalance, useWaitForTransactionReceipt, usePublicClient } from "wagmi";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
@@ -14,6 +14,7 @@ import { Ticket, Star, PartyPopper } from "lucide-react";
 const Lottery = () => {
   const { address, isConnected, chain } = useAccount();
   const { writeContractAsync } = useWriteContract();
+  const publicClient = usePublicClient();
   const [hash, setHash] = useState<`0x${string}` | undefined>();
   const [showResult, setShowResult] = useState(false);
   const [winAmount, setWinAmount] = useState<bigint | null>(null);
@@ -51,8 +52,6 @@ const Lottery = () => {
   useEffect(() => {
     if (isConfirmed) {
       toast.success("Spin confirmed!");
-      // The logic to find the amount won has been moved to the transaction receipt hook
-      // for better accuracy. We just need to trigger the refetch.
       refetchData();
     }
   }, [isConfirmed, refetchData]);
@@ -60,7 +59,7 @@ const Lottery = () => {
 
   // --- Contract Write ---
   const handleEnterLottery = async () => {
-    if (typeof entryPrice !== 'bigint') return;
+    if (typeof entryPrice !== 'bigint' || !publicClient) return;
     setShowResult(false);
     try {
       const txHash = await writeContractAsync({
@@ -73,8 +72,7 @@ const Lottery = () => {
       setHash(txHash);
       toast.info("Spinning the wheel...");
 
-      // After sending, we can simulate waiting for the result
-      const receipt = await heliosTestnet.publicClient.waitForTransactionReceipt({ hash: txHash });
+      const receipt = await publicClient.waitForTransactionReceipt({ hash: txHash });
       
       let amountWon: bigint | null = null;
       for (const log of receipt.logs) {
@@ -86,8 +84,10 @@ const Lottery = () => {
           });
 
           if (decodedEvent.eventName === "WinnerPaid") {
-            const args = decodedEvent.args as { winner: string; amount: bigint };
-            amountWon = args.amount;
+            const args = decodedEvent.args as { winner: `0x${string}`; amount: bigint };
+            if (args && typeof args.amount === 'bigint') {
+              amountWon = args.amount;
+            }
             break;
           }
         } catch (e) {
