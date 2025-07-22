@@ -12,10 +12,10 @@
   }
   
   :root {
-    --background: 0 0% 100%;
+    --background: 220 13% 96%; /* #F8F9FA - Subtle Off-White */
     --foreground: 222 84% 4%; /* approx. #0D111C */
 
-    --card: 0 0% 100%;
+    --card: 0 0% 100%; /* Pure White */
     --card-foreground: 222 84% 4%;
 
     --popover: 0 0% 100%;
@@ -24,10 +24,10 @@
     --primary: 226 100% 50%; /* #0037ff */
     --primary-foreground: 0 0% 100%;
 
-    --secondary: 220 13% 96%; /* #F8F9FA */
+    --secondary: 220 13% 91%; /* Lighter gray for secondary elements */
     --secondary-foreground: 222 84% 4%;
 
-    --muted: 220 13% 96%;
+    --muted: 220 13% 91%;
     --muted-foreground: 215 9% 45%; /* #6C757D */
 
     --accent: 226 100% 50%; /* #0037ff */
@@ -41,13 +41,17 @@
     --ring: 226 100% 50%; /* #0037ff */
 
     --radius: 0.5rem;
+
+    /* Gradients */
+    --gradient-start: 226 100% 50%; /* #0037ff */
+    --gradient-end: 260 100% 60%; /* Vibrant Purple */
   }
 
   .dark {
     --background: 222 84% 4%; /* #0D111C */
     --foreground: 0 0% 100%;
 
-    --card: 223 71% 12%; /* #1D2642 */
+    --card: 224 61% 14%; /* #171E31 - Lighter than main BG for depth */
     --card-foreground: 0 0% 100%;
 
     --popover: 223 71% 12%;
@@ -56,10 +60,10 @@
     --primary: 226 100% 60%; /* Lighter shade of #0037ff for dark mode */
     --primary-foreground: 226 100% 10%;
 
-    --secondary: 224 61% 14%; /* #171E31 */
+    --secondary: 223 71% 12%; /* #1D2642 */
     --secondary-foreground: 0 0% 100%;
 
-    --muted: 224 61% 14%;
+    --muted: 223 71% 12%;
     --muted-foreground: 218 24% 76%; /* #B0B8D3 */
 
     --accent: 226 100% 60%; /* Lighter shade of #0037ff for dark mode */
@@ -71,6 +75,10 @@
     --border: 220 26% 32%; /* #3D4968 */
     --input: 220 26% 32%;
     --ring: 226 100% 60%; /* Lighter shade of #0037ff for dark mode */
+
+    /* Gradients */
+    --gradient-start: 226 100% 50%; /* #0037ff */
+    --gradient-end: 260 100% 60%; /* Vibrant Purple */
   }
 
   html {

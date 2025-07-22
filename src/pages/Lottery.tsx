@@ -128,11 +128,11 @@ const Lottery = () => {
   return (
     <main className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 py-12 grid gap-8">
       <Card className="overflow-hidden">
-        <CardHeader className="bg-gradient-to-r from-purple-500 to-indigo-600 text-white">
+        <CardHeader className="bg-brand-gradient text-white">
           <CardTitle className="flex items-center gap-2">
             <Ticket /> Helios Lottery
           </CardTitle>
-          <CardDescription className="text-purple-200">
+          <CardDescription className="text-white/80">
             Every spin is a win! Pay the price to win a random amount of HLS.
           </CardDescription>
         </CardHeader>
