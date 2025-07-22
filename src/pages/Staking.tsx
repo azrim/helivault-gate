@@ -13,7 +13,8 @@ import { formatEther, parseEther } from "viem";
 
 const Staking = () => {
   const { address, isConnected, chain } = useAccount();
-  const { data: hash, writeContractAsync } = useWriteContract();
+  const { writeContractAsync } = useWriteContract();
+  const [hash, setHash] = useState<`0x${string}` | undefined>();
 
   const [stakeAmount, setStakeAmount] = useState("");
   const [unstakeAmount, setUnstakeAmount] = useState("");
@@ -58,13 +59,14 @@ const Staking = () => {
   // --- Contract Writes ---
   const handleApprove = async () => {
     try {
-      await writeContractAsync({
+      const txHash = await writeContractAsync({
         ...HELIVAULT_TOKEN_CONTRACT,
         functionName: 'approve',
         args: [STAKING_CONTRACT.address as `0x${string}`, parseEther(stakeAmount)],
         account: address,
         chain: heliosTestnet,
       });
+      setHash(txHash);
       toast.info("Approval transaction sent...");
     } catch (error: any) {
       toast.error("Approval failed", { description: error.shortMessage || "An error occurred." });
@@ -73,13 +75,14 @@ const Staking = () => {
 
   const handleStake = async () => {
     try {
-      await writeContractAsync({
+      const txHash = await writeContractAsync({
         ...STAKING_CONTRACT,
         functionName: 'stake',
         args: [parseEther(stakeAmount)],
         account: address,
         chain: heliosTestnet,
       });
+      setHash(txHash);
       toast.info("Stake transaction sent...");
     } catch (error: any) {
       toast.error("Staking failed", { description: error.shortMessage || "An error occurred." });
@@ -88,13 +91,14 @@ const Staking = () => {
   
   const handleUnstake = async () => {
     try {
-      await writeContractAsync({
+      const txHash = await writeContractAsync({
         ...STAKING_CONTRACT,
         functionName: 'unstake',
         args: [parseEther(unstakeAmount)],
         account: address,
         chain: heliosTestnet,
       });
+      setHash(txHash);
       toast.info("Unstake transaction sent...");
     } catch (error: any) {
       toast.error("Unstaking failed", { description: error.shortMessage || "An error occurred." });
@@ -103,12 +107,13 @@ const Staking = () => {
 
   const handleClaim = async () => {
     try {
-      await writeContractAsync({
+      const txHash = await writeContractAsync({
         ...STAKING_CONTRACT,
         functionName: 'claimRewards',
         account: address,
         chain: heliosTestnet,
       });
+      setHash(txHash);
       toast.info("Claim transaction sent...");
     } catch (error: any) {
       toast.error("Claiming failed", { description: error.shortMessage || "An error occurred." });
