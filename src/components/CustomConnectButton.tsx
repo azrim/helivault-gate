@@ -1,6 +1,11 @@
 import { ConnectButton } from "@rainbow-me/rainbowkit";
+import { useBalance } from "wagmi";
+import { Button } from "./ui/button";
 
 export const CustomConnectButton = () => {
+  const { address } = useBalance();
+  const { data: balance } = useBalance({ address: address });
+
   return (
     <ConnectButton.Custom>
       {({
@@ -19,55 +24,37 @@ export const CustomConnectButton = () => {
           chain &&
           (!authenticationStatus || authenticationStatus === "authenticated");
 
-        // Determine the text for the status indicator
-        const statusText = !connected
-          ? "Not Connected"
-          : chain.unsupported
-            ? "Wrong Network"
-            : "Connected";
+        if (!connected) {
+          return (
+            <Button onClick={openConnectModal} type="button">
+              Connect Wallet
+            </Button>
+          );
+        }
+
+        if (chain.unsupported) {
+          return (
+            <Button onClick={openChainModal} type="button" variant="destructive">
+              Wrong Network
+            </Button>
+          );
+        }
 
         return (
           <div
-            {...(!ready && {
-              "aria-hidden": true,
-              style: {
-                opacity: 0,
-                pointerEvents: "none",
-                userSelect: "none",
-              },
-            })}
-            // The outer pill container
-            className="flex items-center justify-between p-1 space-x-2 rounded-full border border-border/40 bg-secondary/60"
+            onClick={openAccountModal}
+            className="flex items-center gap-3 cursor-pointer"
           >
-            {/* Left Side: Plain text status indicator */}
-            <span className="pl-3 pr-1 text-sm font-medium text-muted-foreground">
-              {statusText}
-            </span>
-
-            {/* Right Side: The smaller, gradient action button */}
-            <button
-              onClick={() => {
-                if (!connected) {
-                  openConnectModal();
-                } else if (chain.unsupported) {
-                  openChainModal();
-                } else {
-                  openAccountModal();
-                }
-              }}
-              type="button"
-              className="px-4 py-1.5 rounded-full text-sm font-semibold text-white bg-gradient-to-r from-purple-600 to-blue-500 hover:opacity-90 transition-opacity"
-            >
-              {(() => {
-                if (!connected) {
-                  return "Connect Wallet";
-                }
-                if (chain.unsupported) {
-                  return "Switch Network";
-                }
-                return account.displayName;
-              })()}
-            </button>
+            <div className="px-3 py-2 rounded-md bg-secondary text-foreground font-medium">
+              <span>
+                {balance?.formatted
+                  ? `${parseFloat(balance.formatted).toFixed(3)} ${balance.symbol}`
+                  : "Loading..."}
+              </span>
+            </div>
+            <div className="px-3 py-2 rounded-md bg-secondary text-foreground font-medium">
+              <span>{account.displayName}</span>
+            </div>
           </div>
         );
       }}

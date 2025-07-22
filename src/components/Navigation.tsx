@@ -45,7 +45,6 @@ const DesktopNavLink = ({ path, label }: DesktopNavItemProps) => {
       (item) => item.path === location.pathname,
     );
     const newIndex = desktopNavItems.findIndex((item) => item.path === path);
-    // Corrected the logic here
     if (newIndex > currentIndex) {
       setDirection("right");
     } else {
@@ -58,19 +57,13 @@ const DesktopNavLink = ({ path, label }: DesktopNavItemProps) => {
       to={path}
       onClick={handleClick}
       className={cn(
-        "relative px-3 py-3 text-sm font-medium transition-colors",
+        "px-3 py-2 text-sm font-medium transition-colors rounded-md",
         isActive
-          ? "text-foreground"
+          ? "bg-card text-foreground"
           : "text-muted-foreground hover:text-foreground/80",
       )}
     >
       {label}
-      {isActive && (
-        <motion.div
-          className="absolute bottom-1.5 left-0 right-0 mx-auto h-0.5 w-3/5 rounded-full bg-gradient-to-r from-purple-500 to-blue-400"
-          layoutId="desktop-nav-indicator"
-        />
-      )}
     </Link>
   );
 };
@@ -92,7 +85,7 @@ const MobileTopHeader = () => {
             alt="Helios Icon"
             className="h-8 w-8 rounded-full"
           />
-          <span className="font-bold text-lg">Helivault</span>
+          <span className="font-bold text-lg">Helios Explorer</span>
         </Link>
         <Sheet>
           <SheetTrigger asChild>
@@ -159,7 +152,7 @@ const Navigation = () => {
 
   // On desktop, render the original top header
   return (
-    <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/80 backdrop-blur-lg">
+    <header className="sticky top-0 z-50 w-full bg-background/95 backdrop-blur-lg">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid h-16 grid-cols-3 items-center">
           <div className="flex items-center justify-start">
@@ -170,11 +163,11 @@ const Navigation = () => {
                 className="h-8 w-8 rounded-full"
               />
               <span className="hidden sm:block text-xl font-bold text-foreground whitespace-nowrap">
-                Helivault Gate
+                Helios Testnet Explorer
               </span>
             </Link>
           </div>
-          <nav className="flex items-center justify-center gap-4">
+          <nav className="flex items-center justify-center gap-2">
             {desktopNavItems.map((item) => (
               <DesktopNavLink key={item.path} {...item} />
             ))}
