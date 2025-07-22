@@ -11,105 +11,66 @@
     font-style: normal;
   }
   
-  /**
-   * Tailwind CSS theme
-   * tailwind.config.ts expects the following color variables to be expressed as HSL values.
-   * A different format will require also updating the theme in tailwind.config.ts.
-  */
   :root {
-    --background: 241 42% 93%; /* Lighter version of header for page background */
-    --foreground: 241 42% 10%; /* Darker version of header for text */
+    --background: 0 0% 100%;
+    --foreground: 222 84% 4%; /* approx. #0D111C */
 
-    --card: 240 100% 95%; /* Very light blue for cards */
-    --card-foreground: 241 42% 10%;
+    --card: 0 0% 100%;
+    --card-foreground: 222 84% 4%;
 
-    --popover: 240 100% 95%;
-    --popover-foreground: 241 42% 10%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 222 84% 4%;
 
-    --primary: 225 100% 50%; /* Button Blue */
+    --primary: 217 91% 60%; /* #3B82F6 */
     --primary-foreground: 0 0% 100%;
 
-    --secondary: 240 100% 88%; /* Slightly darker light blue */
-    --secondary-foreground: 241 42% 10%;
+    --secondary: 220 13% 96%; /* #F8F9FA */
+    --secondary-foreground: 222 84% 4%;
 
-    --muted: 240 100% 88%;
-    --muted-foreground: 241 20% 45%;
+    --muted: 220 13% 96%;
+    --muted-foreground: 215 9% 45%; /* #6C757D */
 
-    --accent: 225 100% 50%;
-    --accent-foreground: 0 0% 100%;
+    --accent: 220 13% 96%;
+    --accent-foreground: 222 84% 4%;
 
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 240 100% 80%;
-    --input: 240 100% 80%;
-    --ring: 225 100% 50%;
+    --border: 214 17% 84%; /* #DEE2E6 */
+    --input: 214 17% 84%;
+    --ring: 217 91% 60%;
 
     --radius: 0.5rem;
-
-    /* Custom NFT Platform Colors */
-    --success: 162 85% 55%;
-    --success-foreground: 0 0% 100%;
-    --warning: 48 95% 65%;
-    --warning-foreground: 0 0% 100%;
-    --gradient-start: 225 100% 50%;
-    --gradient-end: 240 100% 55%;
-    --success-gradient-start: 162 85% 55%;
-    --success-gradient-end: 142 75% 60%;
-
-    --sidebar-background: 0 0% 98%;
-
-    --sidebar-foreground: 240 5.3% 26.1%;
-
-    --sidebar-primary: 240 5.9% 10%;
-
-    --sidebar-primary-foreground: 0 0% 98%;
-
-    --sidebar-accent: 240 4.8% 95.9%;
-
-    --sidebar-accent-foreground: 240 5.9% 10%;
-
-    --sidebar-border: 220 13% 91%;
-
-    --sidebar-ring: 217.2 91.2% 59.8%;
   }
 
   .dark {
-    --background: 241 42% 6%; /* Dark Header Blue */
-    --foreground: 0 0% 95%;
+    --background: 222 84% 4%; /* #0D111C */
+    --foreground: 0 0% 100%;
 
-    --card: 240 100% 10%; /* Darker version of Main Content Blue */
-    --card-foreground: 0 0% 95%;
+    --card: 223 71% 12%; /* #1D2642 */
+    --card-foreground: 0 0% 100%;
 
-    --popover: 240 100% 10%;
-    --popover-foreground: 0 0% 95%;
+    --popover: 223 71% 12%;
+    --popover-foreground: 0 0% 100%;
 
-    --primary: 225 100% 60%; /* Lighter Button Blue for contrast */
-    --primary-foreground: 225 100% 8%;
+    --primary: 217 91% 60%; /* #3B82F6 */
+    --primary-foreground: 0 0% 100%;
 
-    --secondary: 240 100% 15%;
-    --secondary-foreground: 0 0% 95%;
+    --secondary: 224 61% 14%; /* #171E31 */
+    --secondary-foreground: 0 0% 100%;
 
-    --muted: 240 100% 15%;
-    --muted-foreground: 240 10% 60%;
+    --muted: 224 61% 14%;
+    --muted-foreground: 218 24% 76%; /* #B0B8D3 */
 
-    --accent: 225 100% 60%;
-    --accent-foreground: 225 100% 8%;
+    --accent: 224 61% 14%;
+    --accent-foreground: 0 0% 100%;
 
     --destructive: 0 75% 55%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 240 100% 18%;
-    --input: 240 100% 18%;
-    --ring: 225 100% 60%;
-    --sidebar-background: 240 5.9% 10%;
-    --sidebar-foreground: 240 4.8% 95.9%;
-    --sidebar-primary: 224.3 76.3% 48%;
-    --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 240 3.7% 15.9%;
-    --sidebar-accent-foreground: 240 4.8% 95.9%;
-    --sidebar-border: 240 3.7% 15.9%;
-    --sidebar-ring: 217.2 91.2% 59.8%;
+    --border: 220 26% 32%; /* #3D4968 */
+    --input: 220 26% 32%;
+    --ring: 217 91% 60%;
   }
 
   html {
