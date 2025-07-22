@@ -12,7 +12,7 @@ import Mint from "./pages/Mint";
 import Faucet from "./pages/Faucet";
 import CheckIn from "./pages/CheckIn";
 import Deploy from "./pages/Deploy";
-import Staking from "./pages/Staking";
+import Lottery from "./pages/Lottery";
 import NotFound from "./pages/NotFound";
 import Gallery from "./pages/Gallery";
 import { Toaster } from "@/components/ui/toaster";
@@ -56,7 +56,7 @@ const AnimatedRoutes = () => {
           <Route path="/checkin" element={<PageWrapper><CheckIn /></PageWrapper>} />
           <Route path="/deploy" element={<PageWrapper><Deploy /></PageWrapper>} />
           <Route path="/gallery" element={<PageWrapper><Gallery /></PageWrapper>} />
-          <Route path="/staking" element={<PageWrapper><Staking /></PageWrapper>} />
+          <Route path="/lottery" element={<PageWrapper><Lottery /></PageWrapper>} />
           <Route path="*" element={<PageWrapper><NotFound /></PageWrapper>} />
         </Routes>
       </AnimatePresence>
