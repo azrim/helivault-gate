@@ -7,7 +7,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { ConnectButton } from "@rainbow-me/rainbowkit";
 import { LOTTERY_CONTRACT } from "@/contracts/Lottery";
 import { heliosTestnet } from "@/lib/chains";
-import { formatEther, parseLog, Abi } from "viem";
+import { formatEther, decodeEventLog, Abi, Log } from "viem";
 import { motion, AnimatePresence } from "framer-motion";
 import { Ticket, Star, PartyPopper } from "lucide-react";
 
@@ -53,11 +53,12 @@ const Lottery = () => {
       let amountWon: bigint | null = null;
       for (const log of receipt.logs) {
         try {
-          // The `log` object from wagmi's receipt has a different structure.
-          // We cast it to `any` to bypass the strict type checking and allow `parseLog` to work.
-          const decodedEvent = parseLog({
+          const decodedEvent = decodeEventLog({
             abi: LOTTERY_CONTRACT.abi as Abi,
-            ...(log as any),
+            // The `log` object from wagmi's receipt has the necessary properties,
+            // but we provide default empty arrays for topics to satisfy TypeScript.
+            topics: (log as Log).topics ?? [],
+            data: log.data,
           });
 
           if (decodedEvent.eventName === "WinnerPaid") {
@@ -89,6 +90,7 @@ const Lottery = () => {
         ...LOTTERY_CONTRACT,
         functionName: 'enter',
         value: entryPrice,
+        account: address,
       });
       setHash(txHash);
       toast.info("Spinning the wheel...");
