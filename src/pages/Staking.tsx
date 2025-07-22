@@ -1,6 +1,6 @@
 // src/pages/Staking.tsx
 import { useState, useEffect } from "react";
-import { useAccount, useReadContract, useWriteContract, useWaitForTransactionReceipt } from "wagmi";
+import { useAccount, useReadContract, useWriteContract, useWaitForTransactionReceipt, useBalance } from "wagmi";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
@@ -19,6 +19,12 @@ const Staking = () => {
   const [unstakeAmount, setUnstakeAmount] = useState("");
 
   // --- Contract Reads ---
+  const { data: hvtBalance, refetch: refetchHvtBalance } = useBalance({
+    address: address,
+    token: HELIVAULT_TOKEN_CONTRACT.address as `0x${string}`,
+    query: { enabled: isConnected },
+  });
+
   const { data: stakedBalance, refetch: refetchStakedBalance } = useReadContract({
     ...STAKING_CONTRACT,
     functionName: 'stakedBalances',
@@ -105,26 +111,31 @@ const Staking = () => {
   useEffect(() => {
     if (isConfirmed) {
       toast.success("Transaction confirmed!");
+      refetchHvtBalance();
       refetchStakedBalance();
       refetchRewards();
       refetchAllowance();
       setStakeAmount("");
       setUnstakeAmount("");
     }
-  }, [isConfirmed, refetchStakedBalance, refetchRewards, refetchAllowance]);
+  }, [isConfirmed, refetchHvtBalance, refetchStakedBalance, refetchRewards, refetchAllowance]);
 
   const isCorrectNetwork = chain?.id === heliosTestnet.id;
   const needsApproval = typeof allowance === 'bigint' && typeof stakeAmount === 'string' && stakeAmount && allowance < parseEther(stakeAmount);
 
   return (
-    <main className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 py-12 grid gap-8">
+    <main className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12 grid gap-8">
       <Card>
         <CardHeader>
           <CardTitle>HVT Staking</CardTitle>
           <CardDescription>Stake your HVT to earn rewards.</CardDescription>
         </CardHeader>
         <CardContent className="text-center space-y-6">
-          <div className="grid grid-cols-2 gap-4 text-left">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-left">
+            <div className="bg-secondary/50 p-4 rounded-lg">
+              <p className="text-sm text-muted-foreground">Your HVT Balance</p>
+              <p className="text-2xl font-bold">{hvtBalance?.formatted ? parseFloat(hvtBalance.formatted).toFixed(4) : 0} {hvtBalance?.symbol}</p>
+            </div>
             <div className="bg-secondary/50 p-4 rounded-lg">
               <p className="text-sm text-muted-foreground">Your Staked Balance</p>
               <p className="text-2xl font-bold">{typeof stakedBalance === 'bigint' ? formatEther(stakedBalance) : 0} HVT</p>
