@@ -1,26 +1,29 @@
-import { useLocation } from "react-router-dom";
-import { useEffect } from "react";
+// src/pages/NotFound.tsx
+import { Link } from "react-router-dom";
+import { Button } from "@/components/ui/button";
+import { AlertTriangle } from "lucide-react";
+import { Helmet } from "react-helmet-async";
 
 const NotFound = () => {
-  const location = useLocation();
-
-  useEffect(() => {
-    console.error(
-      "404 Error: User attempted to access non-existent route:",
-      location.pathname,
-    );
-  }, [location.pathname]);
-
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100">
-      <div className="text-center">
-        <h1 className="text-4xl font-bold mb-4">404</h1>
-        <p className="text-xl text-gray-600 mb-4">Oops! Page not found</p>
-        <a href="/" className="text-blue-500 hover:text-blue-700 underline">
-          Return to Home
-        </a>
+    <>
+      <Helmet>
+        <title>404 Not Found – Helivault Gate</title>
+      </Helmet>
+      <div className="flex flex-col items-center justify-center min-h-[calc(100vh-10rem)] text-center px-4">
+        <AlertTriangle className="h-24 w-24 text-primary mb-6" />
+        <h1 className="text-6xl font-bold tracking-tighter">404</h1>
+        <p className="text-2xl font-medium text-muted-foreground mt-2">
+          Page Not Found
+        </p>
+        <p className="max-w-md mx-auto mt-4 text-muted-foreground">
+          Oops! The page you're looking for doesn't exist. It might have been moved or deleted.
+        </p>
+        <Button asChild className="mt-8">
+          <Link to="/">Return to Home</Link>
+        </Button>
       </div>
-    </div>
+    </>
   );
 };
 
