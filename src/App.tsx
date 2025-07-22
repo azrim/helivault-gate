@@ -22,6 +22,7 @@ import { HelmetProvider } from "react-helmet-async";
 import { ThemeProvider } from "./components/ThemeProvider";
 import { useIsMobile } from "./hooks/use-mobile";
 import PageWrapper from "./components/PageWrapper";
+import { DeploymentProvider } from "./context/DeploymentContext";
 import { NavigationProvider, useNavigationContext } from "./context/NavigationContext";
 
 import '@rainbow-me/rainbowkit/styles.css';
@@ -73,10 +74,12 @@ const App = () => (
               <Toaster />
               <Sonner />
               <BrowserRouter>
-                <NavigationProvider>
-                  <Navigation />
-                  <AnimatedRoutes />
-                </NavigationProvider>
+                <DeploymentProvider>
+                  <NavigationProvider>
+                    <Navigation />
+                    <AnimatedRoutes />
+                  </NavigationProvider>
+                </DeploymentProvider>
               </BrowserRouter>
             </TooltipProvider>
           </ThemeProvider>
