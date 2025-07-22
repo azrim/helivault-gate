@@ -1,5 +1,5 @@
 // src/pages/Lottery.tsx
-import { useState } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useAccount, useReadContract, useWriteContract, useBalance, useWaitForTransactionReceipt } from "wagmi";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
@@ -7,7 +7,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { ConnectButton } from "@rainbow-me/rainbowkit";
 import { LOTTERY_CONTRACT } from "@/contracts/Lottery";
 import { heliosTestnet } from "@/lib/chains";
-import { formatEther, decodeEventLog } from "viem";
+import { formatEther, decodeEventLog, Abi } from "viem";
 import { motion, AnimatePresence } from "framer-motion";
 import { Ticket, Star, PartyPopper } from "lucide-react";
 
@@ -18,6 +18,12 @@ const Lottery = () => {
   const [showResult, setShowResult] = useState(false);
   const [winAmount, setWinAmount] = useState<bigint | null>(null);
 
+  const refetchData = useCallback(() => {
+    refetchContractBalance();
+    refetchLastWinner();
+    refetchLastWinnerAmount();
+  }, []);
+
   // --- Contract Reads ---
   const { data: entryPrice } = useReadContract({
     ...LOTTERY_CONTRACT,
@@ -25,7 +31,7 @@ const Lottery = () => {
   });
 
   const { data: contractBalance, refetch: refetchContractBalance } = useBalance({
-    address: LOTTERY_CONTRACT.address as `0x${string}`,
+    address: LOTTERY_CONTRACT.address,
     query: { enabled: isConnected },
   });
 
@@ -40,44 +46,21 @@ const Lottery = () => {
   });
 
   // --- Transaction Confirmation ---
-  const { isLoading: isConfirming } = useWaitForTransactionReceipt({
-    hash,
-    onSuccess: (data) => {
+  const { isSuccess: isConfirmed, isLoading: isConfirming } = useWaitForTransactionReceipt({ hash });
+
+  useEffect(() => {
+    if (isConfirmed) {
       toast.success("Spin confirmed!");
-      let amountWon: bigint | null = null;
-      
-      // Decode the event log to find the actual amount won
-      for (const log of data.logs) {
-        try {
-          const decodedEvent = decodeEventLog({
-            abi: LOTTERY_CONTRACT.abi,
-            data: log.data,
-            topics: log.topics,
-          });
+      // The logic to find the amount won has been moved to the transaction receipt hook
+      // for better accuracy. We just need to trigger the refetch.
+      refetchData();
+    }
+  }, [isConfirmed, refetchData]);
 
-          if (decodedEvent.eventName === "WinnerPaid") {
-            amountWon = (decodedEvent.args as { winner: string; amount: bigint }).amount;
-            break;
-          }
-        } catch (e) {
-          // Ignore errors from logs that don't match the ABI
-        }
-      }
-
-      setWinAmount(amountWon);
-      setShowResult(true);
-      refetchContractBalance();
-      refetchLastWinner();
-      refetchLastWinnerAmount();
-    },
-    onError: (error) => {
-      toast.error("Spin failed to confirm", { description: error.message });
-    },
-  });
 
   // --- Contract Write ---
   const handleEnterLottery = async () => {
-    if (!entryPrice) return;
+    if (typeof entryPrice !== 'bigint') return;
     setShowResult(false);
     try {
       const txHash = await writeContractAsync({
@@ -89,6 +72,31 @@ const Lottery = () => {
       });
       setHash(txHash);
       toast.info("Spinning the wheel...");
+
+      // After sending, we can simulate waiting for the result
+      const receipt = await heliosTestnet.publicClient.waitForTransactionReceipt({ hash: txHash });
+      
+      let amountWon: bigint | null = null;
+      for (const log of receipt.logs) {
+        try {
+          const decodedEvent = decodeEventLog({
+            abi: LOTTERY_CONTRACT.abi as Abi,
+            data: log.data,
+            topics: log.topics,
+          });
+
+          if (decodedEvent.eventName === "WinnerPaid") {
+            const args = decodedEvent.args as { winner: string; amount: bigint };
+            amountWon = args.amount;
+            break;
+          }
+        } catch (e) {
+          // Ignore non-matching logs
+        }
+      }
+      setWinAmount(amountWon);
+      setShowResult(true);
+
     } catch (error: any) {
       toast.error("Failed to enter lottery", { description: error.shortMessage || "An error occurred." });
     }
@@ -107,7 +115,7 @@ const Lottery = () => {
           <div className="grid grid-cols-2 gap-4 text-left">
             <div className="bg-secondary/50 p-4 rounded-lg">
               <p className="text-sm text-muted-foreground">Entry Price</p>
-              <p className="text-2xl font-bold">{entryPrice ? `${formatEther(entryPrice)} HLS` : "Loading..."}</p>
+              <p className="text-2xl font-bold">{typeof entryPrice === 'bigint' ? `${formatEther(entryPrice)} HLS` : "Loading..."}</p>
             </div>
             <div className="bg-secondary/50 p-4 rounded-lg">
               <p className="text-sm text-muted-foreground">Prize Pool</p>
@@ -139,7 +147,7 @@ const Lottery = () => {
                 <CardTitle className="text-center">Result</CardTitle>
               </CardHeader>
               <CardContent className="text-center space-y-4">
-                {winAmount && winAmount > 0n ? (
+                {winAmount !== null && winAmount > 0n ? (
                   <>
                     <PartyPopper className="h-16 w-16 mx-auto text-green-500" />
                     <p className="text-2xl font-bold">You Won!</p>
@@ -159,14 +167,14 @@ const Lottery = () => {
         )}
       </AnimatePresence>
 
-      {lastWinner && lastWinner !== "0x0000000000000000000000000000000000000000" && (
+      {lastWinner && typeof lastWinner === 'string' && lastWinner !== "0x0000000000000000000000000000000000000000" && (
         <Card>
           <CardHeader>
             <CardTitle className="text-center">Last Winner</CardTitle>
           </CardHeader>
           <CardContent className="text-center">
             <p className="truncate">{lastWinner}</p>
-            <p>Won {lastWinnerAmount ? formatEther(lastWinnerAmount) : '0'} HLS</p>
+            <p>Won {typeof lastWinnerAmount === 'bigint' ? formatEther(lastWinnerAmount) : '0'} HLS</p>
           </CardContent>
         </Card>
       )}
