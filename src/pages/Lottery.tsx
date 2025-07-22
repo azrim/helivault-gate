@@ -1,19 +1,20 @@
 // src/pages/Lottery.tsx
 import { useState, useEffect, useCallback } from "react";
-import { useAccount, useReadContract, useWriteContract, useBalance, useWaitForTransactionReceipt } from "wagmi";
+import { useAccount, useReadContract, useWriteContract, useBalance, useWaitForTransactionReceipt, usePublicClient } from "wagmi";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { ConnectButton } from "@rainbow-me/rainbowkit";
 import { LOTTERY_CONTRACT } from "@/contracts/Lottery";
 import { heliosTestnet } from "@/lib/chains";
-import { formatEther, decodeEventLog, Abi, Log } from "viem";
+import { formatEther, decodeEventLog, Abi } from "viem";
 import { motion, AnimatePresence } from "framer-motion";
 import { Ticket, Star, PartyPopper } from "lucide-react";
 
 const Lottery = () => {
   const { address, isConnected, chain } = useAccount();
   const { writeContractAsync } = useWriteContract();
+  const publicClient = usePublicClient();
   const [hash, setHash] = useState<`0x${string}` | undefined>();
   const [showResult, setShowResult] = useState(false);
   const [winAmount, setWinAmount] = useState<bigint | null>(null);
@@ -46,38 +47,40 @@ const Lottery = () => {
   });
 
   // --- Transaction Confirmation ---
-  const { data: receipt, isLoading: isConfirming } = useWaitForTransactionReceipt({ hash });
+  const { isSuccess: isConfirmed, isLoading: isConfirming } = useWaitForTransactionReceipt({ hash });
 
   useEffect(() => {
-    if (receipt) {
-      let amountWon: bigint | null = null;
-      for (const log of receipt.logs) {
-        try {
-          const decodedEvent = decodeEventLog({
-            abi: LOTTERY_CONTRACT.abi as Abi,
-            // The `log` object from wagmi's receipt has the necessary properties,
-            // but we provide default empty arrays for topics to satisfy TypeScript.
-            topics: (log as Log).topics ?? [],
-            data: log.data,
-          });
+    if (isConfirmed && hash && publicClient) {
+      const processReceipt = async () => {
+        const receipt = await publicClient.getTransactionReceipt({ hash });
+        let amountWon: bigint | null = null;
+        for (const log of receipt.logs) {
+          try {
+            const decodedEvent = decodeEventLog({
+              abi: LOTTERY_CONTRACT.abi as Abi,
+              data: log.data,
+              topics: log.topics,
+            });
 
-          if (decodedEvent.eventName === "WinnerPaid") {
-            const args = decodedEvent.args as { winner: `0x${string}`; amount: bigint };
-            if (args && typeof args.amount === 'bigint') {
-              amountWon = args.amount;
+            if (decodedEvent.eventName === "WinnerPaid") {
+              const args = decodedEvent.args as { winner: `0x${string}`; amount: bigint };
+              if (args && typeof args.amount === 'bigint') {
+                amountWon = args.amount;
+              }
+              break;
             }
-            break;
+          } catch (e) {
+            // Ignore non-matching logs
           }
-        } catch (e) {
-          // Ignore non-matching logs
         }
-      }
-      setWinAmount(amountWon);
-      setShowResult(true);
-      toast.success("Spin confirmed!");
-      refetchData();
+        setWinAmount(amountWon);
+        setShowResult(true);
+        toast.success("Spin confirmed!");
+        refetchData();
+      };
+      processReceipt();
     }
-  }, [receipt, refetchData]);
+  }, [isConfirmed, hash, publicClient, refetchData]);
 
 
   // --- Contract Write ---
