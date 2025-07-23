@@ -1,7 +1,7 @@
 // src/pages/Home.tsx
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { ArrowRight, Ticket, Sparkles, Flame, Droplets, Gallery, Rocket } from "lucide-react";
+import { ArrowRight, Ticket, Sparkles, Flame, Droplets, LayoutGrid, Rocket } from "lucide-react";
 import { motion } from "framer-motion";
 import "../styles/Home.css";
 
@@ -92,7 +92,7 @@ const Home = () => {
             link="/faucet"
           />
           <FeatureCard
-            icon={<Gallery className="h-8 w-8 text-primary" />}
+            icon={<LayoutGrid className="h-8 w-8 text-primary" />}
             title="NFT Gallery"
             description="View your collection of minted Helivault NFTs in our dedicated gallery."
             link="/gallery"
