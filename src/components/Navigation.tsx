@@ -16,8 +16,9 @@ import {
 } from "@/components/ui/sheet";
 import { Menu, Palette, Wallet } from "lucide-react";
 import { Button } from "./ui/button";
-import { Streak } from "./Streak";
 import { Separator } from "./ui/separator";
+import { ProfileDropdown } from "./ProfileDropdown";
+import { useAccount } from "wagmi";
 
 // --- Desktop Navigation Link ---
 type DesktopNavItemProps = {
@@ -32,7 +33,6 @@ const desktopNavItems: DesktopNavItemProps[] = [
   { path: "/faucet", label: "Faucet" },
   { path: "/lottery", label: "Lottery" },
   { path: "/deploy", label: "Deploy" },
-  { path: "/profile", label: "Profile" },
 ];
 
 const DesktopNavLink = ({ path, label }: DesktopNavItemProps) => {
@@ -126,6 +126,7 @@ const MobileTopHeader = () => {
  */
 const Navigation = () => {
   const isMobile = useIsMobile();
+  const { isConnected } = useAccount();
 
   if (isMobile) {
     return (
@@ -158,10 +159,9 @@ const Navigation = () => {
             ))}
           </nav>
           <div className="flex items-center justify-end gap-2 mr-2">
-            <Streak />
             <ThemeSwitcher />
             <div className="h-6 w-px bg-border" />
-            <CustomConnectButton />
+            {isConnected ? <ProfileDropdown /> : <CustomConnectButton />}
           </div>
         </div>
       </div>

@@ -102,14 +102,6 @@ const AnimatedRoutes = () => {
             }
           />
           <Route
-            path="/profile"
-            element={
-              <PageWrapper>
-                <Profile />
-              </PageWrapper>
-            }
-          />
-          <Route
             path="*"
             element={
               <PageWrapper>
