@@ -19,6 +19,7 @@ import { Button } from "./ui/button";
 import { Separator } from "./ui/separator";
 import { ProfileDropdown } from "./ProfileDropdown";
 import { useAccount } from "wagmi";
+import { Streak } from "./Streak";
 
 // --- Desktop Navigation Link ---
 type DesktopNavItemProps = {
@@ -159,6 +160,7 @@ const Navigation = () => {
             ))}
           </nav>
           <div className="flex items-center justify-end gap-2 mr-2">
+            <Streak />
             <ThemeSwitcher />
             <div className="h-6 w-px bg-border" />
             {isConnected ? <ProfileDropdown /> : <CustomConnectButton />}
