@@ -1,5 +1,7 @@
 # Helivault Gate
 
+**Live dApp**: [https://helivault-gate.vercel.app/](https://helivault-gate.vercel.app/)
+
 Helivault Gate is a decentralized application (dApp) built on the Helios testnet. It provides a suite of tools and features for interacting with the Helios ecosystem, including a token faucet, an NFT gallery, and a provably fair lottery.
 
 ## Features
