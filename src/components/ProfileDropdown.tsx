@@ -41,7 +41,7 @@ export const ProfileDropdown = () => {
   }
 
   return (
-    <DropdownMenu>
+    <DropdownMenu modal={false}>
       <DropdownMenuTrigger asChild>
         <Button variant="outline" className="flex items-center gap-2">
           <span>{`${address.slice(0, 6)}...${address.slice(-4)}`}</span>
