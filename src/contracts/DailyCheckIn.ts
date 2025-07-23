@@ -2,7 +2,7 @@
 import { heliosTestnet } from "@/lib/chains";
 
 export const DAILY_CHECK_IN_CONTRACT = {
-  address: "0x2133bcB200F12014eb1415e0b1D62B252e7dC38C" as `0x${string}`,
+  address: "0xF15fc91CCc6451497598bcD0C4080Edcad3279F3" as `0x${string}`,
   abi: [
     {
       anonymous: false,

@@ -3,7 +3,7 @@ import { heliosTestnet } from "@/lib/chains";
 
 export const HELIVAULT_COLLECTIONS_CONTRACT = {
   // TODO: Replace with your deployed HelivaultCollections contract address
-  address: "0x79B521277A664ceF5ab4dd34EE74aa24E1eaE33c" as `0x${string}`,
+  address: "0x6c4Be5128969F1a15417b8B77BB9F3f6e829A546" as `0x${string}`,
   abi: [
     {
       inputs: [

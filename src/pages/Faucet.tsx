@@ -14,29 +14,11 @@ import { motion } from "framer-motion";
 
 const Faucet = () => {
   const { address, isConnected, chain } = useAccount();
-  const { data: hash, writeContractAsync } = useWriteContract();
-
-  const [cooldown, setCooldown] = useState(0);
-
-  const { data: hvtBalance, refetch: refetchHvtBalance } = useBalance({
-    address: address,
-    token: HELIVAULT_TOKEN_CONTRACT.address,
-    query: { enabled: isConnected },
-  });
-
-  const { data: lastClaimed, refetch: refetchLastClaimed } = useReadContract({
-    ...HELIVAULT_TOKEN_CONTRACT,
-    functionName: "lastFaucetUse",
-    args: [address!],
-    query: { enabled: isConnected },
-  });
-
-  const { data: faucetAmountResult } = useReadContract({
-    ...HELIVAULT_TOKEN_CONTRACT,
-    functionName: "faucetAmount",
-  });
+  const { data: hash, writeContractAsync, isPending } = useWriteContract();
 
   const { isLoading: isConfirming, isSuccess: isConfirmed } = useWaitForTransactionReceipt({ hash });
+
+  const [cooldown, setCooldown] = useState(0);
 
   useEffect(() => {
     const calculateCooldown = () => {
@@ -54,11 +36,10 @@ const Faucet = () => {
 
   const handleClaim = async () => {
     try {
-      const txHash = await writeContractAsync({
+      await writeContractAsync({
         ...HELIVAULT_TOKEN_CONTRACT,
         functionName: "faucet",
       });
-      setHash(txHash);
       toast.info("Claim transaction sent...");
     } catch (error: any) {
       toast.error("Claim failed", { description: error.shortMessage || "An error occurred." });
@@ -133,8 +114,8 @@ const Faucet = () => {
               ) : !isCorrectNetwork ? (
                 <ConnectButton label="Wrong Network" />
               ) : isClaimable ? (
-                <Button onClick={handleClaim} disabled={isConfirming} className="w-full h-12 text-lg">
-                  {isConfirming ? "Claiming..." : "Claim Tokens"}
+                <Button onClick={handleClaim} disabled={isPending || isConfirming} className="w-full h-12 text-lg">
+                  {isPending || isConfirming ? "Claiming..." : "Claim Tokens"}
                 </Button>
               ) : (
                 <Button disabled className="w-full h-12 text-lg">
