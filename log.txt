@@ -1,30 +1,128 @@
-[02:27:42.285] Running build in Washington, D.C., USA (East) – iad1
-[02:27:42.286] Build machine configuration: 2 cores, 8 GB
-[02:27:42.299] Cloning github.com/azrim/helivault-gate (Branch: main, Commit: 1f7be80)
-[02:27:42.742] Warning: Failed to fetch one or more git submodules
-[02:27:42.742] Cloning completed: 443.000ms
-[02:27:45.546] Restored build cache from previous deployment (UW7G7SrLcRBBYhz1RFrpkVqbCqSV)
-[02:27:50.592] Running "vercel build"
-[02:27:51.173] Vercel CLI 44.5.0
-[02:27:51.776] Installing dependencies...
-[02:27:55.881] 
-[02:27:55.882] added 179 packages, and removed 1 package in 4s
-[02:27:55.883] 
-[02:27:55.883] 227 packages are looking for funding
-[02:27:55.883]   run `npm fund` for details
-[02:27:56.579] [36mvite v6.3.5 [32mbuilding for production...[36m[39m
-[02:27:56.966] transforming...
-[02:27:58.055] 
-[02:27:58.056] /fonts/satoshi/Satoshi-Variable.woff2 referenced in /fonts/satoshi/Satoshi-Variable.woff2 didn't resolve at build time, it will remain unchanged to be resolved at runtime
-[02:27:59.112] [32m✓[39m 311 modules transformed.
-[02:27:59.115] [31m✗[39m Build failed in 2.51s
-[02:27:59.115] [31merror during build:
-[02:27:59.116] [31mCould not resolve "../../contracts/deployments.json" from "src/contracts/Lottery.ts"[31m
-[02:27:59.116] file: [36m/vercel/path0/src/contracts/Lottery.ts[31m
-[02:27:59.116]     at getRollupError (file:///vercel/path0/node_modules/rollup/dist/es/shared/parseAst.js:400:41)
-[02:27:59.116]     at error (file:///vercel/path0/node_modules/rollup/dist/es/shared/parseAst.js:396:42)
-[02:27:59.117]     at ModuleLoader.handleInvalidResolvedId (file:///vercel/path0/node_modules/rollup/dist/es/shared/node-entry.js:21379:24)
-[02:27:59.117]     at file:///vercel/path0/node_modules/rollup/dist/es/shared/node-entry.js:21339:26[39m
-[02:27:59.154] Error: Command "vite build" exited with 1
-[02:28:00.094] 
-[02:28:02.971] Exiting build container
+[{
+	"resource": "/home/azrim/helivault-gate/src/contracts/HelivaultToken.ts",
+	"owner": "typescript",
+	"code": "1355",
+	"severity": 8,
+	"message": "A 'const' assertions can only be applied to references to enum members, or string, number, boolean, array, or object literals.",
+	"source": "ts",
+	"startLineNumber": 7,
+	"startColumn": 8,
+	"endLineNumber": 7,
+	"endColumn": 29,
+	"origin": "extHost2"
+}]
+
+remove /home/azrim/helivault-gate/src/contracts/Staking.ts
+
+[{
+	"resource": "/home/azrim/helivault-gate/src/pages/Faucet.tsx",
+	"owner": "typescript",
+	"code": "2345",
+	"severity": 8,
+	"message": "Argument of type '{ functionName: string; address: `0x${string}`; abi: ({ inputs: { internalType: string; name: string; type: string; }[]; stateMutability: string; type: string; name?: undefined; anonymous?: undefined; outputs?: undefined; } | { ...; } | { ...; } | { ...; })[]; chain: { ...; }; }' is not assignable to parameter of type '{ [x: string]: any; [x: number]: any; [x: symbol]: any; abi: ({ inputs: { internalType: string; name: string; type: string; }[]; stateMutability: string; type: string; name?: undefined; anonymous?: undefined; outputs?: undefined; } | { ...; } | { ...; } | { ...; })[]; ... 9 more ...; __mode?: \"prepared\"; }'.\n  Property 'account' is missing in type '{ functionName: string; address: `0x${string}`; abi: ({ inputs: { internalType: string; name: string; type: string; }[]; stateMutability: string; type: string; name?: undefined; anonymous?: undefined; outputs?: undefined; } | { ...; } | { ...; } | { ...; })[]; chain: { ...; }; }' but required in type '{ [x: string]: any; [x: number]: any; [x: symbol]: any; abi: ({ inputs: { internalType: string; name: string; type: string; }[]; stateMutability: string; type: string; name?: undefined; anonymous?: undefined; outputs?: undefined; } | { ...; } | { ...; } | { ...; })[]; ... 9 more ...; __mode?: \"prepared\"; }'.",
+	"source": "ts",
+	"startLineNumber": 57,
+	"startColumn": 47,
+	"endLineNumber": 60,
+	"endColumn": 8,
+	"relatedInformation": [
+		{
+			"startLineNumber": 6,
+			"startColumn": 5,
+			"endLineNumber": 6,
+			"endColumn": 12,
+			"message": "'account' is declared here.",
+			"resource": "/home/azrim/helivault-gate/node_modules/viem/_types/types/account.d.ts"
+		}
+	],
+	"origin": "extHost2"
+},{
+	"resource": "/home/azrim/helivault-gate/src/pages/Faucet.tsx",
+	"owner": "typescript",
+	"code": "2304",
+	"severity": 8,
+	"message": "Cannot find name 'setHash'.",
+	"source": "ts",
+	"startLineNumber": 61,
+	"startColumn": 7,
+	"endLineNumber": 61,
+	"endColumn": 14,
+	"origin": "extHost2"
+}]
+
+[{
+	"resource": "/home/azrim/helivault-gate/src/pages/Lottery.tsx",
+	"owner": "typescript",
+	"code": "2339",
+	"severity": 8,
+	"message": "Property 'topics' does not exist on type '{ address: `0x${string}`; blockHash: `0x${string}`; blockNumber: bigint; data: `0x${string}`; logIndex: number; transactionHash: `0x${string}`; transactionIndex: number; removed: boolean; }'.",
+	"source": "ts",
+	"startLineNumber": 43,
+	"startColumn": 113,
+	"endLineNumber": 43,
+	"endColumn": 119,
+	"origin": "extHost2"
+},{
+	"resource": "/home/azrim/helivault-gate/src/pages/Lottery.tsx",
+	"owner": "typescript",
+	"code": "2352",
+	"severity": 8,
+	"message": "Conversion of type 'readonly unknown[]' to type '{ winner: `0x${string}`; amount: bigint; }' may be a mistake because neither type sufficiently overlaps with the other. If this was intentional, convert the expression to 'unknown' first.\n  Type 'readonly unknown[]' is missing the following properties from type '{ winner: `0x${string}`; amount: bigint; }': winner, amount",
+	"source": "ts",
+	"startLineNumber": 45,
+	"startColumn": 28,
+	"endLineNumber": 45,
+	"endColumn": 90,
+	"origin": "extHost2"
+}]
+
+[{
+	"resource": "/home/azrim/helivault-gate/src/index.css",
+	"owner": "_generated_diagnostic_collection_name_#3",
+	"code": "unknownAtRules",
+	"severity": 4,
+	"message": "Unknown at rule @tailwind",
+	"source": "css",
+	"startLineNumber": 1,
+	"startColumn": 1,
+	"endLineNumber": 1,
+	"endColumn": 10,
+	"origin": "extHost2"
+},{
+	"resource": "/home/azrim/helivault-gate/src/index.css",
+	"owner": "_generated_diagnostic_collection_name_#3",
+	"code": "unknownAtRules",
+	"severity": 4,
+	"message": "Unknown at rule @tailwind",
+	"source": "css",
+	"startLineNumber": 2,
+	"startColumn": 1,
+	"endLineNumber": 2,
+	"endColumn": 10,
+	"origin": "extHost2"
+},{
+	"resource": "/home/azrim/helivault-gate/src/index.css",
+	"owner": "_generated_diagnostic_collection_name_#3",
+	"code": "unknownAtRules",
+	"severity": 4,
+	"message": "Unknown at rule @tailwind",
+	"source": "css",
+	"startLineNumber": 3,
+	"startColumn": 1,
+	"endLineNumber": 3,
+	"endColumn": 10,
+	"origin": "extHost2"
+},{
+	"resource": "/home/azrim/helivault-gate/src/index.css",
+	"owner": "_generated_diagnostic_collection_name_#3",
+	"code": "unknownAtRules",
+	"severity": 4,
+	"message": "Unknown at rule @apply",
+	"source": "css",
+	"startLineNumber": 84,
+	"startColumn": 5,
+	"endLineNumber": 84,
+	"endColumn": 11,
+	"origin": "extHost2"
+}]
+

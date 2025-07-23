@@ -13,6 +13,7 @@ import Faucet from "./pages/Faucet";
 import CheckIn from "./pages/CheckIn";
 import Deploy from "./pages/Deploy";
 import Lottery from "./pages/Lottery";
+import Profile from "./pages/Profile";
 import NotFound from "./pages/NotFound";
 import Gallery from "./pages/Gallery";
 import { Toaster } from "@/components/ui/toaster";
@@ -106,6 +107,14 @@ const AnimatedRoutes = () => {
             element={
               <PageWrapper>
                 <Lottery />
+              </PageWrapper>
+            }
+          />
+          <Route
+            path="/profile"
+            element={
+              <PageWrapper>
+                <Profile />
               </PageWrapper>
             }
           />
