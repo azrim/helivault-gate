@@ -1,7 +1,7 @@
 // src/pages/Home.tsx
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { ArrowRight, Ticket, Sparkles, Flame } from "lucide-react";
+import { ArrowRight, Ticket, Sparkles, Flame, Droplets, Gallery, Rocket } from "lucide-react";
 import { motion } from "framer-motion";
 import "../styles/Home.css";
 
@@ -85,7 +85,33 @@ const Home = () => {
             description="Check in every day to build your streak and earn rewards for your consistency."
             link="/checkin"
           />
+          <FeatureCard
+            icon={<Droplets className="h-8 w-8 text-primary" />}
+            title="HVT Faucet"
+            description="Get free HVT tokens to test and interact with the Helivault ecosystem."
+            link="/faucet"
+          />
+          <FeatureCard
+            icon={<Gallery className="h-8 w-8 text-primary" />}
+            title="NFT Gallery"
+            description="View your collection of minted Helivault NFTs in our dedicated gallery."
+            link="/gallery"
+          />
+          <FeatureCard
+            icon={<Rocket className="h-8 w-8 text-primary" />}
+            title="Deploy Contracts"
+            description="A simple interface for deploying and managing your smart contracts on the Helios testnet."
+            link="/deploy"
+          />
         </div>
+      </section>
+
+      {/* About Section */}
+      <section className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+        <h2 className="text-3xl font-bold mb-4">About Helivault Gate</h2>
+        <p className="text-muted-foreground">
+          Helivault Gate is a community-focused platform designed to showcase the power and flexibility of the Helios blockchain. Our goal is to provide a suite of useful and engaging dApps that make it easy for users to explore the world of decentralized applications. Whether you're a developer, an NFT collector, or just curious about crypto, Helivault Gate is your entry point to the future of the decentralized web.
+        </p>
       </section>
     </div>
   );
