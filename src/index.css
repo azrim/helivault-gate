@@ -40,7 +40,7 @@
     --input: 214 17% 84%;
     --ring: 224 100% 40%;
 
-    --radius: 0.5rem;
+    --radius: 1rem;
   }
 
   .dark {
@@ -68,13 +68,20 @@
     --destructive: 0 75% 55%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 226 94% 7%;
+    --border: 226 75% 10%;
     --input: 220 26% 32%;
     --ring: 224 100% 60%;
   }
 
   html {
     overflow-y: scroll;
+  }
+}
+
+@layer components {
+  .card {
+    border-width: 1px;
+    box-shadow: none;
   }
 }
 
