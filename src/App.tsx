@@ -10,7 +10,6 @@ import Navigation from "./components/Navigation";
 import Home from "./pages/Home";
 import Mint from "./pages/Mint";
 import Faucet from "./pages/Faucet";
-import CheckIn from "./pages/CheckIn";
 import Deploy from "./pages/Deploy";
 import Lottery from "./pages/Lottery";
 import Profile from "./pages/Profile";
@@ -75,14 +74,6 @@ const AnimatedRoutes = () => {
             element={
               <PageWrapper>
                 <Faucet />
-              </PageWrapper>
-            }
-          />
-          <Route
-            path="/checkin"
-            element={
-              <PageWrapper>
-                <CheckIn />
               </PageWrapper>
             }
           />

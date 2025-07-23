@@ -39,7 +39,6 @@ const navItems: NavItem[] = [
   { path: "/mint", label: "Mint", icon: Sparkles },
   { path: "/gallery", label: "Gallery", icon: Gallery },
   { path: "/faucet", label: "Faucet", icon: Droplets },
-  { path: "/checkin", label: "Check-in", icon: Flame },
   { path: "/lottery", label: "Lottery", icon: Ticket },
   { path: "/deploy", label: "Deploy", icon: Rocket },
   { path: "/profile", label: "Profile", icon: User },

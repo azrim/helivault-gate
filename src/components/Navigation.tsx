@@ -16,6 +16,7 @@ import {
 } from "@/components/ui/sheet";
 import { Menu, Palette, Wallet } from "lucide-react";
 import { Button } from "./ui/button";
+import { Streak } from "./Streak";
 import { Separator } from "./ui/separator";
 
 // --- Desktop Navigation Link ---
@@ -29,7 +30,6 @@ const desktopNavItems: DesktopNavItemProps[] = [
   { path: "/mint", label: "Mint" },
   { path: "/gallery", label: "Gallery" },
   { path: "/faucet", label: "Faucet" },
-  { path: "/checkin", label: "Check-in" },
   { path: "/lottery", label: "Lottery" },
   { path: "/deploy", label: "Deploy" },
   { path: "/profile", label: "Profile" },
@@ -158,6 +158,7 @@ const Navigation = () => {
             ))}
           </nav>
           <div className="flex items-center justify-end gap-2 mr-2">
+            <Streak />
             <ThemeSwitcher />
             <div className="h-6 w-px bg-border" />
             <CustomConnectButton />
