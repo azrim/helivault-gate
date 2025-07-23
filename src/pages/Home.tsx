@@ -80,12 +80,6 @@ const Home = () => {
             link="/mint"
           />
           <FeatureCard
-            icon={<Flame className="h-8 w-8 text-primary" />}
-            title="Daily Check-in"
-            description="Check in every day to build your streak and earn rewards for your consistency."
-            link="/checkin"
-          />
-          <FeatureCard
             icon={<Droplets className="h-8 w-8 text-primary" />}
             title="HVT Faucet"
             description="Get free HVT tokens to test and interact with the Helivault ecosystem."

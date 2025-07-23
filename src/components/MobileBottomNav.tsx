@@ -41,7 +41,6 @@ const navItems: NavItem[] = [
   { path: "/faucet", label: "Faucet", icon: Droplets },
   { path: "/lottery", label: "Lottery", icon: Ticket },
   { path: "/deploy", label: "Deploy", icon: Rocket },
-  { path: "/profile", label: "Profile", icon: User },
 ];
 
 const NavLink = React.memo(
