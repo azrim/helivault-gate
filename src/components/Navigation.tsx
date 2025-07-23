@@ -140,7 +140,7 @@ const Navigation = () => {
 
   return (
     <header className="sticky top-4 z-50">
-      <div className="max-w-7xl mx-auto px-4">
+      <div className="mx-auto px-8">
         <div className="flex items-center justify-between h-16 p-2 bg-card/80 backdrop-blur-lg rounded-2xl">
           <div className="flex items-center justify-start">
             <Link to="/" className="flex items-center gap-3 ml-2">
