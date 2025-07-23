@@ -1,4 +1,5 @@
 // src/components/ProfileDropdown.tsx
+import { useState } from "react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -13,10 +14,12 @@ import { formatEther } from "viem";
 import { Copy, LogOut, ChevronDown } from "lucide-react";
 import { toast } from "sonner";
 import { HELIVAULT_TOKEN_CONTRACT } from "@/contracts/HelivaultToken";
+import { motion } from "framer-motion";
 
 export const ProfileDropdown = () => {
   const { address, isConnected } = useAccount();
   const { disconnect } = useDisconnect();
+  const [isOpen, setIsOpen] = useState(false);
 
   const { data: hlsBalance } = useBalance({
     address,
@@ -35,17 +38,20 @@ export const ProfileDropdown = () => {
   };
 
   if (!isConnected || !address) {
-    // This component will only render when connected,
-    // so this is just a fallback.
     return null;
   }
 
   return (
-    <DropdownMenu modal={false}>
+    <DropdownMenu modal={false} onOpenChange={setIsOpen}>
       <DropdownMenuTrigger asChild>
         <Button variant="outline" className="flex items-center gap-2">
           <span>{`${address.slice(0, 6)}...${address.slice(-4)}`}</span>
-          <ChevronDown className="h-4 w-4" />
+          <motion.div
+            animate={{ rotate: isOpen ? 180 : 0 }}
+            transition={{ duration: 0.2 }}
+          >
+            <ChevronDown className="h-4 w-4" />
+          </motion.div>
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent className="w-64" align="end">
