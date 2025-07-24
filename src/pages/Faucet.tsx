@@ -20,6 +20,24 @@ const Faucet = () => {
 
   const [cooldown, setCooldown] = useState(0);
 
+  const { data: hvtBalance, refetch: refetchHvtBalance } = useBalance({
+    address: address,
+    token: HELIVAULT_TOKEN_CONTRACT.address,
+    query: { enabled: isConnected },
+  });
+
+  const { data: lastClaimed, refetch: refetchLastClaimed } = useReadContract({
+    ...HELIVAULT_TOKEN_CONTRACT,
+    functionName: "lastFaucetUse",
+    args: [address!],
+    query: { enabled: isConnected },
+  });
+
+  const { data: faucetAmountResult } = useReadContract({
+    ...HELIVAULT_TOKEN_CONTRACT,
+    functionName: "faucetAmount",
+  });
+
   useEffect(() => {
     const calculateCooldown = () => {
       if (typeof lastClaimed === "bigint") {

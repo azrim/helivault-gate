@@ -1,4 +1,3 @@
-// src/pages/Mint.tsx
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -15,32 +14,9 @@ import { formatEther, TransactionExecutionError } from "viem";
 import { ConnectButton } from "@rainbow-me/rainbowkit";
 import { motion } from "framer-motion";
 import { Skeleton } from "@/components/ui/skeleton";
-import { readContract } from "@wagmi/core";
-import { config } from "@/App";
 
 const contractConfig = HELIVAULT_COLLECTIONS_CONTRACT;
 const tokenContract = HELIVAULT_TOKEN_CONTRACT;
-
-const HistoryRow = ({ ownerAddress, index, nftName }) => {
-  const { data: tokenId, isLoading } = useReadContract({
-    ...contractConfig,
-    functionName: "tokenOfOwnerByIndex",
-    args: [ownerAddress, index],
-  });
-
-  if (isLoading) return <tr><td colSpan={2} className="py-4 px-4 text-center"><Skeleton className="h-4 w-1/2 mx-auto" /></td></tr>;
-
-  return (
-    <tr className="border-b border-border/50 last:border-0">
-      <td className="py-3 px-4 font-medium">{nftName} #{tokenId?.toString()}</td>
-      <td className="py-3 px-4 text-right">
-        <a href={`https://testnet-explorer.helioschain.io/token/${contractConfig.address}/instance/${tokenId?.toString()}`} target="_blank" rel="noopener noreferrer" className="text-primary hover:underline text-sm">
-          View
-        </a>
-      </td>
-    </tr>
-  );
-};
 
 const Mint = () => {
   const wagmiConfig = useConfig();
@@ -51,6 +27,7 @@ const Mint = () => {
   const [copied, setCopied] = useState(false);
   const [mintingStep, setMintingStep] = useState<"idle" | "approving" | "minting">("idle");
   const [txHash, setTxHash] = useState<`0x${string}` | undefined>();
+  const [toastId, setToastId] = useState<string | number | undefined>();
   
   const isConnected = !!address;
 
@@ -66,36 +43,39 @@ const Mint = () => {
   const handleMint = async () => {
     if (!address || !chain || typeof mintPriceResult !== "bigint" || quantity <= 0) return;
     const totalCost = mintPriceResult * BigInt(quantity);
-    const toastId = toast.loading("Initializing transaction...");
+    const id = toast.loading("Initializing transaction...");
+    setToastId(id);
     try {
       if (typeof allowance !== "bigint" || allowance < totalCost) {
         setMintingStep("approving");
-        toast.loading("Approval required...", { id: toastId });
+        toast.loading("Approval required...", { id });
         const approvalHash = await writeContractAsync({ ...tokenContract, functionName: "approve", args: [contractConfig.address, totalCost], account: address });
         await waitForTransactionReceipt(wagmiConfig, { hash: approvalHash });
-        toast.success("Approval successful!", { id: toastId });
+        toast.success("Approval successful!", { id });
         await refetchAllowance();
       }
       setMintingStep("minting");
-      toast.loading("Minting your NFT...", { id: toastId });
+      toast.loading("Minting your NFT...", { id });
       const mintTxHash = await writeContractAsync({ ...contractConfig, functionName: "mint", args: [BigInt(quantity)], account: address });
       setTxHash(mintTxHash);
     } catch (error) {
       const errorMessage = error instanceof TransactionExecutionError ? error.shortMessage : "Transaction failed.";
-      toast.error("Minting Failed", { id: toastId, description: errorMessage });
+      toast.error("Minting Failed", { id, description: errorMessage });
       setMintingStep("idle");
+      setToastId(undefined);
     }
   };
 
   useEffect(() => {
-    if (isConfirmed) {
-      toast.success(`🎉 ${quantity} NFT(s) Minted Successfully!`);
+    if (isConfirmed && toastId) {
+      toast.success(`🎉 ${quantity} NFT(s) Minted Successfully!`, { id: toastId });
       refetchTotalSupply();
       refetchUserBalance();
       setMintingStep("idle");
       setTxHash(undefined);
+      setToastId(undefined);
     }
-  }, [isConfirmed, quantity, refetchTotalSupply, refetchUserBalance]);
+  }, [isConfirmed, quantity, refetchTotalSupply, refetchUserBalance, toastId]);
 
   const currentSupply = typeof totalSupply === "bigint" ? Number(totalSupply) : 0;
   const maxSupplyNum = typeof maxSupply === "bigint" ? Number(maxSupply) : 10000;
@@ -103,7 +83,6 @@ const Mint = () => {
   const isSoldOut = currentSupply >= maxSupplyNum;
   const isCorrectNetwork = chain?.id === heliosTestnet.id;
   const isLoading = mintingStep !== "idle";
-  const tokenIndices = Array.from({ length: Number(userBalance || 0) }, (_, i) => BigInt(i));
 
   const copyToClipboard = (text: string) => {
     navigator.clipboard.writeText(text);
@@ -131,6 +110,16 @@ const Mint = () => {
           <motion.div className="lg:col-span-2 space-y-8" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.7 }}>
             <Card>
               <CardHeader>
+                <CardTitle>{nftName as string || <Skeleton className="h-6 w-3/4" />}</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p className="text-muted-foreground">
+                  A relic from a bygone era, pulsating with the energy of the cosmos. It is said to hold the key to unlocking the secrets of the Helivault.
+                </p>
+              </CardContent>
+            </Card>
+            <Card>
+              <CardHeader>
                 <CardTitle>Mint Your NFT</CardTitle>
                 <CardDescription>{currentSupply} / {maxSupplyNum} minted</CardDescription>
               </CardHeader>
@@ -145,7 +134,7 @@ const Mint = () => {
               </CardContent>
             </Card>
             <Card>
-              <CardHeader><CardTitle>Contract Details</CardTitle></CardHeader>
+              <CardHeader><CardTitle>Contract Details</CardTitle></Header>
               <CardContent className="space-y-3 text-sm">
                 <div className="flex justify-between">
                   <span className="text-muted-foreground">Address</span>
@@ -162,25 +151,6 @@ const Mint = () => {
             </Card>
           </motion.div>
         </section>
-
-        {isConnected && (
-          <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <Card>
-              <CardHeader><CardTitle>Your Mint History</CardTitle></CardHeader>
-              <CardContent>
-                {Number(userBalance || 0) > 0 ? (
-                  <table className="w-full">
-                    <tbody>
-                      {tokenIndices.map(index => <HistoryRow key={index.toString()} ownerAddress={address!} index={index} nftName={nftName as string} />)}
-                    </tbody>
-                  </table>
-                ) : (
-                  <p className="text-muted-foreground text-center py-8">You haven't minted any NFTs yet.</p>
-                )}
-              </CardContent>
-            </Card>
-          </section>
-        )}
       </div>
     </>
   );
