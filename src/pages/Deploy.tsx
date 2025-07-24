@@ -125,86 +125,92 @@ const Deploy: React.FC = () => {
         </section>
 
         {/* Deploy Section */}
-        <motion.section 
-          className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8"
+        <motion.section
+          className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.5 }}
         >
-          <Card>
-            <CardHeader>
-              <div className="flex justify-between items-center">
-                <CardTitle>Contract Deployment</CardTitle>
-                {(logs.length > 0 || isDeploying) && (
-                  <Button variant="ghost" size="icon" onClick={resetDeployment} disabled={isDeploying}>
-                    <RefreshCw className={`h-4 w-4 ${isDeploying ? "animate-spin" : ""}`} />
-                  </Button>
-                )}
-              </div>
-              <CardDescription>
-                Your deployment progress is saved even if you navigate away.
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-6">
-              {error && (
-                <Alert variant="destructive">
-                  <XCircle className="h-4 w-4" />
-                  <AlertTitle>Deployment Error</AlertTitle>
-                  <AlertDescription>{error}</AlertDescription>
-                </Alert>
-              )}
-              <div className="space-y-3">
-                <div className="flex items-center justify-between p-3 rounded-lg bg-secondary">
-                  <label htmlFor="select-all" className="font-medium">Select All Contracts</label>
-                  <Checkbox id="select-all" checked={allSelected} onCheckedChange={(c) => handleSelectAll(!!c)} disabled={isDeploying} />
+          <div className="grid lg:grid-cols-2 gap-12">
+            {/* --- Left Column --- */}
+            <Card>
+              <CardHeader>
+                <div className="flex justify-between items-center">
+                  <CardTitle>Contract Deployment</CardTitle>
+                  {(logs.length > 0 || isDeploying) && (
+                    <Button variant="ghost" size="icon" onClick={resetDeployment} disabled={isDeploying}>
+                      <RefreshCw className={`h-4 w-4 ${isDeploying ? "animate-spin" : ""}`} />
+                    </Button>
+                  )}
                 </div>
-                {ALL_CONTRACTS.map(c => (
-                  <div key={c.name} className="flex items-center justify-between p-3 rounded-lg">
-                    <div className="flex items-center gap-3">
-                      <FileJson className="h-5 w-5 text-muted-foreground" />
-                      <span>{c.name}</span>
-                    </div>
-                    <Checkbox id={c.name} checked={selectedContracts[c.name]} onCheckedChange={(checked) => setSelectedContracts(p => ({ ...p, [c.name]: !!checked }))} disabled={isDeploying} />
+                <CardDescription>
+                  Your deployment progress is saved even if you navigate away.
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-6">
+                {error && (
+                  <Alert variant="destructive">
+                    <XCircle className="h-4 w-4" />
+                    <AlertTitle>Deployment Error</AlertTitle>
+                    <AlertDescription>{error}</AlertDescription>
+                  </Alert>
+                )}
+                <div className="space-y-3">
+                  <div className="flex items-center justify-between p-3 rounded-lg bg-secondary">
+                    <label htmlFor="select-all" className="font-medium">Select All Contracts</label>
+                    <Checkbox id="select-all" checked={allSelected} onCheckedChange={(c) => handleSelectAll(!!c)} disabled={isDeploying} />
                   </div>
-                ))}
-              </div>
-              {isDeploying && <Progress value={progress} />}
-              <Button onClick={handleDeploy} disabled={isDeploying || !isConnected || !Object.values(selectedContracts).some(v => v)} className="w-full h-12 text-lg">
-                <Rocket className="mr-2 h-5 w-5" />
-                {isDeploying ? "Deploying..." : `Deploy ${Object.values(selectedContracts).filter(v => v).length} Contract(s)`}
-              </Button>
-            </CardContent>
-          </Card>
-
-          {logs.length > 0 && (
-            <Card className="mt-8">
-              <CardHeader><CardTitle>Logs</CardTitle></CardHeader>
-              <CardContent>
-                <div className="bg-black text-white font-mono text-xs p-4 rounded-lg h-64 overflow-y-auto">
-                  {logs.map((log, i) => (
-                    <p key={i} className={log.includes("FAILED") ? "text-red-400" : log.includes("successfully") ? "text-green-400" : ""}>{log}</p>
+                  {ALL_CONTRACTS.map(c => (
+                    <div key={c.name} className="flex items-center justify-between p-3 rounded-lg">
+                      <div className="flex items-center gap-3">
+                        <FileJson className="h-5 w-5 text-muted-foreground" />
+                        <span>{c.name}</span>
+                      </div>
+                      <Checkbox id={c.name} checked={selectedContracts[c.name]} onCheckedChange={(checked) => setSelectedContracts(p => ({ ...p, [c.name]: !!checked }))} disabled={isDeploying} />
+                    </div>
                   ))}
                 </div>
+                {isDeploying && <Progress value={progress} />}
+                <Button onClick={handleDeploy} disabled={isDeploying || !isConnected || !Object.values(selectedContracts).some(v => v)} className="w-full h-12 text-lg">
+                  <Rocket className="mr-2 h-5 w-5" />
+                  {isDeploying ? "Deploying..." : `Deploy ${Object.values(selectedContracts).filter(v => v).length} Contract(s)`}
+                </Button>
               </CardContent>
             </Card>
-          )}
 
-          {deploymentCompleted && Object.keys(deployedContracts).length > 0 && (
-            <Card className="mt-8">
-              <CardHeader><CardTitle>Deployed Contracts</CardTitle></CardHeader>
-              <CardContent className="space-y-2">
-                {Object.entries(deployedContracts).map(([name, address]) => (
-                  <div key={name} className="flex items-center justify-between p-3 bg-secondary rounded-lg">
-                    <span className="font-medium">{name}</span>
-                    <a href={`https://explorer.helioschainlabs.org/address/${address}`} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 text-sm text-primary hover:underline">
-                      {`${address.slice(0, 6)}...${address.slice(-4)}`}
-                      <ExternalLink className="h-4 w-4" />
-                    </a>
-                  </div>
-                ))}
-              </CardContent>
-            </Card>
-          )}
+            {/* --- Right Column --- */}
+            <div className="space-y-8">
+              {logs.length > 0 && (
+                <Card>
+                  <CardHeader><CardTitle>Logs</CardTitle></CardHeader>
+                  <CardContent>
+                    <div className="bg-black text-white font-mono text-xs p-4 rounded-lg h-96 overflow-y-auto">
+                      {logs.map((log, i) => (
+                        <p key={i} className={log.includes("FAILED") ? "text-red-400" : log.includes("successfully") ? "text-green-400" : ""}>{log}</p>
+                      ))}
+                    </div>
+                  </CardContent>
+                </Card>
+              )}
+
+              {deploymentCompleted && Object.keys(deployedContracts).length > 0 && (
+                <Card>
+                  <CardHeader><CardTitle>Deployed Contracts</CardTitle></CardHeader>
+                  <CardContent className="space-y-2">
+                    {Object.entries(deployedContracts).map(([name, address]) => (
+                      <div key={name} className="flex items-center justify-between p-3 bg-secondary rounded-lg">
+                        <span className="font-medium">{name}</span>
+                        <a href={`https://explorer.helioschainlabs.org/address/${address}`} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 text-sm text-primary hover:underline">
+                          {`${address.slice(0, 6)}...${address.slice(-4)}`}
+                          <ExternalLink className="h-4 w-4" />
+                        </a>
+                      </div>
+                    ))}
+                  </CardContent>
+                </Card>
+              )}
+            </div>
+          </div>
         </motion.section>
       </div>
     </>
