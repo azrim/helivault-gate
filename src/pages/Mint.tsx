@@ -2,7 +2,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Copy, Check } from "lucide-react";
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { Helmet } from "react-helmet-async";
 import { toast } from "sonner";
 import { useAccount, useReadContract, useWriteContract, useWaitForTransactionReceipt, useConfig } from "wagmi";
@@ -113,7 +113,7 @@ const Mint = () => {
   };
 
   return (
-    <>
+    <React.Fragment>
       <Helmet><title>Mint NFT – Helivault Gate</title></Helmet>
       <div className="space-y-16 pb-24">
         <section className="text-center pt-24 pb-12">
@@ -174,7 +174,7 @@ const Mint = () => {
           </motion.div>
         </section>
       </div>
-    </>
+    </React.Fragment>
   );
 };
 
