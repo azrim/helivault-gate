@@ -19,7 +19,7 @@ import {
 } from "@/components/ui/sheet";
 import { Button } from "./ui/button";
 import { ThemeSwitcher } from "./ThemeSwitcher";
-import { WalletStatus } from "./WalletStatus";
+import WalletStatus from "./WalletStatus";
 import { useNavigationContext } from "@/context/NavigationContext";
 import React from "react";
 
