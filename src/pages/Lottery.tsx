@@ -165,6 +165,22 @@ const Lottery = () => {
                   </div>
                 </CardContent>
               </Card>
+              <Card>
+                <CardHeader>
+                  <CardTitle>Donate to the Prize Pool</CardTitle>
+                  <CardDescription>
+                    Help make the lottery more exciting by donating HLS to the prize pool.
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-sm text-muted-foreground">
+                    To donate, simply send HLS to the lottery contract address:
+                  </p>
+                  <p className="font-mono text-sm bg-secondary p-2 rounded-lg mt-2 truncate">
+                    {LOTTERY_CONTRACT.address}
+                  </p>
+                </CardContent>
+              </Card>
               {lastWinner && lastWinner !== "0x0000000000000000000000000000000000000000" && (
                 <Card>
                   <CardHeader><CardTitle className="text-center">Last Winner</CardTitle></CardHeader>
