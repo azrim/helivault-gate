@@ -64,6 +64,8 @@ const Navigation = () => {
   const isMobile = useIsMobile();
   const { isConnected } = useAccount();
 
+  console.log("isMobile:", isMobile);
+
   if (isMobile) {
     return <MobileTopNav />;
   }
