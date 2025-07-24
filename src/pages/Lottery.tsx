@@ -36,10 +36,13 @@ const Lottery = () => {
   useEffect(() => {
     if (isConfirmed && receipt) {
       let amountWon: bigint | null = null;
+      let winnerPaidEventFound = false;
+
       for (const log of receipt.logs) {
         try {
           const { eventName, args } = decodeEventLog({ abi: LOTTERY_CONTRACT.abi as Abi, data: log.data, topics: log.topics });
           if (eventName === "WinnerPaid") {
+            winnerPaidEventFound = true;
             const winner = args[0] as `0x${string}`;
             const amount = args[1] as bigint;
             if (winner === address) {
@@ -49,12 +52,33 @@ const Lottery = () => {
           }
         } catch (e) { /* Ignore non-matching logs */ }
       }
-      setWinAmount(amountWon);
-      setShowResult(true);
-      toast.success("Spin confirmed!");
-      refetchData();
+
+      // If no WinnerPaid event, it implies a consolation prize or no win.
+      // We can't definitively know the amount without more events.
+      // For a better UX, we'll check the lastWinner from the contract.
+      refetchLastWinner().then(({ data: newLastWinner }) => {
+        if (newLastWinner === address) {
+          // If the user is the last winner, but we didn't find the event,
+          // it's likely a small prize. We can show a generic win message.
+          // For now, we'll rely on the event, but this is where you'd add
+          // more robust logic if the contract doesn't always emit an event.
+          if (!winnerPaidEventFound) {
+            // Heuristic: Assume a win if the user is the last winner
+            // but without a specific amount from an event.
+            // This is not ideal. A better solution is to always emit an event.
+            setWinAmount(1n); // Represents a generic "win"
+          } else {
+            setWinAmount(amountWon);
+          }
+        } else {
+          setWinAmount(null); // Not the winner
+        }
+        setShowResult(true);
+        toast.success("Spin confirmed!");
+        refetchData();
+      });
     }
-  }, [isConfirmed, receipt, refetchData, address]);
+  }, [isConfirmed, receipt, refetchData, address, refetchLastWinner]);
 
   const handleEnterLottery = async () => {
     if (typeof entryPrice !== "bigint") return;
