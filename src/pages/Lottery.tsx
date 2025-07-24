@@ -42,6 +42,7 @@ const Lottery = () => {
           if (eventName === "WinnerPaid") {
             const winner = args[0] as `0x${string}`;
             const amount = args[1] as bigint;
+            toast.info(`[DEBUG] Event Winner: ${winner} | Your Address: ${address}`);
             // Case-insensitive comparison for Ethereum addresses
             if (winner.toLowerCase() === address?.toLowerCase()) {
               amountWon = amount;
@@ -153,15 +154,15 @@ const Lottery = () => {
                     <span className="font-mono">50% of Prize Pool</span>
                   </div>
                   <div className="flex justify-between items-center p-3 bg-secondary rounded-lg">
-                    <span className="font-bold text-slate-300">🥈 Gold (10%)</span>
+                    <span className="font-bold text-slate-300">🥈 Gold (5%)</span>
                     <span className="font-mono">10% of Prize Pool</span>
                   </div>
                   <div className="flex justify-between items-center p-3 bg-secondary rounded-lg">
-                    <span className="font-bold text-amber-700">🥉 Silver (25%)</span>
+                    <span className="font-bold text-amber-700">🥉 Silver (15%)</span>
                     <span className="font-mono">2.5% of Prize Pool</span>
                   </div>
                   <div className="flex justify-between items-center p-3 bg-secondary rounded-lg">
-                    <span className="font-bold">Consolation (~64%)</span>
+                    <span className="font-bold">Consolation (79%)</span>
                     <span className="font-mono">0.075 HLS</span>
                   </div>
                 </CardContent>
