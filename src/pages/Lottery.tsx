@@ -36,11 +36,11 @@ const Lottery = () => {
   useEffect(() => {
     if (isConfirmed && hash && publicClient) {
       const processReceipt = async () => {
-        const receipt = await publicClient.waitForTransactionReceipt({ hash });
+        const receipt = await publicClient.getTransactionReceipt({ hash });
         let amountWon: bigint | null = null;
         for (const log of receipt.logs) {
           try {
-            const decodedEvent = decodeEventLog({ abi: LOTTERY_CONTRACT.abi as Abi, ...log });
+            const decodedEvent = decodeEventLog({ abi: LOTTERY_CONTRACT.abi as Abi, data: log.data, topics: log.topics });
             if (decodedEvent.eventName === "WinnerPaid") {
               const args = decodedEvent.args as { winner: `0x${string}`; amount: bigint };
               if (args && typeof args.amount === "bigint") amountWon = args.amount;
