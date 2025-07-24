@@ -2,7 +2,7 @@
 import { heliosTestnet } from "@/lib/chains";
 
 export const LOTTERY_CONTRACT = {
-  address: "0xF363DeCD595e337135E4405e8Ef353C47D412a85" as `0x${string}`,
+  address: "0x263C021146a5f539B16A83feA26B0EA883A7336a",
   abi: [
     {
       inputs: [{ internalType: "uint256", name: "_entryPrice", type: "uint256" }],

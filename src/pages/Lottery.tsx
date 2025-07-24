@@ -148,20 +148,20 @@ const Lottery = () => {
                 </CardHeader>
                 <CardContent className="space-y-4">
                   <div className="flex justify-between items-center p-3 bg-secondary rounded-lg">
-                    <span className="font-bold text-yellow-400">🌟 Jackpot</span>
-                    <span className="font-mono">50%</span>
+                    <span className="font-bold text-yellow-400">🌟 Jackpot (1%)</span>
+                    <span className="font-mono">50% of Prize Pool</span>
                   </div>
                   <div className="flex justify-between items-center p-3 bg-secondary rounded-lg">
-                    <span className="font-bold text-slate-300">🥈 Gold</span>
-                    <span className="font-mono">10%</span>
+                    <span className="font-bold text-slate-300">🥈 Gold (10%)</span>
+                    <span className="font-mono">10% of Prize Pool</span>
                   </div>
                   <div className="flex justify-between items-center p-3 bg-secondary rounded-lg">
-                    <span className="font-bold text-amber-700">🥉 Silver</span>
-                    <span className="font-mono">2.5%</span>
+                    <span className="font-bold text-amber-700">🥉 Silver (25%)</span>
+                    <span className="font-mono">2.5% of Prize Pool</span>
                   </div>
                   <div className="flex justify-between items-center p-3 bg-secondary rounded-lg">
-                    <span className="font-bold"> consolation</span>
-                    <span className="font-mono">0.1 HLS</span>
+                    <span className="font-bold">Consolation (~64%)</span>
+                    <span className="font-mono">0.075 HLS</span>
                   </div>
                 </CardContent>
               </Card>
