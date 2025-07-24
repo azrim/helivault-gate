@@ -1,22 +1,10 @@
-// src/components/Navigation.tsx
 import { Link, useLocation } from "react-router-dom";
 import { cn } from "@/lib/utils";
 import { ThemeSwitcher } from "./ThemeSwitcher";
 import { CustomConnectButton } from "./CustomConnectButton";
 import { useIsMobile } from "@/hooks/use-mobile";
-import { MobileBottomNav } from "./MobileBottomNav";
+import { MobileTopNav } from "./MobileTopNav";
 import { useNavigationContext } from "@/context/NavigationContext";
-import {
-  Sheet,
-  SheetContent,
-  SheetHeader,
-  SheetTitle,
-  SheetTrigger,
-  SheetDescription,
-} from "@/components/ui/sheet";
-import { Menu, Palette, Wallet } from "lucide-react";
-import { Button } from "./ui/button";
-import { Separator } from "./ui/separator";
 import { ProfileDropdown } from "./ProfileDropdown";
 import { useAccount } from "wagmi";
 import { Streak } from "./Streak";
@@ -69,59 +57,6 @@ const DesktopNavLink = ({ path, label }: DesktopNavItemProps) => {
   );
 };
 
-// --- Mobile Top Header ---
-const MobileTopHeader = () => {
-  return (
-    <header className="md:hidden sticky top-0 z-40 w-full border-b border-border/40 bg-background/80 backdrop-blur-lg">
-      <div className="flex items-center justify-between h-16 px-4">
-        <Link to="/" className="flex items-center gap-2">
-          <img
-            src="/helios-icon.png"
-            alt="Helios Icon"
-            className="h-8 w-8 rounded-full"
-          />
-          <span className="font-bold text-lg">
-            Helivault <span className="text-primary">Gate</span>
-          </span>
-        </Link>
-        <Sheet>
-          <SheetTrigger asChild>
-            <Button variant="ghost" size="icon">
-              <Menu className="h-6 w-6" />
-              <span className="sr-only">Open menu</span>
-            </Button>
-          </SheetTrigger>
-          <SheetContent side="right" className="w-[300px]">
-            <SheetHeader className="text-left">
-              <SheetTitle>Menu</SheetTitle>
-              <SheetDescription>
-                Manage your wallet and preferences.
-              </SheetDescription>
-            </SheetHeader>
-            <div className="mt-6 flex flex-col gap-6">
-              <Separator />
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-3">
-                  <Palette className="h-5 w-5 text-muted-foreground" />
-                  <span className="font-medium">Theme</span>
-                </div>
-                <ThemeSwitcher />
-              </div>
-              <div className="flex flex-col gap-3">
-                <div className="flex items-center gap-3">
-                  <Wallet className="h-5 w-5 text-muted-foreground" />
-                  <span className="font-medium">Wallet</span>
-                </div>
-                <CustomConnectButton />
-              </div>
-            </div>
-          </SheetContent>
-        </Sheet>
-      </div>
-    </header>
-  );
-};
-
 /**
  * Main Navigation Component - Renders the correct layout for mobile vs desktop
  */
@@ -130,12 +65,7 @@ const Navigation = () => {
   const { isConnected } = useAccount();
 
   if (isMobile) {
-    return (
-      <>
-        <MobileTopHeader />
-        <MobileBottomNav />
-      </>
-    );
+    return <MobileTopNav />;
   }
 
   return (
