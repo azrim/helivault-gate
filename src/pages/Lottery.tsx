@@ -31,33 +31,29 @@ const Lottery = () => {
     refetchLastWinnerAmount();
   }, [refetchContractBalance, refetchLastWinner, refetchLastWinnerAmount]);
 
-  const { isSuccess: isConfirmed, isLoading: isConfirming } = useWaitForTransactionReceipt({ hash });
+  const { data: receipt, isSuccess: isConfirmed, isLoading: isConfirming } = useWaitForTransactionReceipt({ hash });
 
   useEffect(() => {
-    if (isConfirmed && hash && publicClient) {
-      const processReceipt = async () => {
-        const receipt = await publicClient.getTransactionReceipt({ hash });
-        let amountWon: bigint | null = null;
-        for (const log of receipt.logs) {
-          try {
-            const { eventName, args } = decodeEventLog({ abi: LOTTERY_CONTRACT.abi as Abi, data: log.data, topics: log.topics });
-            if (eventName === "WinnerPaid") {
-              const { winner, amount } = args as { winner: `0x${string}`; amount: bigint };
-              if (winner === address) {
-                amountWon = amount;
-              }
-              break;
+    if (isConfirmed && receipt) {
+      let amountWon: bigint | null = null;
+      for (const log of receipt.logs) {
+        try {
+          const { eventName, args } = decodeEventLog({ abi: LOTTERY_CONTRACT.abi as Abi, data: log.data, topics: log.topics });
+          if (eventName === "WinnerPaid") {
+            const { winner, amount } = args as { winner: `0x${string}`; amount: bigint };
+            if (winner === address) {
+              amountWon = amount;
             }
-          } catch (e) { /* Ignore non-matching logs */ }
-        }
-        setWinAmount(amountWon);
-        setShowResult(true);
-        toast.success("Spin confirmed!");
-        refetchData();
-      };
-      processReceipt();
+            break;
+          }
+        } catch (e) { /* Ignore non-matching logs */ }
+      }
+      setWinAmount(amountWon);
+      setShowResult(true);
+      toast.success("Spin confirmed!");
+      refetchData();
     }
-  }, [isConfirmed, hash, publicClient, refetchData, address]);
+  }, [isConfirmed, receipt, refetchData, address]);
 
   const handleEnterLottery = async () => {
     if (typeof entryPrice !== "bigint") return;
