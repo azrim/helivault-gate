@@ -90,6 +90,28 @@ const Mint = () => {
     setTimeout(() => setCopied(false), 2000);
   };
 
+  const renderMintButton = () => {
+    if (!isConnected) {
+      return <ConnectButton label="Connect Wallet to Mint" />;
+    }
+    if (!isCorrectNetwork) {
+      return <ConnectButton label="Wrong Network" />;
+    }
+    return (
+      <Button
+        onClick={handleMint}
+        disabled={isLoading || isSoldOut}
+        className="w-full h-12 text-lg"
+      >
+        {isLoading
+          ? `${mintingStep}...`
+          : isSoldOut
+          ? "Sold Out"
+          : "Mint Now"}
+      </Button>
+    );
+  };
+
   return (
     <>
       <Helmet><title>Mint NFT – Helivault Gate</title></Helmet>
@@ -128,13 +150,13 @@ const Mint = () => {
                 <div className="flex gap-4">
                   <Input type="number" value={quantity} onChange={(e) => setQuantity(Math.max(1, parseInt(e.target.value) || 1))} className="w-24 h-12 text-center text-lg" disabled={isLoading} />
                   <div className="flex-1">
-                    {!isConnected ? <ConnectButton label="Connect Wallet to Mint" /> : !isCorrectNetwork ? <ConnectButton label="Wrong Network" /> : <Button onClick={handleMint} disabled={isLoading || isSoldOut} className="w-full h-12 text-lg">{isLoading ? `${mintingStep}...` : isSoldOut ? "Sold Out" : "Mint Now"}</Button>}
+                    {renderMintButton()}
                   </div>
                 </div>
               </CardContent>
             </Card>
             <Card>
-              <CardHeader><CardTitle>Contract Details</CardTitle></Header>
+              <CardHeader><CardTitle>Contract Details</CardTitle></CardHeader>
               <CardContent className="space-y-3 text-sm">
                 <div className="flex justify-between">
                   <span className="text-muted-foreground">Address</span>
