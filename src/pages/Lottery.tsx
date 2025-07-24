@@ -40,7 +40,8 @@ const Lottery = () => {
         try {
           const { eventName, args } = decodeEventLog({ abi: LOTTERY_CONTRACT.abi as Abi, data: log.data, topics: log.topics });
           if (eventName === "WinnerPaid") {
-            const { winner, amount } = args;
+            const winner = args[0] as `0x${string}`;
+            const amount = args[1] as bigint;
             if (winner.toLowerCase() === address?.toLowerCase()) {
               amountWon = amount;
             }
