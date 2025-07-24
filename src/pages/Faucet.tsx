@@ -108,7 +108,12 @@ const Faucet = () => {
         </section>
 
         {/* Faucet Section */}
-        <section className="max-w-xl mx-auto px-4 sm:px-6 lg:px-8">
+        <motion.section 
+          className="max-w-xl mx-auto px-4 sm:px-6 lg:px-8"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.5 }}
+        >
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center gap-3">
@@ -143,7 +148,7 @@ const Faucet = () => {
               )}
             </CardContent>
           </Card>
-        </section>
+        </motion.section>
       </div>
     </>
   );
