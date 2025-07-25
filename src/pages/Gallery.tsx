@@ -9,10 +9,10 @@ import {
   AlertTriangle,
   Search,
 } from "lucide-react";
-import { ConnectButton } from "@rainbow-me/rainbowkit";
+
 import Page from "@/components/Page";
 import { readContract } from "@wagmi/core";
-import { config } from "@/App";
+import { config } from "@/config/reown";
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -257,7 +257,13 @@ const Gallery = () => {
           <p className="text-muted-foreground">
             Please connect your wallet to view your NFT gallery.
           </p>
-          <ConnectButton />
+          <Button
+            onClick={() => {
+              /* This will be handled by the ConnectWallet button in the nav */
+            }}
+          >
+            Connect Your Wallet
+          </Button>
         </div>
       );
     }

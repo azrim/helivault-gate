@@ -1,87 +1,561 @@
-dist.94abdbf1.js:1  TronWeb is already initiated. TronLink will overwrite the current instance
-_bindTronWeb @ dist.94abdbf1.js:1
-dist.94abdbf1.js:80 bybit:page provider inject code 
-react-dom.development.js:29895 Download the React DevTools for a better development experience: https://reactjs.org/link/react-devtools
-Navigation.tsx:67 isMobile: false
-index.esm.js:640  Uncaught TypeError: Cannot read properties of undefined (reading 'add')
-    at HelmetDispatcher.init (index.esm.js:640:21)
-    at HelmetDispatcher.render (index.esm.js:644:10)
-    at finishClassComponent (react-dom.development.js:19781:31)
-    at updateClassComponent (react-dom.development.js:19727:24)
-    at beginWork (react-dom.development.js:21650:16)
-    at HTMLUnknownElement.callCallback2 (react-dom.development.js:4164:14)
-    at Object.invokeGuardedCallbackDev (react-dom.development.js:4213:16)
-    at invokeGuardedCallback (react-dom.development.js:4277:31)
-    at beginWork$1 (react-dom.development.js:27490:7)
-    at performUnitOfWork (react-dom.development.js:26596:12)
-Navigation.tsx:67 isMobile: false
-index.esm.js:640  Uncaught TypeError: Cannot read properties of undefined (reading 'add')
-    at HelmetDispatcher.init (index.esm.js:640:21)
-    at HelmetDispatcher.render (index.esm.js:644:10)
-    at finishClassComponent (react-dom.development.js:19781:31)
-    at updateClassComponent (react-dom.development.js:19727:24)
-    at beginWork (react-dom.development.js:21650:16)
-    at HTMLUnknownElement.callCallback2 (react-dom.development.js:4164:14)
-    at Object.invokeGuardedCallbackDev (react-dom.development.js:4213:16)
-    at invokeGuardedCallback (react-dom.development.js:4277:31)
-    at beginWork$1 (react-dom.development.js:27490:7)
-    at performUnitOfWork (react-dom.development.js:26596:12)
-react-dom.development.js:18704  The above error occurred in the <HelmetDispatcher> component:
+reown.ts
 
-    at HelmetDispatcher (http://localhost:8080/node_modules/.vite/deps/react-helmet-async.js?v=b7686dba:779:5)
-    at _a2 (http://localhost:8080/node_modules/.vite/deps/react-helmet-async.js?v=b7686dba:828:21)
-    at Page (http://localhost:8080/src/components/Page.tsx:13:17)
-    at Home
-    at RenderedRoute (http://localhost:8080/node_modules/.vite/deps/react-router-dom.js?v=b7686dba:4092:5)
-    at Routes (http://localhost:8080/node_modules/.vite/deps/react-router-dom.js?v=b7686dba:4531:5)
-    at PresenceChild (http://localhost:8080/node_modules/.vite/deps/framer-motion.js?v=b7686dba:135:24)
-    at AnimatePresence (http://localhost:8080/node_modules/.vite/deps/framer-motion.js?v=b7686dba:216:26)
-    at div
-    at AnimatedRoutes (http://localhost:8080/src/App.tsx:46:22)
-    at main
-    at NavigationProvider (http://localhost:8080/src/context/NavigationContext.tsx:14:38)
-    at DeploymentProvider (http://localhost:8080/src/context/DeploymentContext.tsx:29:38)
-    at Router (http://localhost:8080/node_modules/.vite/deps/react-router-dom.js?v=b7686dba:4474:15)
-    at BrowserRouter (http://localhost:8080/node_modules/.vite/deps/react-router-dom.js?v=b7686dba:5219:5)
-    at Provider2 (http://localhost:8080/node_modules/.vite/deps/@radix-ui_react-tooltip.js?v=b7686dba:61:15)
-    at TooltipProvider (http://localhost:8080/node_modules/.vite/deps/@radix-ui_react-tooltip.js?v=b7686dba:252:5)
-    at z (http://localhost:8080/node_modules/.vite/deps/next-themes.js?v=b7686dba:21:18)
-    at ThemeProvider (http://localhost:8080/src/components/ThemeProvider.tsx:12:33)
-    at div
-    at ModalProvider (http://localhost:8080/node_modules/.vite/deps/@rainbow-me_rainbowkit.js?v=b7686dba:44363:26)
-    at ShowBalanceProvider (http://localhost:8080/node_modules/.vite/deps/@rainbow-me_rainbowkit.js?v=b7686dba:39482:32)
-    at TransactionStoreProvider (http://localhost:8080/node_modules/.vite/deps/@rainbow-me_rainbowkit.js?v=b7686dba:39920:3)
-    at ModalSizeProvider (http://localhost:8080/node_modules/.vite/deps/@rainbow-me_rainbowkit.js?v=b7686dba:40071:3)
-    at I18nProvider (http://localhost:8080/node_modules/.vite/deps/@rainbow-me_rainbowkit.js?v=b7686dba:39188:23)
-    at WalletButtonProvider (http://localhost:8080/node_modules/.vite/deps/@rainbow-me_rainbowkit.js?v=b7686dba:40047:33)
-    at RainbowKitChainProvider (http://localhost:8080/node_modules/.vite/deps/@rainbow-me_rainbowkit.js?v=b7686dba:39447:3)
-    at RainbowKitProvider (http://localhost:8080/node_modules/.vite/deps/@rainbow-me_rainbowkit.js?v=b7686dba:40853:3)
-    at QueryClientProvider (http://localhost:8080/node_modules/.vite/deps/chunk-HBMSL3B2.js?v=b7686dba:2933:3)
-    at Hydrate (http://localhost:8080/node_modules/.vite/deps/chunk-L6XXUEPA.js?v=b7686dba:250:11)
-    at WagmiProvider (http://localhost:8080/node_modules/.vite/deps/chunk-L6XXUEPA.js?v=b7686dba:274:11)
-    at App
-    at O (http://localhost:8080/node_modules/.vite/deps/next-themes.js?v=b7686dba:23:25)
-    at z (http://localhost:8080/node_modules/.vite/deps/next-themes.js?v=b7686dba:21:18)
-    at ThemeProvider (http://localhost:8080/src/components/ThemeProvider.tsx:12:33)
+Object literal may only specify known properties, and 'config' does not exist in type 'Partial<CreateConfigParameters> & { networks: AppKitNetwork[]; pendingTransactionsFilter?: PendingTransactionsFilter; projectId: string; customRpcUrls?: CustomRpcUrlMap; }'.ts(2353)
+(property) config: Config<readonly [{
+    readonly id: 42000;
+    readonly name: "Helios Chain Testnet";
+    readonly nativeCurrency: {
+        readonly name: "Helios";
+        readonly symbol: "HLS";
+        readonly decimals: 18;
+    };
+    readonly rpcUrls: {
+        readonly default: {
+            ...;
+        };
+        readonly public: {
+            ...;
+        };
+    };
+    readonly blockExplorers: {
+        ...;
+    };
+}], {
+    ...;
+}, readonly CreateConnectorFn[]>
 
-Consider adding an error boundary to your tree to customize error handling behavior.
-Visit https://reactjs.org/link/error-boundaries to learn more about error boundaries.
-logCapturedError @ react-dom.development.js:18704
-react-dom.development.js:26962  Uncaught TypeError: Cannot read properties of undefined (reading 'add')
-    at HelmetDispatcher.init (index.esm.js:640:21)
-    at HelmetDispatcher.render (index.esm.js:644:10)
-    at finishClassComponent (react-dom.development.js:19781:31)
-    at updateClassComponent (react-dom.development.js:19727:24)
-    at beginWork (react-dom.development.js:21650:16)
-    at beginWork$1 (react-dom.development.js:27465:14)
-    at performUnitOfWork (react-dom.development.js:26596:12)
-    at workLoopSync (react-dom.development.js:26505:5)
-    at renderRootSync (react-dom.development.js:26473:7)
-    at recoverFromConcurrentError (react-dom.development.js:25889:20)
-lit-html.ts:233  Lit is in dev mode. Not recommended for production! See https://lit.dev/msg/dev-mode for more information.
-issueWarning @ lit-html.ts:233
-[NEW] Explain Console errors by using Copilot in Edge: click
-         
-         to explain an error. 
-        Learn more
-        Don't show again
+App.tsx
+
+Type 'AppKitNetwork[]' is not assignable to type '[AppKitNetwork, ...AppKitNetwork[]]'.
+  Source provides no match for required element at position 0 in target.ts(2322)
+TypesUtil.d.ts(49, 5): The expected type comes from property 'networks' which is declared here on type 'CreateAppKit'
+(property) networks: [AppKitNetwork, ...AppKitNetwork[]]
+You can set the desired caipnetworks for the app:
+
+@see — https://docs.reown.com/appkit/react/core/options#defaultchain
+
+from https://docs.reown.com/appkit/react/core/options#defaultchain
+
+Reown Docs home pagedark logo
+
+Search...
+Ctrl K
+Reown Dashboard
+AppKit Demo
+
+Docs
+AppKit
+WalletKit
+
+React
+
+AppKit on React
+
+Contact Us
+Community
+Blog
+Fundamentals
+Installation
+Hooks
+Options
+Components
+Smart Accounts
+Embedded Wallets Interactions (EIP-5792)
+Custom connectors
+Custom networks
+Multichain
+Theming
+Resources
+Authentication
+Email & Socials
+One-Click Auth (SIWE)
+SIWX
+Early Access
+Smart Sessions
+Chain Abstraction
+Payments
+Pay with Exchange
+Transactions
+On-Ramp
+Swaps
+Sponsored Transactions
+Notifications
+Introduction
+Cloud Setup
+Sending with Cloud
+Frontend Integration
+Backend Integration
+Demo
+Authorization Signatures
+Cloud
+Verify
+Relay
+Blockchain API
+Analytics
+On this page
+networks
+metadata
+defaultNetwork
+defaultAccountTypes
+featuredWalletIds
+chainImages
+connectorImages
+enableWalletConnect
+enableWallets
+enableNetworkSwitch
+enableReconnect
+debug
+enableWalletGuide
+termsConditionsUrl
+privacyPolicyUrl
+features
+analytics
+swaps
+onramp
+connectMethodsOrder
+legalCheckbox
+customWallets
+AllWallets
+includeWalletIds & excludeWalletIds
+includeWalletIds
+excludeWalletIds
+Coinbase Smart Wallet
+customRpcUrls
+universalProviderConfigOverride
+allowUnsupportedChain
+Fundamentals
+Options
+
+Open in ChatGPT
+
+The following options can be passed to the createAppKit function:
+
+Copy
+createAppKit({ adapters, projectId, networks, ...options });
+​
+networks
+Array of networks that can be chosen from the @reown/appkit/networks library. This library retrieves the list of EVM networks from Viem and also includes the Solana networks.
+
+Copy
+import { mainnet, solana } from "@reown/appkit/networks";
+
+createAppKit({
+  // ...
+  networks: [mainnet, solana],
+});
+For custom networks, refer to this doc page.
+​
+metadata
+Metadata for your AppKit. The name, description, icons, and url are used at certain places like the wallet connection, sign message, etc screens. If not provided, they will be fetched from the metadata of your website’s document object.
+
+Copy
+createAppKit({
+  // ...
+  metadata: {
+    name: "My App",
+    description: "My App Description",
+    icons: ["https://myapp.com/icon.png"],
+    url: "https://myapp.com",
+  },
+});
+This information will primarily be used in modals when signing a transaction or message using Embedded wallets (Smart Accounts), or when verifying ownership with SIWE/SIWX using any wallet.
+For custom networks, refer to this doc page.
+The icon can be an encoded image
+
+​
+defaultNetwork
+Desired network for the initial connection as default:
+Wagmi
+Ethers
+Solana
+
+Copy
+import { mainnet } from "@reown/appkit/networks";
+
+createAppKit({
+  //...
+  defaultNetwork: mainnet,
+});
+​
+defaultAccountTypes
+It allows you to configure the default account selected for the specified networks in AppKit. For example, if you want your EVM networks to use an EOA account by default, you can configure it as shown in the code below.
+
+Copy
+createAppKit({
+  //...
+  defaultAccountTypes: { eip155: "eoa" },
+});
+Here are all the options you have for each network identifier or networks. Network identifier or networks available are eip155 for EVM chains, solana for Solana, bip122 for Bitcoin, and polkadot for Polkadot.
+
+Copy
+type DefaultAccountTypes = {
+  eip155: "eoa" | "smartAccount";
+  solana: "eoa";
+  bip122: "payment" | "ordinal" | "stx";
+  polkadot: "eoa";
+};
+​
+featuredWalletIds
+Select wallets that are going to be shown on the modal’s main view. Default wallets are MetaMask and Trust Wallet. Array of wallet ids defined will be prioritized (order is respected). These wallets will also show up first in All Wallets view. You can find the wallets IDs in Wallets List or in WalletGuide
+
+Copy
+createAppKit({
+  //...
+  featuredWalletIds: [
+    "1ae92b26df02f0abca6304df07debccd18262fdf5fe82daa81593582dac9a369",
+    "4622a2b2d6af1c9844944291e5e7351a6aa24cd7b23099efac1b2fd875da31a0",
+  ],
+});
+​
+chainImages
+Add or override the modal’s network images.
+
+Copy
+createAppKit({
+  // ...
+  chainImages: {
+    1: "https://my.images.com/eth.png",
+  },
+});
+​
+connectorImages
+Wagmi
+Ethers
+Solana
+Set or override the images of any connector. AppKit supports two types of connector identification:
+EIP6963 wallets (announced wallets): Use RDNS format like 'io.metamask', 'io.coinbase', 'app.phantom'
+Other wallets: Use normal connector IDs like walletConnect, injected, appKitAuth
+
+Copy
+createAppKit({
+  connectorImages: {
+    // EIP6963 wallets (announced wallets use RDNS)
+    'io.coinbase': "https://images.mydapp.com/coinbase.png",
+    'io.metamask': "https://images.mydapp.com/metamask.png",
+    // Other wallets (use normal connector IDs)
+    walletConnect: "https://images.mydapp.com/walletconnect.png",
+    injected: "https://images.mydapp.com/browser-wallet.png",
+  },
+});
+​
+enableWalletConnect
+Enable or disable WalletConnect QR feature. Default is true.
+
+Copy
+enableWalletConnect: false;
+​
+enableWallets
+Enable or disable injected wallets and WalletConnect. Default is true.
+
+Copy
+createAppKit({
+  //...
+  enableWallets: false,
+});
+​
+enableNetworkSwitch
+Enables or disables the network switching functionality in the modal. The default is true.
+
+Copy
+createAppKit({
+  //...
+  enableNetworkSwitch: false,
+});
+​
+enableReconnect
+Enable or disable automatic reconnection on initialization and page load. Default is true.
+
+Copy
+createAppKit({
+  //...
+  enableReconnect: false,
+});
+​
+debug
+Enable or disable debug mode in your AppKit. This is useful if you want to see UI alerts when debugging. Default is false.
+
+Copy
+debug: true;
+​
+enableWalletGuide
+Enable or disable the wallet guide text: Haven't got a wallet? Get started, is useful for people that don’t have a wallet yet. Default is true.
+
+Copy
+createAppKit({
+  //...
+  enableWalletGuide: false,
+});
+​
+termsConditionsUrl
+You can add an url for the terms and conditions link.
+
+Copy
+createAppKit({
+  //...
+  termsConditionsUrl: "https://www.mytermsandconditions.com",
+});
+​
+privacyPolicyUrl
+A URL for the privacy policy link.
+
+Copy
+createAppKit({
+  //...
+  privacyPolicyUrl: "https://www.myprivacypolicy.com",
+});
+​
+features
+Allows you to toggle (enable or disable) additional features provided by AppKit. Features such as analytics, email and social logins, On-ramp, swaps, etc., can be enabled using this parameter.
+​
+analytics
+Enable analytics to get more insights on your users activity within your Reown Dashboard
+
+Copy
+createAppKit({
+  //...
+  features: {
+    analytics: true,
+  },
+});
+Learn More
+​
+swaps
+Enable or disable the swap feature in your AppKit. Swaps feature is enabled by default.
+
+Copy
+createAppKit({
+  //...
+  features: {
+    swaps: true,
+  },
+});
+​
+onramp
+Enable or disable the onramp feature in your AppKit. Onramp feature is enabled by default.
+
+Copy
+createAppKit({
+  //...
+  features: {
+    onramp: true,
+  },
+});
+​
+connectMethodsOrder
+Order of the connection methods in the modal. The default order is ['wallet', 'email', 'social'].
+
+
+Copy
+createAppKit({
+  //...
+  features: {
+    connectMethodsOrder: ["social", "email", "wallet"],
+  },
+});
+​
+legalCheckbox
+Enable or disable the terms of service and/or privacy policy checkbox.
+
+Copy
+createAppKit({
+  //...
+  features: {
+    legalCheckbox: true,
+  },
+});
+
+​
+customWallets
+Adds custom wallets to the modal. customWallets is an array of objects, where each object contains specific information of a custom wallet.
+
+Copy
+createAppKit({
+  //...
+  customWallets: [
+    {
+      id: "myCustomWallet",
+      name: "My Custom Wallet",
+      homepage: "www.mycustomwallet.com", // Optional
+      image_url: "my_custom_wallet_image", // Optional
+      mobile_link: "mobile_link", // Optional - Deeplink or universal
+      desktop_link: "desktop_link", // Optional - Deeplink
+      webapp_link: "webapp_link", // Optional
+      app_store: "app_store", // Optional
+      play_store: "play_store", // Optional
+    },
+  ],
+});
+​
+AllWallets
+If the “All Wallets” button is removed on mobile, all the mobile wallets that were not added on the main view of the modal won’t be able to connect to your website via WalletConnect protocol.
+The allWallets parameter allows you to add or remove the “All Wallets” button on the modal.
+Value	Description
+SHOW	Shows the “All Wallets” button on AppKit.
+HIDE	Removes the “All Wallets” button from AppKit.
+ONLY_MOBILE	Shows the “All Wallets” button on AppKit only on mobile.
+
+Copy
+createAppKit({
+  //...
+  allWallets: "ONLY_MOBILE",
+});
+​
+includeWalletIds & excludeWalletIds
+Wallets that are either not included or excluded won’t be able to connect to your website on mobile via WalletConnect protocol.
+​
+includeWalletIds
+Override default recommended wallets that are fetched from WalletGuide. Array of wallet ids defined will be shown (order is respected). Unlike featuredWalletIds, these wallets will be the only ones shown in All Wallets view and as recommended wallets. You can find the wallets IDs in our Wallets List.
+
+Copy
+createAppKit({
+  //...
+  includeWalletIds: [
+    "1ae92b26df02f0abca6304df07debccd18262fdf5fe82daa81593582dac9a369",
+    "4622a2b2d6af1c9844944291e5e7351a6aa24cd7b23099efac1b2fd875da31a0",
+  ],
+});
+​
+excludeWalletIds
+Exclude wallets that are fetched from WalletGuide. Array of wallet ids defined will be excluded. All other wallets will be shown in respective places. You can find the wallets IDs in our Wallets List.
+
+Copy
+createAppKit({
+  //...
+  excludeWalletIds: [
+    "1ae92b26df02f0abca6304df07debccd18262fdf5fe82daa81593582dac9a369",
+    "4622a2b2d6af1c9844944291e5e7351a6aa24cd7b23099efac1b2fd875da31a0",
+  ],
+});
+​
+Coinbase Smart Wallet
+The Coinbase connector now includes a new flag to customize the Smart Wallet behavior.
+The preference (or coinbasePreference) flag accepts one of the following string values:
+eoaOnly: Uses EOA Browser Extension or Mobile Coinbase Wallet.
+smartWalletOnly: Displays Smart Wallet popup.
+all (default): Supports both eoaOnly and smartWalletOnly based on context.
+Wagmi
+Ethers
+AppKit can be configured in two different ways: Default or Custom
+Select your preferred configuration mode below:
+Learn more about the Coinbase connector in the Wagmi documentation.
+
+Default
+
+Custom
+
+Copy
+createAppKit({
+  //...
+  enableCoinbase: true, // true by default
+  coinbasePreference: "smartWalletOnly",
+});
+​
+customRpcUrls
+This function allows you to add custom RPC URLs to override the default network RPC URLs for native RPC calls. This is useful when you want to use your own RPC endpoints instead of the defaults.
+
+Copy
+type CustomRpcUrl = {
+  url: string
+  config?: HttpTransportConfig // Optional transport configuration
+}
+
+type CustomRpcUrlMap = Record<CaipNetworkId, CustomRpcUrl[]>
+
+createAppKit({
+  //...
+  customRpcUrls: {
+    'eip155:1': [
+      {
+        url: 'https://your-custom-mainnet-url.com',
+        config: {
+          // Optional HTTP transport configuration
+        }
+      }
+    ],
+    'eip155:137': [
+      {
+        url: 'https://your-custom-polygon-url.com'
+      }
+    ]
+  }
+})
+If you are using the Wagmi adapter, you need to pass the same customRpcUrls configuration to both the WagmiAdapter and createAppKit.
+
+Copy
+const customRpcUrls: CustomRpcUrlMap = {
+  'eip155:1': [{ url: 'https://your-custom-mainnet-url.com' }],
+  'eip155:137': [{ url: 'https://your-custom-polygon-url.com' }]
+}
+
+const wagmiAdapter = new WagmiAdapter({
+  networks: [...],
+  projectId: "project-id",
+  customRpcUrls
+})
+
+const modal = createAppKit({
+  adapters: [...],
+  networks: [...],
+  projectId: "project-id",
+  customRpcUrls
+})
+When using the Wagmi adapter, you don’t need to configure transports separately. The WagmiAdapter will automatically configure them based on your customRpcUrls.
+However, if you use both customRpcUrls and Wagmi’s transports property, be aware that transports will take precedence and override any conflicting RPC URLs defined in customRpcUrls.
+
+Copy
+const wagmiAdapter = new WagmiAdapter({
+  //...
+  customRpcUrls: {
+    'eip155:1': [{ url: 'https://custom-rpc-1.com' }] // This will be overridden
+  },
+  transports: {
+    [mainnet.id]: http('https://transport-rpc-1.com') // This takes precedence
+  }
+})
+​
+universalProviderConfigOverride
+Lets you customize specific aspects of the provider’s behavior.
+
+Copy
+createAppKit({
+  //...
+  universalProviderConfigOverride: {
+    methods: { eip155: ['eth_sendTransaction', 'personal_sign'] },
+    chains: { eip155: ['1', '137'] },
+    events: { eip155: ['chainChanged', 'accountsChanged'] },
+    rpcMap: { eip155:1: 'https://ethereum.publicnode.com' },
+    defaultChain: 'eip155:1'
+  },
+});
+You can override any of the following properties:
+methods: Custom RPC methods for each namespace
+chains: Supported chains for each namespace
+events: Events to subscribe to for each namespace
+rpcMap: Custom RPC URLs for specific chains
+defaultChain: The default chain to connect to
+​
+allowUnsupportedChain
+Allow users to switch to an unsupported chain. This parameter prevents the switch network dialog when a user connects to a network not listed under the networks attribute.
+
+Copy
+createAppKit({
+  //...
+  allowUnsupportedChain: true,
+});
+Was this page helpful?
+
+
+Yes
+
+No
+Suggest edits
+Raise issue
+Hooks
+Components
+website
+x
+discord
+linkedin
+github
+youtube
+Powered by Mintlify

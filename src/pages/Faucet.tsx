@@ -20,7 +20,7 @@ import {
 } from "@/components/ui/card";
 import { HELIVAULT_TOKEN_CONTRACT } from "@/contracts/HelivaultToken";
 import { heliosTestnet } from "@/lib/chains";
-import { ConnectButton } from "@rainbow-me/rainbowkit";
+
 import { Hourglass, Droplets } from "lucide-react";
 import { motion } from "framer-motion";
 
@@ -161,9 +161,18 @@ const Faucet = () => {
               </div>
 
               {!isConnected ? (
-                <ConnectButton label="Connect Wallet to Claim" />
+                <Button
+                  onClick={() => {
+                    /* This will be handled by the ConnectWallet button in the nav */
+                  }}
+                  className="w-full h-12 text-lg"
+                >
+                  Connect Wallet to Claim
+                </Button>
               ) : !isCorrectNetwork ? (
-                <ConnectButton label="Wrong Network" />
+                <Button disabled className="w-full h-12 text-lg">
+                  Wrong Network
+                </Button>
               ) : isClaimable ? (
                 <Button
                   onClick={handleClaim}

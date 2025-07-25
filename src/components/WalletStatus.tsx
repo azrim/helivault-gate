@@ -4,7 +4,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Wallet, ExternalLink } from "lucide-react";
 import { useAccount, useBalance } from "wagmi";
-import { ConnectButton } from "@rainbow-me/rainbowkit";
+
 import { heliosTestnet } from "@/lib/chains";
 
 const WalletStatus = () => {
@@ -23,7 +23,13 @@ const WalletStatus = () => {
             Connect your wallet to start minting NFTs and track your collection.
           </p>
           <div className="flex justify-center">
-            <ConnectButton />
+            <Button
+              onClick={() => {
+                /* This will be handled by the ConnectWallet button in the nav */
+              }}
+            >
+              Connect Wallet
+            </Button>
           </div>
         </CardContent>
       </Card>
@@ -77,7 +83,13 @@ const WalletStatus = () => {
           </div>
           {!isCorrectNetwork && (
             <div className="mt-4">
-              <ConnectButton />
+              <Button
+                onClick={() => {
+                  /* This will be handled by the ConnectWallet button in the nav */
+                }}
+              >
+                Switch Network
+              </Button>
             </div>
           )}
         </div>

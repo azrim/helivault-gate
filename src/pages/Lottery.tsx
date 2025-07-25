@@ -17,7 +17,7 @@ import {
   CardTitle,
   CardDescription,
 } from "@/components/ui/card";
-import { ConnectButton } from "@rainbow-me/rainbowkit";
+
 import { LOTTERY_CONTRACT } from "@/contracts/Lottery";
 import { heliosTestnet } from "@/lib/chains";
 import { formatEther, decodeEventLog, Abi } from "viem";
@@ -178,9 +178,18 @@ const Lottery = () => {
                     </div>
                   </div>
                   {!isConnected ? (
-                    <ConnectButton label="Connect Wallet to Play" />
+                    <Button
+                      onClick={() => {
+                        /* This will be handled by the ConnectWallet button in the nav */
+                      }}
+                      className="w-full h-12 text-lg"
+                    >
+                      Connect Wallet to Play
+                    </Button>
                   ) : !isCorrectNetwork ? (
-                    <ConnectButton label="Wrong Network" />
+                    <Button disabled className="w-full h-12 text-lg">
+                      Wrong Network
+                    </Button>
                   ) : (
                     <Button
                       onClick={handleEnterLottery}

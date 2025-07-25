@@ -23,7 +23,7 @@ import { HELIVAULT_COLLECTIONS_CONTRACT } from "@/contracts/HelivaultCollections
 import { HELIVAULT_TOKEN_CONTRACT } from "@/contracts/HelivaultToken";
 import { heliosTestnet } from "@/lib/chains";
 import { formatEther, TransactionExecutionError } from "viem";
-import { ConnectButton } from "@rainbow-me/rainbowkit";
+
 import { motion } from "framer-motion";
 import { Skeleton } from "@/components/ui/skeleton";
 
@@ -154,10 +154,23 @@ const Mint = () => {
 
   const renderMintButton = () => {
     if (!isConnected) {
-      return <ConnectButton label="Connect Wallet to Mint" />;
+      return (
+        <Button
+          onClick={() => {
+            /* This will be handled by the ConnectWallet button in the nav */
+          }}
+          className="w-full h-12 text-lg"
+        >
+          Connect Wallet to Mint
+        </Button>
+      );
     }
     if (!isCorrectNetwork) {
-      return <ConnectButton label="Wrong Network" />;
+      return (
+        <Button disabled className="w-full h-12 text-lg">
+          Wrong Network
+        </Button>
+      );
     }
     return (
       <Button
