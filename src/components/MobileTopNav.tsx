@@ -124,7 +124,7 @@ export const MobileTopNav = () => {
                 <MoreHorizontal className="h-5 w-5" />
               </Button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="w-64">
+            <DropdownMenuContent align="end" className="w-64" sideOffset={16}>
               {navItems.map((item) => (
                 <DropdownMenuItem key={item.path} asChild>
                   <NavLink
