@@ -11,6 +11,7 @@ import {
   Ticket,
   Copy,
   LogOut,
+  Wallet,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import {
@@ -28,6 +29,7 @@ import { useAccount, useBalance, useDisconnect } from "wagmi";
 import { toast } from "sonner";
 import { HELIVAULT_TOKEN_CONTRACT } from "@/contracts/HelivaultToken";
 import { useState } from "react";
+import { useAppKit } from "@reown/appkit/react";
 
 type NavItem = {
   path: string;
@@ -69,9 +71,10 @@ const NavLink = ({
 export const MobileTopNav = () => {
   const location = useLocation();
   const { setDirection } = useNavigationContext();
-  const { address, isConnected } = useAccount();
+  const { address, isConnected }_ = useAccount();
   const { disconnect } = useDisconnect();
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const { open } = useAppKit();
 
   const { data: hlsBalance } = useBalance({
     address,
@@ -132,9 +135,9 @@ export const MobileTopNav = () => {
                   />
                 </DropdownMenuItem>
               ))}
-              {isConnected && address && (
+              <DropdownMenuSeparator />
+              {isConnected && address ? (
                 <>
-                  <DropdownMenuSeparator />
                   <DropdownMenuLabel>My Wallet</DropdownMenuLabel>
                   <DropdownMenuItem
                     className="flex justify-between items-center"
@@ -172,6 +175,11 @@ export const MobileTopNav = () => {
                     <span>Disconnect</span>
                   </DropdownMenuItem>
                 </>
+              ) : (
+                <DropdownMenuItem onSelect={() => open()}>
+                  <Wallet className="mr-2 h-4 w-4" />
+                  <span>Connect Wallet</span>
+                </DropdownMenuItem>
               )}
             </DropdownMenuContent>
           </DropdownMenu>
