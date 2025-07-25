@@ -2,18 +2,30 @@
 import React, { useState, useEffect } from "react";
 import { ethers } from "ethers";
 import { useAccount } from "wagmi";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+} from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Checkbox } from "@/components/ui/checkbox";
-import { XCircle, Rocket, FileJson, ExternalLink, RefreshCw } from "lucide-react";
+import {
+  XCircle,
+  Rocket,
+  FileJson,
+  ExternalLink,
+  RefreshCw,
+} from "lucide-react";
 import { toast } from "sonner";
 import { useDeployment } from "@/context/DeploymentContext";
 import CronJob from "../contracts/CronJob.json";
 import HyperionClient from "../contracts/HyperionClient.json";
 import { motion } from "framer-motion";
-import { Helmet } from "react-helmet-async";
+import Page from "@/components/Page";
 
 const ALL_CONTRACTS = [
   { name: "CronJob", artifact: CronJob },
@@ -23,14 +35,20 @@ const ALL_CONTRACTS = [
 const Deploy: React.FC = () => {
   const { isConnected } = useAccount();
   const {
-    logs, addLog, isDeploying, setIsDeploying,
-    deploymentCompleted, setDeploymentCompleted,
-    deployedContracts, setDeployedContracts, resetDeployment,
+    logs,
+    addLog,
+    isDeploying,
+    setIsDeploying,
+    deploymentCompleted,
+    setDeploymentCompleted,
+    deployedContracts,
+    setDeployedContracts,
+    resetDeployment,
   } = useDeployment();
 
-  const [selectedContracts, setSelectedContracts] = useState<Record<string, boolean>>(
-    ALL_CONTRACTS.reduce((acc, { name }) => ({ ...acc, [name]: true }), {})
-  );
+  const [selectedContracts, setSelectedContracts] = useState<
+    Record<string, boolean>
+  >(ALL_CONTRACTS.reduce((acc, { name }) => ({ ...acc, [name]: true }), {}));
   const [progress, setProgress] = useState(0);
   const [error, setError] = useState<string | null>(null);
 
@@ -43,7 +61,10 @@ const Deploy: React.FC = () => {
 
   const handleSelectAll = (checked: boolean) => {
     setSelectedContracts(
-      ALL_CONTRACTS.reduce((acc, { name }) => ({ ...acc, [name]: checked }), {})
+      ALL_CONTRACTS.reduce(
+        (acc, { name }) => ({ ...acc, [name]: checked }),
+        {},
+      ),
     );
   };
 
@@ -58,7 +79,9 @@ const Deploy: React.FC = () => {
     setError(null);
     setProgress(0);
 
-    const contractsToDeploy = ALL_CONTRACTS.filter(c => selectedContracts[c.name]);
+    const contractsToDeploy = ALL_CONTRACTS.filter(
+      (c) => selectedContracts[c.name],
+    );
     let newDeployedContracts: Record<string, string> = {};
     let failedDeployments = 0;
 
@@ -71,7 +94,11 @@ const Deploy: React.FC = () => {
         const logPrefix = `[${name}]`;
         try {
           addLog(`${logPrefix} Deploying...`);
-          const factory = new ethers.ContractFactory(artifact.abi, artifact.bytecode, signer);
+          const factory = new ethers.ContractFactory(
+            artifact.abi,
+            artifact.bytecode,
+            signer,
+          );
           const contract = await factory.deploy();
           await contract.waitForDeployment();
           const address = await contract.getAddress();
@@ -87,7 +114,8 @@ const Deploy: React.FC = () => {
         }
       }
       setDeployedContracts(newDeployedContracts);
-      if (failedDeployments > 0) setError(`${failedDeployments} contract(s) failed to deploy.`);
+      if (failedDeployments > 0)
+        setError(`${failedDeployments} contract(s) failed to deploy.`);
     } catch (e: any) {
       setError(`An unexpected error occurred: ${e.message}`);
       addLog(`[FATAL] ${e.message}`);
@@ -97,13 +125,13 @@ const Deploy: React.FC = () => {
     }
   };
 
-  const allSelected = Object.values(selectedContracts).every(v => v);
+  const allSelected = Object.values(selectedContracts).every((v) => v);
 
   return (
-    <>
-      <Helmet>
-        <title>Deploy Contracts – Helivault Gate</title>
-      </Helmet>
+    <Page
+      title="Deploy Contracts"
+      description="Select and deploy your automation contracts to the Helios network with a single click."
+    >
       <div className="space-y-16 pb-24">
         {/* Header */}
         <section className="text-center pt-24 pb-12">
@@ -120,13 +148,13 @@ const Deploy: React.FC = () => {
             animate={{ opacity: 1 }}
             transition={{ delay: 0.3 }}
           >
-            Select and deploy your automation contracts to the Helios network with a single click.
+            Select and deploy your automation contracts to the Helios network
+            with a single click.
           </motion.p>
         </section>
 
         {/* Deploy Section */}
         <motion.section
-          className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.5 }}
@@ -138,8 +166,15 @@ const Deploy: React.FC = () => {
                 <div className="flex justify-between items-center">
                   <CardTitle>Contract Deployment</CardTitle>
                   {(logs.length > 0 || isDeploying) && (
-                    <Button variant="ghost" size="icon" onClick={resetDeployment} disabled={isDeploying}>
-                      <RefreshCw className={`h-4 w-4 ${isDeploying ? "animate-spin" : ""}`} />
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      onClick={resetDeployment}
+                      disabled={isDeploying}
+                    >
+                      <RefreshCw
+                        className={`h-4 w-4 ${isDeploying ? "animate-spin" : ""}`}
+                      />
                     </Button>
                   )}
                 </div>
@@ -157,63 +192,123 @@ const Deploy: React.FC = () => {
                 )}
                 <div className="space-y-3">
                   <div className="flex items-center justify-between p-3 rounded-lg bg-secondary">
-                    <label htmlFor="select-all" className="font-medium">Select All Contracts</label>
-                    <Checkbox id="select-all" checked={allSelected} onCheckedChange={(c) => handleSelectAll(!!c)} disabled={isDeploying} />
+                    <label htmlFor="select-all" className="font-medium">
+                      Select All Contracts
+                    </label>
+                    <Checkbox
+                      id="select-all"
+                      checked={allSelected}
+                      onCheckedChange={(c) => handleSelectAll(!!c)}
+                      disabled={isDeploying}
+                    />
                   </div>
-                  {ALL_CONTRACTS.map(c => (
-                    <div key={c.name} className="flex items-center justify-between p-3 rounded-lg">
+                  {ALL_CONTRACTS.map((c) => (
+                    <div
+                      key={c.name}
+                      className="flex items-center justify-between p-3 rounded-lg"
+                    >
                       <div className="flex items-center gap-3">
                         <FileJson className="h-5 w-5 text-muted-foreground" />
                         <span>{c.name}</span>
                       </div>
-                      <Checkbox id={c.name} checked={selectedContracts[c.name]} onCheckedChange={(checked) => setSelectedContracts(p => ({ ...p, [c.name]: !!checked }))} disabled={isDeploying} />
+                      <Checkbox
+                        id={c.name}
+                        checked={selectedContracts[c.name]}
+                        onCheckedChange={(checked) =>
+                          setSelectedContracts((p) => ({
+                            ...p,
+                            [c.name]: !!checked,
+                          }))
+                        }
+                        disabled={isDeploying}
+                      />
                     </div>
                   ))}
                 </div>
                 {isDeploying && <Progress value={progress} />}
-                <Button onClick={handleDeploy} disabled={isDeploying || !isConnected || !Object.values(selectedContracts).some(v => v)} className="w-full h-12 text-lg">
+                <Button
+                  onClick={handleDeploy}
+                  disabled={
+                    isDeploying ||
+                    !isConnected ||
+                    !Object.values(selectedContracts).some((v) => v)
+                  }
+                  className="w-full h-12 text-lg"
+                >
                   <Rocket className="mr-2 h-5 w-5" />
-                  {isDeploying ? "Deploying..." : `Deploy ${Object.values(selectedContracts).filter(v => v).length} Contract(s)`}
+                  {isDeploying
+                    ? "Deploying..."
+                    : `Deploy ${Object.values(selectedContracts).filter((v) => v).length} Contract(s)`}
                 </Button>
               </CardContent>
             </Card>
 
             {/* --- Right Column --- */}
             <div className="space-y-8">
-              {logs.length > 0 && (
-                <Card>
-                  <CardHeader><CardTitle>Logs</CardTitle></CardHeader>
-                  <CardContent>
-                    <div className="bg-black text-white font-mono text-xs p-4 rounded-lg h-96 overflow-y-auto">
-                      {logs.map((log, i) => (
-                        <p key={i} className={log.includes("FAILED") ? "text-red-400" : log.includes("successfully") ? "text-green-400" : ""}>{log}</p>
-                      ))}
-                    </div>
-                  </CardContent>
-                </Card>
-              )}
+              <Card>
+                <CardHeader>
+                  <CardTitle>Logs</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="bg-black text-white font-mono text-xs p-4 rounded-lg h-96 overflow-y-auto">
+                    {logs.length > 0 ? (
+                      logs.map((log, i) => (
+                        <p
+                          key={i}
+                          className={
+                            log.includes("FAILED")
+                              ? "text-red-400"
+                              : log.includes("successfully")
+                                ? "text-green-400"
+                                : ""
+                          }
+                        >
+                          {log}
+                        </p>
+                      ))
+                    ) : (
+                      <p className="text-gray-400">
+                        No logs yet. Start a deployment to see logs.
+                      </p>
+                    )}
+                  </div>
+                </CardContent>
+              </Card>
 
-              {deploymentCompleted && Object.keys(deployedContracts).length > 0 && (
-                <Card>
-                  <CardHeader><CardTitle>Deployed Contracts</CardTitle></CardHeader>
-                  <CardContent className="space-y-2">
-                    {Object.entries(deployedContracts).map(([name, address]) => (
-                      <div key={name} className="flex items-center justify-between p-3 bg-secondary rounded-lg">
-                        <span className="font-medium">{name}</span>
-                        <a href={`https://explorer.helioschainlabs.org/address/${address}`} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 text-sm text-primary hover:underline">
-                          {`${address.slice(0, 6)}...${address.slice(-4)}`}
-                          <ExternalLink className="h-4 w-4" />
-                        </a>
-                      </div>
-                    ))}
-                  </CardContent>
-                </Card>
-              )}
+              {deploymentCompleted &&
+                Object.keys(deployedContracts).length > 0 && (
+                  <Card>
+                    <CardHeader>
+                      <CardTitle>Deployed Contracts</CardTitle>
+                    </CardHeader>
+                    <CardContent className="space-y-2">
+                      {Object.entries(deployedContracts).map(
+                        ([name, address]) => (
+                          <div
+                            key={name}
+                            className="flex items-center justify-between p-3 bg-secondary rounded-lg"
+                          >
+                            <span className="font-medium">{name}</span>
+                            <a
+                              href={`https://explorer.helioschainlabs.org/address/${address}`}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="flex items-center gap-2 text-sm text-primary hover:underline"
+                            >
+                              {`${address.slice(0, 6)}...${address.slice(-4)}`}
+                              <ExternalLink className="h-4 w-4" />
+                            </a>
+                          </div>
+                        ),
+                      )}
+                    </CardContent>
+                  </Card>
+                )}
             </div>
           </div>
         </motion.section>
       </div>
-    </>
+    </Page>
   );
 };
 
