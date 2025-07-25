@@ -12,6 +12,7 @@ import {
   Copy,
   LogOut,
   Wallet,
+  CalendarCheck,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import {
@@ -44,6 +45,7 @@ const navItems: NavItem[] = [
   { path: "/faucet", label: "Faucet", icon: Droplets },
   { path: "/lottery", label: "Lottery", icon: Ticket },
   { path: "/deploy", label: "Deploy", icon: Rocket },
+  { path: "/check-in", label: "Daily Check-in", icon: CalendarCheck },
 ];
 
 const NavLink = forwardRef<
