@@ -58,14 +58,17 @@ const NftCard = ({
 
         for (const gateway of gateways) {
           try {
-            const response = await fetch(gateway + ipfsHash);
+            // Correctly form the URL by pointing to the metadata.json file within the folder
+            const response = await fetch(`${gateway}${ipfsHash}/metadata.json`);
             if (response.ok) {
               data = await response.json();
               setMetadata(data);
               break; // Success
             }
           } catch (e) {
-            console.warn(`Gateway ${gateway} failed for ${ipfsHash}`);
+            console.warn(
+              `Gateway ${gateway} failed for ${ipfsHash}/metadata.json`,
+            );
           }
         }
 
@@ -73,7 +76,7 @@ const NftCard = ({
           setError(true);
           console.error(
             `Failed to fetch NFT metadata from all gateways for token ${tokenId}:`,
-            ipfsHash,
+            `${ipfsHash}/metadata.json`,
           );
         }
       } else if (tokenURIResult !== undefined) {
