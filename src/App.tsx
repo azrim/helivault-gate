@@ -18,6 +18,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { ThemeProvider } from "./components/ThemeProvider";
+import { useIsMobile } from "./hooks/use-mobile";
 import { DeploymentProvider } from "./context/DeploymentContext";
 import {
   NavigationProvider,
@@ -43,9 +44,14 @@ createAppKit({
 const AnimatedRoutes = () => {
   const location = useLocation();
   const { direction } = useNavigationContext();
+  const isMobile = useIsMobile();
+
+  // On mobile, we have a top and bottom bar, each 4rem high.
+  // On desktop, we only have a top bar, 4rem high.
+  const minHeight = isMobile ? "calc(100vh - 8rem)" : "calc(100vh - 4rem)";
 
   return (
-    <div style={{ position: "relative" }}>
+    <div style={{ position: "relative", minHeight }}>
       <AnimatePresence initial={false} custom={direction}>
         <Routes location={location} key={location.pathname}>
           <Route path="/" element={<Home />} />
