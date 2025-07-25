@@ -46,26 +46,46 @@ const NftCard = ({
   useEffect(() => {
     const fetchMetadata = async () => {
       if (typeof tokenURIResult === "string" && tokenURIResult) {
-        try {
-          const response = await fetch(
-            tokenURIResult.replace("ipfs://", "https://ipfs.io/ipfs/"),
-          );
-          if (!response.ok) throw new Error("Failed to fetch");
-          const data: NftMetadata = await response.json();
-          setMetadata(data);
-        } catch (error) {
-          console.error("Failed to fetch NFT metadata:", error);
+        const ipfsHash = tokenURIResult.replace("ipfs://", "");
+        const gateways = [
+          "https://gateway.pinata.cloud/ipfs/",
+          "https://ipfs.io/ipfs/",
+          "https://cloudflare-ipfs.com/ipfs/",
+          "https://dweb.link/ipfs/",
+        ];
+
+        let data: NftMetadata | null = null;
+
+        for (const gateway of gateways) {
+          try {
+            const response = await fetch(gateway + ipfsHash);
+            if (response.ok) {
+              data = await response.json();
+              setMetadata(data);
+              break; // Success
+            }
+          } catch (e) {
+            console.warn(`Gateway ${gateway} failed for ${ipfsHash}`);
+          }
+        }
+
+        if (!data) {
           setError(true);
-        } finally {
-          setLoading(false);
+          console.error(
+            `Failed to fetch NFT metadata from all gateways for token ${tokenId}:`,
+            ipfsHash,
+          );
         }
       } else if (tokenURIResult !== undefined) {
         setError(true);
-        setLoading(false);
       }
+      setLoading(false);
     };
-    fetchMetadata();
-  }, [tokenURIResult]);
+
+    if (tokenURIResult !== undefined) {
+      fetchMetadata();
+    }
+  }, [tokenURIResult, tokenId]);
 
   if (loading) {
     return <Skeleton className="w-full h-80 rounded-lg" />;
