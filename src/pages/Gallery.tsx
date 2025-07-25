@@ -45,8 +45,19 @@ const NftCard = ({
 
   useEffect(() => {
     const fetchMetadata = async () => {
-      if (typeof tokenURIResult === "string" && tokenURIResult) {
-        const ipfsHash = tokenURIResult.replace("ipfs://", "");
+      if (typeof tokenURIResult !== "string" || !tokenURIResult) {
+        if (tokenURIResult !== undefined) setError(true);
+        setLoading(false);
+        return;
+      }
+
+      // Patch for contract returning URI with token ID appended (e.g. .../metadata.json1)
+      const correctedUri = tokenURIResult.replace(/(\.json)\d+$/, "$1");
+
+      let data: NftMetadata | null = null;
+
+      if (correctedUri.startsWith("ipfs://")) {
+        const ipfsHash = correctedUri.replace("ipfs://", "");
         const gateways = [
           "https://gateway.pinata.cloud/ipfs/",
           "https://ipfs.io/ipfs/",
@@ -54,40 +65,41 @@ const NftCard = ({
           "https://dweb.link/ipfs/",
         ];
 
-        let data: NftMetadata | null = null;
-
         for (const gateway of gateways) {
           try {
-            // Correctly form the URL by pointing to the metadata.json file within the folder
-            const response = await fetch(`${gateway}${ipfsHash}/metadata.json`);
+            const response = await fetch(gateway + ipfsHash);
             if (response.ok) {
               data = await response.json();
               setMetadata(data);
               break; // Success
             }
           } catch (e) {
-            console.warn(
-              `Gateway ${gateway} failed for ${ipfsHash}/metadata.json`,
-            );
+            console.warn(`Gateway ${gateway} failed for ${ipfsHash}`);
           }
         }
-
-        if (!data) {
-          setError(true);
-          console.error(
-            `Failed to fetch NFT metadata from all gateways for token ${tokenId}:`,
-            `${ipfsHash}/metadata.json`,
-          );
+      } else if (correctedUri.startsWith("https://")) {
+        try {
+          const response = await fetch(correctedUri);
+          if (response.ok) {
+            data = await response.json();
+            setMetadata(data);
+          }
+        } catch (e) {
+          console.error(`Failed to fetch from ${correctedUri}`, e);
         }
-      } else if (tokenURIResult !== undefined) {
-        setError(true);
       }
+
+      if (!data) {
+        setError(true);
+        console.error(
+          `Failed to fetch metadata for token ${tokenId} from URI: ${correctedUri}`,
+        );
+      }
+
       setLoading(false);
     };
 
-    if (tokenURIResult !== undefined) {
-      fetchMetadata();
-    }
+    fetchMetadata();
   }, [tokenURIResult, tokenId]);
 
   if (loading) {
@@ -108,6 +120,13 @@ const NftCard = ({
     );
   }
 
+  const resolveImageUrl = (imageUri: string) => {
+    if (imageUri.startsWith("ipfs://")) {
+      return `https://gateway.pinata.cloud/ipfs/${imageUri.replace("ipfs://", "")}`;
+    }
+    return imageUri;
+  };
+
   return (
     <motion.div
       whileHover={{ y: -5 }}
@@ -116,7 +135,7 @@ const NftCard = ({
     >
       <div className="aspect-square w-full overflow-hidden">
         <img
-          src={metadata.image.replace("ipfs://", "https://ipfs.io/ipfs/")}
+          src={resolveImageUrl(metadata.image)}
           alt={metadata.name}
           className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
         />
