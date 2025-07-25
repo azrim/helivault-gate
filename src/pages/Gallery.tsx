@@ -166,9 +166,14 @@ const Gallery = () => {
       let ids: bigint[] = [];
       try {
         if (viewAll) {
-          if (typeof totalSupply === "bigint") {
-            ids = Array.from({ length: Number(totalSupply) }, (_, i) =>
-              BigInt(i + 1),
+          const currentTotalSupply = await readContract(config, {
+            ...HELIVAULT_COLLECTIONS_CONTRACT,
+            functionName: "totalSupply",
+          });
+          if (typeof currentTotalSupply === "bigint") {
+            ids = Array.from(
+              { length: Number(currentTotalSupply) },
+              (_, i) => BigInt(i),
             );
           }
         } else if (isConnected && typeof balance === "bigint") {
@@ -192,7 +197,7 @@ const Gallery = () => {
       }
     };
     fetchTokenIds();
-  }, [balance, address, isConnected, viewAll, totalSupply]);
+  }, [balance, address, isConnected, viewAll]);
 
   // Filtering and Pagination
   const filteredTokenIds = useMemo(() => {
