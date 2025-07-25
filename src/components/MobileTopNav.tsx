@@ -12,7 +12,6 @@ import {
   Copy,
   LogOut,
   Wallet,
-  CalendarCheck,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import {
@@ -31,6 +30,7 @@ import { toast } from "sonner";
 import { HELIVAULT_TOKEN_CONTRACT } from "@/contracts/HelivaultToken";
 import { useState, forwardRef } from "react";
 import { useAppKit } from "@reown/appkit/react";
+import { Streak } from "./Streak";
 
 type NavItem = {
   path: string;
@@ -45,7 +45,6 @@ const navItems: NavItem[] = [
   { path: "/faucet", label: "Faucet", icon: Droplets },
   { path: "/lottery", label: "Lottery", icon: Ticket },
   { path: "/deploy", label: "Deploy", icon: Rocket },
-  { path: "/check-in", label: "Daily Check-in", icon: CalendarCheck },
 ];
 
 const NavLink = forwardRef<
@@ -115,6 +114,7 @@ export const MobileTopNav = () => {
           </span>
         </Link>
         <div className="flex items-center gap-2">
+          <Streak />
           <ThemeSwitcher />
           <DropdownMenu onOpenChange={setIsDropdownOpen}>
             <DropdownMenuTrigger asChild>

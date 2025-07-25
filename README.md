@@ -8,7 +8,7 @@ Helivault Gate is a full-stack decentralized application (dApp) built to showcas
 
 ## ✨ Features
 
-*   **Seamless Wallet Integration**: Connect your wallet with ease using RainbowKit.
+*   **Seamless Wallet Integration**: Connect your wallet with ease using Reown AppKit.
 *   **Token Faucet**: Instantly get test HVT (Helivault Token) to use across the dApp.
 *   **Dynamic NFT Gallery**: Mint unique Helivault NFTs and browse your collection. The gallery includes:
     *   A detailed modal view for each NFT.
@@ -16,13 +16,13 @@ Helivault Gate is a full-stack decentralized application (dApp) built to showcas
     *   Search and filtering capabilities.
     *   A toggle to view all NFTs minted on the platform.
 *   **HLS Lottery**: Participate in a provably fair, tiered lottery to win HLS tokens.
-*   **Daily Check-in**: Maintain a streak by checking in daily.
+*   **Daily Check-in**: Maintain your streak directly from the navigation bar.
 *   **Contract Deployment**: A dedicated interface to deploy and manage your own smart contracts on the Helios network.
 
 ## 🛠️ Tech Stack
 
 *   **Frontend**: React, Vite, TypeScript, Tailwind CSS, shadcn/ui
-*   **Wallet & Blockchain Interaction**: RainbowKit, Wagmi, Viem, Ethers.js
+*   **Wallet & Blockchain Interaction**: Reown AppKit, Wagmi, Viem, Ethers.js
 *   **Smart Contracts**: Solidity, Hardhat
 *   **Blockchain**: Helios Testnet
 
