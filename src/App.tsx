@@ -72,7 +72,7 @@ const App = () => (
             <DeploymentProvider>
               <NavigationProvider>
                 <Navigation />
-                <main className="container mx-auto px-4 sm:px-6 lg:px-8">
+                <main className="container mx-auto px-4 sm:px-6 lg:px-8 pt-16 md:pt-0">
                   <AnimatedRoutes />
                 </main>
               </NavigationProvider>

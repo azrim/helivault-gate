@@ -105,7 +105,7 @@ export const MobileTopNav = () => {
 
   return (
     <>
-      <header className="md:hidden sticky top-0 z-50 flex h-16 items-center justify-between bg-background/80 px-4 backdrop-blur-lg sm:px-6">
+      <header className="md:hidden fixed top-0 left-0 right-0 z-50 flex h-16 items-center justify-between bg-background/80 px-4 backdrop-blur-lg sm:px-6">
         <Link to="/" className="flex items-center gap-2 font-bold text-lg">
           <img src="/helios-icon.png" alt="Helios Icon" className="h-7 w-7" />
           <span className="hero-glow">
