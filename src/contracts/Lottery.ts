@@ -5,7 +5,9 @@ export const LOTTERY_CONTRACT = {
   address: "0x2c50D817946401595A79e99C48Da0Bd778CB804D",
   abi: [
     {
-      inputs: [{ internalType: "uint256", name: "_entryPrice", type: "uint256" }],
+      inputs: [
+        { internalType: "uint256", name: "_entryPrice", type: "uint256" },
+      ],
       stateMutability: "nonpayable",
       type: "constructor",
     },
@@ -23,8 +25,18 @@ export const LOTTERY_CONTRACT = {
     {
       anonymous: false,
       inputs: [
-        { indexed: true, internalType: "address", name: "previousOwner", type: "address" },
-        { indexed: true, internalType: "address", name: "newOwner", type: "address" },
+        {
+          indexed: true,
+          internalType: "address",
+          name: "previousOwner",
+          type: "address",
+        },
+        {
+          indexed: true,
+          internalType: "address",
+          name: "newOwner",
+          type: "address",
+        },
       ],
       name: "OwnershipTransferred",
       type: "event",
@@ -32,13 +44,29 @@ export const LOTTERY_CONTRACT = {
     {
       anonymous: false,
       inputs: [
-        { indexed: true, internalType: "address", name: "winner", type: "address" },
-        { indexed: false, internalType: "uint256", name: "amount", type: "uint256" },
+        {
+          indexed: true,
+          internalType: "address",
+          name: "winner",
+          type: "address",
+        },
+        {
+          indexed: false,
+          internalType: "uint256",
+          name: "amount",
+          type: "uint256",
+        },
       ],
       name: "WinnerPaid",
       type: "event",
     },
-    { inputs: [], name: "enter", outputs: [], stateMutability: "payable", type: "function" },
+    {
+      inputs: [],
+      name: "enter",
+      outputs: [],
+      stateMutability: "payable",
+      type: "function",
+    },
     {
       inputs: [],
       name: "entryPrice",
@@ -46,7 +74,13 @@ export const LOTTERY_CONTRACT = {
       stateMutability: "view",
       type: "function",
     },
-    { inputs: [], name: "fund", outputs: [], stateMutability: "payable", type: "function" },
+    {
+      inputs: [],
+      name: "fund",
+      outputs: [],
+      stateMutability: "payable",
+      type: "function",
+    },
     {
       inputs: [],
       name: "lastWinner",
@@ -68,7 +102,13 @@ export const LOTTERY_CONTRACT = {
       stateMutability: "view",
       type: "function",
     },
-    { inputs: [], name: "renounceOwnership", outputs: [], stateMutability: "nonpayable", type: "function" },
+    {
+      inputs: [],
+      name: "renounceOwnership",
+      outputs: [],
+      stateMutability: "nonpayable",
+      type: "function",
+    },
     {
       inputs: [{ internalType: "uint256", name: "_newPrice", type: "uint256" }],
       name: "setEntryPrice",
@@ -83,7 +123,13 @@ export const LOTTERY_CONTRACT = {
       stateMutability: "nonpayable",
       type: "function",
     },
-    { inputs: [], name: "withdraw", outputs: [], stateMutability: "nonpayable", type: "function" },
+    {
+      inputs: [],
+      name: "withdraw",
+      outputs: [],
+      stateMutability: "nonpayable",
+      type: "function",
+    },
     { stateMutability: "payable", type: "receive" },
   ],
   chain: heliosTestnet,

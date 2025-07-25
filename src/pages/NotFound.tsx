@@ -2,14 +2,14 @@
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { AlertTriangle } from "lucide-react";
-import { Helmet } from "react-helmet-async";
+import Page from "@/components/Page";
 
 const NotFound = () => {
   return (
-    <>
-      <Helmet>
-        <title>404 Not Found – Helivault Gate</title>
-      </Helmet>
+    <Page
+      title="404 Not Found"
+      description="Oops! The page you're looking for doesn't exist."
+    >
       <div className="flex flex-col items-center justify-center min-h-[calc(100vh-10rem)] text-center px-4">
         <AlertTriangle className="h-24 w-24 text-primary mb-6" />
         <h1 className="text-6xl font-bold tracking-tighter">404</h1>
@@ -17,13 +17,14 @@ const NotFound = () => {
           Page Not Found
         </p>
         <p className="max-w-md mx-auto mt-4 text-muted-foreground">
-          Oops! The page you're looking for doesn't exist. It might have been moved or deleted.
+          Oops! The page you're looking for doesn't exist. It might have been
+          moved or deleted.
         </p>
         <Button asChild className="mt-8">
           <Link to="/">Return to Home</Link>
         </Button>
       </div>
-    </>
+    </Page>
   );
 };
 

@@ -1,11 +1,20 @@
 // src/components/Streak.tsx
 import { useState, useEffect } from "react";
-import { useAccount, useReadContract, useWriteContract, useWaitForTransactionReceipt } from "wagmi";
+import {
+  useAccount,
+  useReadContract,
+  useWriteContract,
+  useWaitForTransactionReceipt,
+} from "wagmi";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Flame } from "lucide-react";
 import { DAILY_CHECK_IN_CONTRACT } from "@/contracts/DailyCheckIn";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 
 export const Streak = () => {
   const { address, isConnected } = useAccount();
@@ -27,12 +36,18 @@ export const Streak = () => {
     query: { enabled: isConnected },
   });
 
-  const { isLoading: isConfirming, isSuccess: isConfirmed } = useWaitForTransactionReceipt({ hash });
+  const { isLoading: isConfirming, isSuccess: isConfirmed } =
+    useWaitForTransactionReceipt({ hash });
 
   useEffect(() => {
     if (typeof lastCheckIn === "bigint") {
       const today = new Date().setHours(0, 0, 0, 0);
-      const lastCheckInDay = new Date(Number(lastCheckIn) * 1000).setHours(0, 0, 0, 0);
+      const lastCheckInDay = new Date(Number(lastCheckIn) * 1000).setHours(
+        0,
+        0,
+        0,
+        0,
+      );
       setCanCheckIn(today > lastCheckInDay);
     } else if (isConnected) {
       setCanCheckIn(true);
@@ -41,11 +56,16 @@ export const Streak = () => {
 
   const handleCheckIn = async () => {
     try {
-      const txHash = await writeContractAsync({ ...DAILY_CHECK_IN_CONTRACT, functionName: "checkIn" });
+      const txHash = await writeContractAsync({
+        ...DAILY_CHECK_IN_CONTRACT,
+        functionName: "checkIn",
+      });
       setHash(txHash);
       toast.info("Check-in transaction sent...");
     } catch (error: any) {
-      toast.error("Check-in failed", { description: error.shortMessage || "An error occurred." });
+      toast.error("Check-in failed", {
+        description: error.shortMessage || "An error occurred.",
+      });
     }
   };
 
@@ -77,8 +97,15 @@ export const Streak = () => {
               Check in every day to maintain your streak!
             </p>
           </div>
-          <Button onClick={handleCheckIn} disabled={!canCheckIn || isConfirming}>
-            {isConfirming ? "Confirming..." : canCheckIn ? "Check-in Now" : "Already Checked In Today"}
+          <Button
+            onClick={handleCheckIn}
+            disabled={!canCheckIn || isConfirming}
+          >
+            {isConfirming
+              ? "Confirming..."
+              : canCheckIn
+                ? "Check-in Now"
+                : "Already Checked In Today"}
           </Button>
         </div>
       </PopoverContent>

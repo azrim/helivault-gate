@@ -12,16 +12,13 @@ import Mint from "./pages/Mint";
 import Faucet from "./pages/Faucet";
 import Deploy from "./pages/Deploy";
 import Lottery from "./pages/Lottery";
-import Profile from "./pages/Profile";
 import NotFound from "./pages/NotFound";
 import Gallery from "./pages/Gallery";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
-import { HelmetProvider } from "react-helmet-async";
 import { ThemeProvider } from "./components/ThemeProvider";
 import { useIsMobile } from "./hooks/use-mobile";
-import PageWrapper from "./components/PageWrapper";
 import { DeploymentProvider } from "./context/DeploymentContext";
 import {
   NavigationProvider,
@@ -56,57 +53,43 @@ const AnimatedRoutes = () => {
           <Route
             path="/"
             element={
-              <PageWrapper>
                 <Home />
-              </PageWrapper>
             }
           />
           <Route
             path="/mint"
             element={
-              <PageWrapper>
                 <Mint />
-              </PageWrapper>
             }
           />
           <Route
             path="/faucet"
             element={
-              <PageWrapper>
                 <Faucet />
-              </PageWrapper>
             }
           />
           <Route
             path="/deploy"
             element={
-              <PageWrapper>
                 <Deploy />
-              </PageWrapper>
             }
           />
           <Route
             path="/gallery"
             element={
-              <PageWrapper>
                 <Gallery />
-              </PageWrapper>
             }
           />
           <Route
             path="/lottery"
             element={
-              <PageWrapper>
                 <Lottery />
-              </PageWrapper>
             }
           />
           <Route
             path="*"
             element={
-              <PageWrapper>
                 <NotFound />
-              </PageWrapper>
             }
           />
         </Routes>
@@ -116,28 +99,28 @@ const AnimatedRoutes = () => {
 };
 
 const App = () => (
-  <HelmetProvider>
-    <WagmiProvider config={config}>
-      <QueryClientProvider client={queryClient}>
-        <RainbowKitProvider>
-          <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
-            <TooltipProvider>
-              <Toaster />
-              <Sonner />
-              <BrowserRouter>
-                <DeploymentProvider>
-                  <NavigationProvider>
-                    <Navigation />
+  <WagmiProvider config={config}>
+    <QueryClientProvider client={queryClient}>
+      <RainbowKitProvider>
+        <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+          <TooltipProvider>
+            <Toaster />
+            <Sonner />
+            <BrowserRouter>
+              <DeploymentProvider>
+                <NavigationProvider>
+                  <Navigation />
+                  <main className="container mx-auto px-4 sm:px-6 lg:px-8">
                     <AnimatedRoutes />
-                  </NavigationProvider>
-                </DeploymentProvider>
-              </BrowserRouter>
-            </TooltipProvider>
-          </ThemeProvider>
-        </RainbowKitProvider>
-      </QueryClientProvider>
-    </WagmiProvider>
-  </HelmetProvider>
+                  </main>
+                </NavigationProvider>
+              </DeploymentProvider>
+            </BrowserRouter>
+          </TooltipProvider>
+        </ThemeProvider>
+      </RainbowKitProvider>
+    </QueryClientProvider>
+  </WagmiProvider>
 );
 
 export default App;

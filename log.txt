@@ -1,2 +1,87 @@
-1. hvt faucet: claim failed, but it's succeeded. my hvt balance increased
-2. mint: error when minting: execution reverted: "Insufficient payment" (action="estimateGas", data="0x08c379a000000000000000000000000000000000000000000000000000000000000000200000000000000000000000000000000000000000000000000000000000000014496e73756666696369656e74207061796d656e74000000000000000000000000", reason="Insufficient payment", transaction={ "data": "0xa0712d680000000000000000000000000000000000000000000000000000000000000001", "from": "0xe0bECc917eC26961BF40aD87650ec0878daf950D", "to": "0x79B521277A664ceF5ab4dd34EE74aa24E1eaE33c" }, invocation=null, revert={ "args": [ "Insufficient payment" ], "name": "Error", "signature": "Error(string)" }, code=CALL_EXCEPTION, version=6.13.5)
+dist.94abdbf1.js:1  TronWeb is already initiated. TronLink will overwrite the current instance
+_bindTronWeb @ dist.94abdbf1.js:1
+dist.94abdbf1.js:80 bybit:page provider inject code 
+react-dom.development.js:29895 Download the React DevTools for a better development experience: https://reactjs.org/link/react-devtools
+Navigation.tsx:67 isMobile: false
+index.esm.js:640  Uncaught TypeError: Cannot read properties of undefined (reading 'add')
+    at HelmetDispatcher.init (index.esm.js:640:21)
+    at HelmetDispatcher.render (index.esm.js:644:10)
+    at finishClassComponent (react-dom.development.js:19781:31)
+    at updateClassComponent (react-dom.development.js:19727:24)
+    at beginWork (react-dom.development.js:21650:16)
+    at HTMLUnknownElement.callCallback2 (react-dom.development.js:4164:14)
+    at Object.invokeGuardedCallbackDev (react-dom.development.js:4213:16)
+    at invokeGuardedCallback (react-dom.development.js:4277:31)
+    at beginWork$1 (react-dom.development.js:27490:7)
+    at performUnitOfWork (react-dom.development.js:26596:12)
+Navigation.tsx:67 isMobile: false
+index.esm.js:640  Uncaught TypeError: Cannot read properties of undefined (reading 'add')
+    at HelmetDispatcher.init (index.esm.js:640:21)
+    at HelmetDispatcher.render (index.esm.js:644:10)
+    at finishClassComponent (react-dom.development.js:19781:31)
+    at updateClassComponent (react-dom.development.js:19727:24)
+    at beginWork (react-dom.development.js:21650:16)
+    at HTMLUnknownElement.callCallback2 (react-dom.development.js:4164:14)
+    at Object.invokeGuardedCallbackDev (react-dom.development.js:4213:16)
+    at invokeGuardedCallback (react-dom.development.js:4277:31)
+    at beginWork$1 (react-dom.development.js:27490:7)
+    at performUnitOfWork (react-dom.development.js:26596:12)
+react-dom.development.js:18704  The above error occurred in the <HelmetDispatcher> component:
+
+    at HelmetDispatcher (http://localhost:8080/node_modules/.vite/deps/react-helmet-async.js?v=b7686dba:779:5)
+    at _a2 (http://localhost:8080/node_modules/.vite/deps/react-helmet-async.js?v=b7686dba:828:21)
+    at Page (http://localhost:8080/src/components/Page.tsx:13:17)
+    at Home
+    at RenderedRoute (http://localhost:8080/node_modules/.vite/deps/react-router-dom.js?v=b7686dba:4092:5)
+    at Routes (http://localhost:8080/node_modules/.vite/deps/react-router-dom.js?v=b7686dba:4531:5)
+    at PresenceChild (http://localhost:8080/node_modules/.vite/deps/framer-motion.js?v=b7686dba:135:24)
+    at AnimatePresence (http://localhost:8080/node_modules/.vite/deps/framer-motion.js?v=b7686dba:216:26)
+    at div
+    at AnimatedRoutes (http://localhost:8080/src/App.tsx:46:22)
+    at main
+    at NavigationProvider (http://localhost:8080/src/context/NavigationContext.tsx:14:38)
+    at DeploymentProvider (http://localhost:8080/src/context/DeploymentContext.tsx:29:38)
+    at Router (http://localhost:8080/node_modules/.vite/deps/react-router-dom.js?v=b7686dba:4474:15)
+    at BrowserRouter (http://localhost:8080/node_modules/.vite/deps/react-router-dom.js?v=b7686dba:5219:5)
+    at Provider2 (http://localhost:8080/node_modules/.vite/deps/@radix-ui_react-tooltip.js?v=b7686dba:61:15)
+    at TooltipProvider (http://localhost:8080/node_modules/.vite/deps/@radix-ui_react-tooltip.js?v=b7686dba:252:5)
+    at z (http://localhost:8080/node_modules/.vite/deps/next-themes.js?v=b7686dba:21:18)
+    at ThemeProvider (http://localhost:8080/src/components/ThemeProvider.tsx:12:33)
+    at div
+    at ModalProvider (http://localhost:8080/node_modules/.vite/deps/@rainbow-me_rainbowkit.js?v=b7686dba:44363:26)
+    at ShowBalanceProvider (http://localhost:8080/node_modules/.vite/deps/@rainbow-me_rainbowkit.js?v=b7686dba:39482:32)
+    at TransactionStoreProvider (http://localhost:8080/node_modules/.vite/deps/@rainbow-me_rainbowkit.js?v=b7686dba:39920:3)
+    at ModalSizeProvider (http://localhost:8080/node_modules/.vite/deps/@rainbow-me_rainbowkit.js?v=b7686dba:40071:3)
+    at I18nProvider (http://localhost:8080/node_modules/.vite/deps/@rainbow-me_rainbowkit.js?v=b7686dba:39188:23)
+    at WalletButtonProvider (http://localhost:8080/node_modules/.vite/deps/@rainbow-me_rainbowkit.js?v=b7686dba:40047:33)
+    at RainbowKitChainProvider (http://localhost:8080/node_modules/.vite/deps/@rainbow-me_rainbowkit.js?v=b7686dba:39447:3)
+    at RainbowKitProvider (http://localhost:8080/node_modules/.vite/deps/@rainbow-me_rainbowkit.js?v=b7686dba:40853:3)
+    at QueryClientProvider (http://localhost:8080/node_modules/.vite/deps/chunk-HBMSL3B2.js?v=b7686dba:2933:3)
+    at Hydrate (http://localhost:8080/node_modules/.vite/deps/chunk-L6XXUEPA.js?v=b7686dba:250:11)
+    at WagmiProvider (http://localhost:8080/node_modules/.vite/deps/chunk-L6XXUEPA.js?v=b7686dba:274:11)
+    at App
+    at O (http://localhost:8080/node_modules/.vite/deps/next-themes.js?v=b7686dba:23:25)
+    at z (http://localhost:8080/node_modules/.vite/deps/next-themes.js?v=b7686dba:21:18)
+    at ThemeProvider (http://localhost:8080/src/components/ThemeProvider.tsx:12:33)
+
+Consider adding an error boundary to your tree to customize error handling behavior.
+Visit https://reactjs.org/link/error-boundaries to learn more about error boundaries.
+logCapturedError @ react-dom.development.js:18704
+react-dom.development.js:26962  Uncaught TypeError: Cannot read properties of undefined (reading 'add')
+    at HelmetDispatcher.init (index.esm.js:640:21)
+    at HelmetDispatcher.render (index.esm.js:644:10)
+    at finishClassComponent (react-dom.development.js:19781:31)
+    at updateClassComponent (react-dom.development.js:19727:24)
+    at beginWork (react-dom.development.js:21650:16)
+    at beginWork$1 (react-dom.development.js:27465:14)
+    at performUnitOfWork (react-dom.development.js:26596:12)
+    at workLoopSync (react-dom.development.js:26505:5)
+    at renderRootSync (react-dom.development.js:26473:7)
+    at recoverFromConcurrentError (react-dom.development.js:25889:20)
+lit-html.ts:233  Lit is in dev mode. Not recommended for production! See https://lit.dev/msg/dev-mode for more information.
+issueWarning @ lit-html.ts:233
+[NEW] Explain Console errors by using Copilot in Edge: click
+         
+         to explain an error. 
+        Learn more
+        Don't show again

@@ -1,11 +1,23 @@
 // src/pages/Faucet.tsx
 import { useEffect, useState } from "react";
-import { Helmet } from "react-helmet-async";
-import { useAccount, useReadContract, useWriteContract, useWaitForTransactionReceipt, useBalance } from "wagmi";
+import Page from "@/components/Page";
+import {
+  useAccount,
+  useReadContract,
+  useWriteContract,
+  useWaitForTransactionReceipt,
+  useBalance,
+} from "wagmi";
 import { formatEther } from "viem";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+} from "@/components/ui/card";
 import { HELIVAULT_TOKEN_CONTRACT } from "@/contracts/HelivaultToken";
 import { heliosTestnet } from "@/lib/chains";
 import { ConnectButton } from "@rainbow-me/rainbowkit";
@@ -16,7 +28,8 @@ const Faucet = () => {
   const { address, isConnected, chain } = useAccount();
   const { data: hash, writeContractAsync, isPending } = useWriteContract();
 
-  const { isLoading: isConfirming, isSuccess: isConfirmed } = useWaitForTransactionReceipt({ hash });
+  const { isLoading: isConfirming, isSuccess: isConfirmed } =
+    useWaitForTransactionReceipt({ hash });
 
   const [cooldown, setCooldown] = useState(0);
 
@@ -57,10 +70,13 @@ const Faucet = () => {
       await writeContractAsync({
         ...HELIVAULT_TOKEN_CONTRACT,
         functionName: "faucet",
+        account: address,
       });
       toast.info("Claim transaction sent...");
     } catch (error: any) {
-      toast.error("Claim failed", { description: error.shortMessage || "An error occurred." });
+      toast.error("Claim failed", {
+        description: error.shortMessage || "An error occurred.",
+      });
     }
   };
 
@@ -73,8 +89,12 @@ const Faucet = () => {
   }, [isConfirmed, refetchHvtBalance, refetchLastClaimed]);
 
   const formatCooldown = (seconds: number) => {
-    const h = Math.floor(seconds / 3600).toString().padStart(2, "0");
-    const m = Math.floor((seconds % 3600) / 60).toString().padStart(2, "0");
+    const h = Math.floor(seconds / 3600)
+      .toString()
+      .padStart(2, "0");
+    const m = Math.floor((seconds % 3600) / 60)
+      .toString()
+      .padStart(2, "0");
     const s = (seconds % 60).toString().padStart(2, "0");
     return `${h}:${m}:${s}`;
   };
@@ -83,10 +103,10 @@ const Faucet = () => {
   const isCorrectNetwork = chain?.id === heliosTestnet.id;
 
   return (
-    <>
-      <Helmet>
-        <title>HVT Faucet – Helivault Gate</title>
-      </Helmet>
+    <Page
+      title="HVT Faucet"
+      description="Get free Helivault Tokens (HVT) to use for minting NFTs and interacting with our ecosystem."
+    >
       <div className="space-y-16 pb-24">
         {/* Header */}
         <section className="text-center pt-24 pb-12">
@@ -103,32 +123,40 @@ const Faucet = () => {
             animate={{ opacity: 1 }}
             transition={{ delay: 0.3 }}
           >
-            Get free Helivault Tokens (HVT) to use for minting NFTs and interacting with our ecosystem.
+            Get free Helivault Tokens (HVT) to use for minting NFTs and
+            interacting with our ecosystem.
           </motion.p>
         </section>
 
         {/* Faucet Section */}
-        <motion.section 
-          className="max-w-xl mx-auto px-4 sm:px-6 lg:px-8"
+        <motion.section
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.5 }}
         >
-          <Card>
+          <Card className="max-w-xl mx-auto">
             <CardHeader>
               <CardTitle className="flex items-center gap-3">
                 <Droplets className="h-6 w-6 text-primary" />
                 <span>Claim Your Tokens</span>
               </CardTitle>
               <CardDescription>
-                You can claim {typeof faucetAmountResult === "bigint" ? formatEther(faucetAmountResult) : "0.1"} HVT every 24 hours.
+                You can claim{" "}
+                {typeof faucetAmountResult === "bigint"
+                  ? formatEther(faucetAmountResult)
+                  : "0.1"}{" "}
+                HVT every 24 hours.
               </CardDescription>
             </CardHeader>
             <CardContent className="text-center space-y-8">
               <div className="bg-secondary p-6 rounded-lg">
-                <p className="text-sm text-muted-foreground">Your HVT Balance</p>
+                <p className="text-sm text-muted-foreground">
+                  Your HVT Balance
+                </p>
                 <p className="text-4xl font-bold">
-                  {hvtBalance ? `${parseFloat(hvtBalance.formatted).toFixed(2)} HVT` : "0.00 HVT"}
+                  {hvtBalance
+                    ? `${parseFloat(hvtBalance.formatted).toFixed(2)} HVT`
+                    : "0.00 HVT"}
                 </p>
               </div>
 
@@ -137,7 +165,11 @@ const Faucet = () => {
               ) : !isCorrectNetwork ? (
                 <ConnectButton label="Wrong Network" />
               ) : isClaimable ? (
-                <Button onClick={handleClaim} disabled={isPending || isConfirming} className="w-full h-12 text-lg">
+                <Button
+                  onClick={handleClaim}
+                  disabled={isPending || isConfirming}
+                  className="w-full h-12 text-lg"
+                >
                   {isPending || isConfirming ? "Claiming..." : "Claim Tokens"}
                 </Button>
               ) : (
@@ -150,7 +182,7 @@ const Faucet = () => {
           </Card>
         </motion.section>
       </div>
-    </>
+    </Page>
   );
 };
 

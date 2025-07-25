@@ -33,7 +33,11 @@ export const CustomConnectButton = () => {
 
         if (chain.unsupported) {
           return (
-            <Button onClick={openChainModal} type="button" variant="destructive">
+            <Button
+              onClick={openChainModal}
+              type="button"
+              variant="destructive"
+            >
               Wrong Network
             </Button>
           );
