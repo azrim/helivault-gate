@@ -29,8 +29,8 @@ const queryClient = new QueryClient();
 const metadata = {
   name: "Helivault Gate",
   description: "A dApp for the Helios testnet.",
-  url: "https://helivault-gate.vercel.app/",
-  icons: ["https://helivault-gate.vercel.app/helios-icon.png"],
+  url: window.location.origin,
+  icons: [`${window.location.origin}/helios-icon.png`],
 };
 
 createAppKit({

@@ -28,7 +28,7 @@ import { useNavigationContext } from "@/context/NavigationContext";
 import { useAccount, useBalance, useDisconnect } from "wagmi";
 import { toast } from "sonner";
 import { HELIVAULT_TOKEN_CONTRACT } from "@/contracts/HelivaultToken";
-import { useState } from "react";
+import { useState, forwardRef } from "react";
 import { useAppKit } from "@reown/appkit/react";
 
 type NavItem = {
@@ -46,16 +46,14 @@ const navItems: NavItem[] = [
   { path: "/deploy", label: "Deploy", icon: Rocket },
 ];
 
-const NavLink = ({
-  path,
-  icon: Icon,
-  label,
-  isActive,
-  onClick,
-}: NavItem & { isActive: boolean; onClick: () => void }) => (
+const NavLink = forwardRef<
+  HTMLAnchorElement,
+  NavItem & { isActive: boolean; onClick: () => void }
+>(({ path, icon: Icon, label, isActive, onClick }, ref) => (
   <Link
     to={path}
     onClick={onClick}
+    ref={ref}
     className={cn(
       "flex items-center gap-3 rounded-lg px-3 py-2 transition-all",
       isActive
@@ -66,12 +64,13 @@ const NavLink = ({
     <Icon className="h-5 w-5" />
     <span className="text-base font-medium">{label}</span>
   </Link>
-);
+));
+NavLink.displayName = "NavLink";
 
 export const MobileTopNav = () => {
   const location = useLocation();
   const { setDirection } = useNavigationContext();
-  const { address, isConnected }_ = useAccount();
+  const { address, isConnected } = useAccount();
   const { disconnect } = useDisconnect();
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const { open } = useAppKit();
